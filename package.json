@@ -1,0 +1,46 @@
+{
+  "name": "nex-gen-wx",
+  "version": "0.6.5",
+  "private": true,
+  "description": "NEX GEN WX local broadcast weather presentation authoring, rendering, PNG export, and optional live output workstation.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "check": "tsc -b --pretty false",
+    "validate:reference": "node tools/validate-reference.mjs",
+    "validate": "npm run validate:reference && npm run validate:tauri-versions && npm run audit && npm run validate:foundation && npm run validate:stabilization && npm run validate:functional-repair && npm run validate:map-controllers && npm run validate:module-architecture && npm run validate:scene-objects && npm run validate:render-pipeline && npm run test:state && npm run test:modules && npm run test:scene-objects && npm run check",
+    "validate:foundation": "node tools/validate-foundation.mjs",
+    "audit": "node tools/audit-codebase.mjs",
+    "validate:stabilization": "node tools/validate-stabilization.mjs",
+    "test:state": "node tools/test-state-runtime.cjs",
+    "validate:functional-repair": "node tools/validate-functional-repair.mjs",
+    "validate:map-controllers": "node tools/validate-map-controllers.mjs",
+    "validate:module-architecture": "node tools/validate-module-architecture.mjs",
+    "test:modules": "node tools/test-module-registry.cjs && node tools/test-built-in-module-registry.cjs",
+    "validate:tauri-versions": "node tools/validate-tauri-versions.mjs",
+    "validate:scene-objects": "node tools/validate-scene-objects.mjs",
+    "test:scene-objects": "node tools/test-scene-object-state.cjs",
+    "validate:render-pipeline": "node tools/validate-render-pipeline.mjs"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.11.1",
+    "html-to-image": "1.11.13",
+    "maplibre-gl": "6.0.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
+    "@types/react": "19.2.13",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.1.4",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "vite": "7.3.6",
+    "@types/node": "24.0.0"
+  }
+}

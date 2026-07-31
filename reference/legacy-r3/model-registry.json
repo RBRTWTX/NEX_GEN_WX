@@ -1,0 +1,665 @@
+{
+  "schemaVersion": 1,
+  "models": {
+    "hrrr": {
+      "name": "HRRR",
+      "provider": "herbie",
+      "defaultProduct": "sfc",
+      "products": [
+        "sfc",
+        "prs",
+        "nat"
+      ],
+      "maxHour": 48,
+      "step": 1,
+      "cycleHours": 1,
+      "fields": [
+        "composite_reflectivity",
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_10m",
+        "wind_gust",
+        "mslp",
+        "surface_pressure",
+        "total_precip",
+        "precip_rate",
+        "snowfall",
+        "snow_depth",
+        "surface_cape",
+        "ml_cape",
+        "mu_cape",
+        "cin",
+        "lifted_index",
+        "srh_0_1",
+        "srh_0_3",
+        "updraft_helicity",
+        "temp_850",
+        "temp_500",
+        "height_500",
+        "wind_500",
+        "jet_250",
+        "cloud_cover",
+        "cloud_low",
+        "cloud_mid",
+        "cloud_high",
+        "visibility",
+        "precip_type"
+      ]
+    },
+    "rap": {
+      "name": "RAP",
+      "provider": "herbie",
+      "defaultProduct": "awp130pgrb",
+      "products": [
+        "awp130pgrb"
+      ],
+      "maxHour": 51,
+      "step": 1,
+      "cycleHours": 1,
+      "fields": [
+        "composite_reflectivity",
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_10m",
+        "wind_gust",
+        "mslp",
+        "surface_pressure",
+        "total_precip",
+        "precip_rate",
+        "snowfall",
+        "snow_depth",
+        "surface_cape",
+        "ml_cape",
+        "mu_cape",
+        "cin",
+        "lifted_index",
+        "srh_0_1",
+        "srh_0_3",
+        "temp_850",
+        "temp_500",
+        "height_500",
+        "wind_500",
+        "jet_250",
+        "cloud_cover",
+        "cloud_low",
+        "cloud_mid",
+        "cloud_high",
+        "visibility",
+        "precip_type"
+      ]
+    },
+    "nam": {
+      "name": "NAM",
+      "provider": "herbie",
+      "defaultProduct": "conusnest.hiresf",
+      "products": [
+        "conusnest.hiresf",
+        "awphys",
+        "awip12"
+      ],
+      "maxHour": 84,
+      "step": 3,
+      "cycleHours": 6,
+      "fields": [
+        "composite_reflectivity",
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_10m",
+        "wind_gust",
+        "mslp",
+        "surface_pressure",
+        "total_precip",
+        "precip_rate",
+        "snowfall",
+        "snow_depth",
+        "surface_cape",
+        "ml_cape",
+        "mu_cape",
+        "cin",
+        "lifted_index",
+        "srh_0_1",
+        "srh_0_3",
+        "temp_850",
+        "temp_500",
+        "height_500",
+        "wind_500",
+        "jet_250",
+        "cloud_cover",
+        "cloud_low",
+        "cloud_mid",
+        "cloud_high",
+        "visibility",
+        "precip_type"
+      ]
+    },
+    "gfs": {
+      "name": "GFS",
+      "provider": "herbie",
+      "defaultProduct": "pgrb2.0p25",
+      "products": [
+        "pgrb2.0p25"
+      ],
+      "maxHour": 384,
+      "step": 3,
+      "cycleHours": 6,
+      "fields": [
+        "composite_reflectivity",
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_10m",
+        "wind_gust",
+        "mslp",
+        "surface_pressure",
+        "total_precip",
+        "precip_rate",
+        "snowfall",
+        "snow_depth",
+        "surface_cape",
+        "cin",
+        "lifted_index",
+        "temp_850",
+        "temp_500",
+        "height_500",
+        "wind_500",
+        "jet_250",
+        "cloud_cover",
+        "cloud_low",
+        "cloud_mid",
+        "cloud_high",
+        "visibility",
+        "precip_type"
+      ]
+    },
+    "nbm": {
+      "name": "NBM CONUS Blend",
+      "provider": "herbie",
+      "defaultProduct": "co",
+      "products": [
+        "co"
+      ],
+      "maxHour": 264,
+      "step": 1,
+      "cycleHours": 1,
+      "fields": [
+        "temp_2m",
+        "max_temp",
+        "min_temp",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_gust",
+        "total_precip",
+        "snowfall",
+        "cloud_cover",
+        "visibility"
+      ]
+    },
+    "gefs_mean": {
+      "name": "GEFS Ensemble Mean",
+      "provider": "herbie",
+      "herbieModel": "gefs",
+      "member": "mean",
+      "defaultProduct": "atmos.5",
+      "products": [
+        "atmos.5",
+        "atmos.25"
+      ],
+      "maxHour": 384,
+      "step": 6,
+      "cycleHours": 6,
+      "fields": [
+        "temp_2m",
+        "relative_humidity_2m",
+        "mslp",
+        "total_precip",
+        "surface_cape",
+        "temp_850",
+        "temp_500",
+        "height_500",
+        "wind_500",
+        "jet_250",
+        "cloud_cover"
+      ]
+    },
+    "gefs_spread": {
+      "name": "GEFS Ensemble Spread",
+      "provider": "herbie",
+      "herbieModel": "gefs",
+      "member": "spr",
+      "defaultProduct": "atmos.5",
+      "products": [
+        "atmos.5",
+        "atmos.25"
+      ],
+      "maxHour": 384,
+      "step": 6,
+      "cycleHours": 6,
+      "fields": [
+        "temp_2m",
+        "mslp",
+        "total_precip",
+        "temp_850",
+        "temp_500",
+        "height_500"
+      ],
+      "isSpread": true
+    },
+    "rtma": {
+      "name": "RTMA 2.5 km Analysis",
+      "provider": "herbie",
+      "defaultProduct": "anl",
+      "products": [
+        "anl"
+      ],
+      "maxHour": 0,
+      "step": 1,
+      "cycleHours": 1,
+      "fields": [
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_10m",
+        "wind_gust",
+        "surface_pressure",
+        "visibility"
+      ]
+    },
+    "rtma_ru": {
+      "name": "RTMA Rapid Update",
+      "provider": "herbie",
+      "defaultProduct": "anl",
+      "products": [
+        "anl"
+      ],
+      "maxHour": 0,
+      "step": 1,
+      "cycleHours": 1,
+      "fields": [
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_10m",
+        "wind_gust",
+        "surface_pressure",
+        "visibility"
+      ]
+    },
+    "urma": {
+      "name": "URMA Analysis",
+      "provider": "herbie",
+      "defaultProduct": "anl",
+      "products": [
+        "anl"
+      ],
+      "maxHour": 0,
+      "step": 1,
+      "cycleHours": 1,
+      "fields": [
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_10m",
+        "wind_gust",
+        "surface_pressure",
+        "visibility"
+      ]
+    },
+    "ndfd": {
+      "name": "NDFD Official Forecast Grid",
+      "provider": "ndfd",
+      "defaultProduct": "official",
+      "products": [
+        "official"
+      ],
+      "maxHour": 168,
+      "step": 3,
+      "cycleHours": 1,
+      "fields": [
+        "temp_2m",
+        "max_temp",
+        "min_temp",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "apparent_temperature",
+        "wind_10m",
+        "wind_gust",
+        "total_precip",
+        "snowfall",
+        "cloud_cover",
+        "visibility"
+      ]
+    },
+    "ifs": {
+      "name": "ECMWF IFS Open Data",
+      "provider": "ecmwf-opendata",
+      "defaultProduct": "oper",
+      "products": [
+        "oper"
+      ],
+      "maxHour": 240,
+      "step": 3,
+      "cycleHours": 6,
+      "fields": [
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "wind_10m",
+        "wind_gust",
+        "mslp",
+        "surface_pressure",
+        "total_precip",
+        "precip_rate",
+        "snowfall",
+        "snow_depth",
+        "surface_cape",
+        "temp_850",
+        "temp_500",
+        "height_500",
+        "wind_500",
+        "jet_250",
+        "cloud_cover",
+        "cloud_low",
+        "cloud_mid",
+        "cloud_high"
+      ]
+    },
+    "aifs": {
+      "name": "ECMWF AIFS Single Open Data",
+      "provider": "ecmwf-opendata",
+      "defaultProduct": "oper",
+      "products": [
+        "oper"
+      ],
+      "maxHour": 360,
+      "step": 6,
+      "cycleHours": 6,
+      "fields": [
+        "temp_2m",
+        "dewpoint_2m",
+        "relative_humidity_2m",
+        "wind_10m",
+        "wind_gust",
+        "mslp",
+        "surface_pressure",
+        "total_precip",
+        "snowfall",
+        "snow_depth",
+        "surface_cape",
+        "temp_850",
+        "temp_500",
+        "height_500",
+        "wind_500",
+        "jet_250",
+        "cloud_cover",
+        "cloud_low",
+        "cloud_mid",
+        "cloud_high"
+      ]
+    },
+    "ifs_ens_mean": {
+      "name": "ECMWF IFS Ensemble Mean",
+      "provider": "ecmwf-opendata",
+      "ecmwfModel": "ifs",
+      "ecmwfType": "em",
+      "ecmwfStream": "enfo",
+      "defaultProduct": "enfo-mean",
+      "products": [
+        "enfo-mean"
+      ],
+      "maxHour": 360,
+      "step": 6,
+      "cycleHours": 6,
+      "fields": [
+        "mslp",
+        "temp_850",
+        "temp_500",
+        "height_500"
+      ]
+    },
+    "ifs_ens_spread": {
+      "name": "ECMWF IFS Ensemble Spread",
+      "provider": "ecmwf-opendata",
+      "ecmwfModel": "ifs",
+      "ecmwfType": "es",
+      "ecmwfStream": "enfo",
+      "defaultProduct": "enfo-spread",
+      "products": [
+        "enfo-spread"
+      ],
+      "maxHour": 360,
+      "step": 6,
+      "cycleHours": 6,
+      "fields": [
+        "mslp",
+        "temp_850",
+        "temp_500",
+        "height_500"
+      ],
+      "isSpread": true
+    },
+    "aifs_ens_mean": {
+      "name": "ECMWF AIFS Ensemble Mean",
+      "provider": "ecmwf-opendata",
+      "ecmwfModel": "aifs-ens",
+      "ecmwfType": "em",
+      "ecmwfStream": "enfo",
+      "defaultProduct": "enfo-mean",
+      "products": [
+        "enfo-mean"
+      ],
+      "maxHour": 360,
+      "step": 6,
+      "cycleHours": 6,
+      "fields": [
+        "mslp",
+        "temp_850",
+        "temp_500",
+        "height_500"
+      ]
+    },
+    "aifs_ens_spread": {
+      "name": "ECMWF AIFS Ensemble Spread",
+      "provider": "ecmwf-opendata",
+      "ecmwfModel": "aifs-ens",
+      "ecmwfType": "es",
+      "ecmwfStream": "enfo",
+      "defaultProduct": "enfo-spread",
+      "products": [
+        "enfo-spread"
+      ],
+      "maxHour": 360,
+      "step": 6,
+      "cycleHours": 6,
+      "fields": [
+        "mslp",
+        "temp_850",
+        "temp_500",
+        "height_500"
+      ],
+      "isSpread": true
+    }
+  },
+  "fields": {
+    "composite_reflectivity": {
+      "name": "Composite Reflectivity",
+      "legend": "reflectivity",
+      "units": "dBZ"
+    },
+    "temp_2m": {
+      "name": "2 m Temperature",
+      "legend": "temperature",
+      "units": "\u00b0F"
+    },
+    "max_temp": {
+      "name": "Daytime Maximum Temperature",
+      "legend": "temperature",
+      "units": "\u00b0F"
+    },
+    "min_temp": {
+      "name": "Nighttime Minimum Temperature",
+      "legend": "temperature",
+      "units": "\u00b0F"
+    },
+    "dewpoint_2m": {
+      "name": "2 m Dew Point",
+      "legend": "dewpoint",
+      "units": "\u00b0F"
+    },
+    "relative_humidity_2m": {
+      "name": "2 m Relative Humidity",
+      "legend": "humidity",
+      "units": "%"
+    },
+    "apparent_temperature": {
+      "name": "Apparent Temperature",
+      "legend": "temperature",
+      "units": "\u00b0F"
+    },
+    "wind_10m": {
+      "name": "10 m Wind Speed",
+      "legend": "wind",
+      "units": "mph"
+    },
+    "wind_gust": {
+      "name": "Wind Gust",
+      "legend": "wind",
+      "units": "mph"
+    },
+    "mslp": {
+      "name": "Mean Sea-Level Pressure",
+      "legend": "pressure",
+      "units": "hPa"
+    },
+    "surface_pressure": {
+      "name": "Surface Pressure",
+      "legend": "pressure",
+      "units": "hPa"
+    },
+    "total_precip": {
+      "name": "Accumulated Precipitation",
+      "legend": "rainfall",
+      "units": "in"
+    },
+    "precip_rate": {
+      "name": "Precipitation Rate",
+      "legend": "rain-rate",
+      "units": "in/hr"
+    },
+    "snowfall": {
+      "name": "Accumulated Snowfall",
+      "legend": "snowfall",
+      "units": "in"
+    },
+    "snow_depth": {
+      "name": "Snow Depth",
+      "legend": "snowfall",
+      "units": "in"
+    },
+    "surface_cape": {
+      "name": "Surface CAPE",
+      "legend": "cape",
+      "units": "J/kg"
+    },
+    "ml_cape": {
+      "name": "Mixed-Layer CAPE",
+      "legend": "cape",
+      "units": "J/kg"
+    },
+    "mu_cape": {
+      "name": "Most-Unstable CAPE",
+      "legend": "cape",
+      "units": "J/kg"
+    },
+    "cin": {
+      "name": "Convective Inhibition",
+      "legend": "cin",
+      "units": "J/kg"
+    },
+    "lifted_index": {
+      "name": "Lifted Index",
+      "legend": "lifted-index",
+      "units": "\u00b0C"
+    },
+    "srh_0_1": {
+      "name": "0\u20131 km Storm-Relative Helicity",
+      "legend": "helicity",
+      "units": "m\u00b2/s\u00b2"
+    },
+    "srh_0_3": {
+      "name": "0\u20133 km Storm-Relative Helicity",
+      "legend": "helicity",
+      "units": "m\u00b2/s\u00b2"
+    },
+    "updraft_helicity": {
+      "name": "Updraft Helicity",
+      "legend": "updraft-helicity",
+      "units": "m\u00b2/s\u00b2"
+    },
+    "temp_850": {
+      "name": "850 mb Temperature",
+      "legend": "temperature",
+      "units": "\u00b0F"
+    },
+    "temp_500": {
+      "name": "500 mb Temperature",
+      "legend": "temperature",
+      "units": "\u00b0F"
+    },
+    "height_500": {
+      "name": "500 mb Geopotential Height",
+      "legend": "height",
+      "units": "dam"
+    },
+    "wind_500": {
+      "name": "500 mb Wind",
+      "legend": "wind",
+      "units": "mph"
+    },
+    "jet_250": {
+      "name": "250 mb Jet Stream",
+      "legend": "wind",
+      "units": "mph"
+    },
+    "cloud_cover": {
+      "name": "Total Cloud Cover",
+      "legend": "cloud-cover",
+      "units": "%"
+    },
+    "cloud_low": {
+      "name": "Low Cloud Cover",
+      "legend": "cloud-cover",
+      "units": "%"
+    },
+    "cloud_mid": {
+      "name": "Middle Cloud Cover",
+      "legend": "cloud-cover",
+      "units": "%"
+    },
+    "cloud_high": {
+      "name": "High Cloud Cover",
+      "legend": "cloud-cover",
+      "units": "%"
+    },
+    "visibility": {
+      "name": "Surface Visibility",
+      "legend": "visibility",
+      "units": "mi"
+    },
+    "precip_type": {
+      "name": "Precipitation Type",
+      "legend": "precip-type",
+      "units": "category"
+    }
+  }
+}

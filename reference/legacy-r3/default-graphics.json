@@ -1,0 +1,350 @@
+[
+  {
+    "id": "graphic-today",
+    "name": "Today",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "today",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "sunrise"
+      }
+    },
+    "transition": {
+      "type": "dissolve",
+      "duration": 900
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "graphic-tonight",
+    "name": "Tonight",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "tonight",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "night"
+      }
+    },
+    "transition": {
+      "type": "dissolve",
+      "duration": 900
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "graphic-today-tonight",
+    "name": "Today & Tonight",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "today-tonight",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "sunrise"
+      }
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1100
+    },
+    "advance": "manual",
+    "hold": 14
+  },
+  {
+    "id": "graphic-seven-day",
+    "name": "7-Day Forecast",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "seven-day",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "sky"
+      }
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1200
+    },
+    "advance": "manual",
+    "hold": 15
+  },
+  {
+    "id": "graphic-hourly",
+    "name": "Hourly",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "hourly",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "violet",
+        "hours": 12
+      }
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1000
+    },
+    "advance": "manual",
+    "hold": 14
+  },
+  {
+    "id": "graphic-temp-trend",
+    "name": "Temperature Trend",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "temp-trend",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "violet"
+      }
+    },
+    "transition": {
+      "type": "ease",
+      "duration": 1100
+    },
+    "advance": "manual",
+    "hold": 14
+  },
+  {
+    "id": "graphic-muggy-meter",
+    "name": "Muggy Meter",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "muggy-meter",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "aqua"
+      }
+    },
+    "transition": {
+      "type": "dissolve",
+      "duration": 900
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "graphic-pain-index",
+    "title": "Weather Pain Index",
+    "category": "Graphics",
+    "type": "graphic",
+    "tags": [
+      "Graphics"
+    ],
+    "graphic": {
+      "templateId": "pain-index",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "aqua"
+      }
+    },
+    "transition": {
+      "type": "ease",
+      "duration": 650
+    },
+    "name": "Pain Index",
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "graphic-right-now",
+    "name": "Right Now",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "right-now",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "midnight"
+      }
+    },
+    "transition": {
+      "type": "dissolve",
+      "duration": 700
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "graphic-planner",
+    "name": "Planner",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "planner",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "sky"
+      }
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1000
+    },
+    "advance": "manual",
+    "hold": 14
+  },
+  {
+    "id": "graphic-heading-out",
+    "name": "Heading Out",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "heading-out",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "sunset"
+      }
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1000
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "graphic-weekend",
+    "name": "Weekend",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "weekend",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "sky"
+      }
+    },
+    "transition": {
+      "type": "ease",
+      "duration": 1000
+    },
+    "advance": "manual",
+    "hold": 14
+  },
+  {
+    "id": "graphic-friday-football",
+    "name": "Friday Night Football",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "friday-football",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "stadium",
+        "eventName": "FRIDAY NIGHT FOOTBALL"
+      }
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1200
+    },
+    "advance": "manual",
+    "hold": 14
+  },
+  {
+    "id": "graphic-need-to-know",
+    "name": "Need to Know",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "need-to-know",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "theme": "forest",
+        "headline1": "STARTING TO GET MORE WARM",
+        "detail1": "Highs climb through the week with limited rain chances.",
+        "headline2": "DRY WEATHER CONTINUES",
+        "detail2": "Outdoor plans remain favorable for most of the area.",
+        "headline3": "WATCHING LATE WEEK",
+        "detail3": "A weather system may bring changing conditions late in the week."
+      }
+    },
+    "transition": {
+      "type": "dissolve",
+      "duration": 900
+    },
+    "advance": "manual",
+    "hold": 16
+  },
+  {
+    "id": "graphic-river-levels",
+    "name": "River Levels",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "river-levels",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "violet",
+        "radiusDegrees": 2.5
+      }
+    },
+    "transition": {
+      "type": "dissolve",
+      "duration": 900
+    },
+    "advance": "manual",
+    "hold": 16
+  },
+  {
+    "id": "graphic-river-hydrograph",
+    "name": "River Hydrograph",
+    "category": "Graphics",
+    "type": "graphic",
+    "graphic": {
+      "templateId": "river-hydrograph",
+      "settings": {
+        "locationName": "San Antonio, TX",
+        "lat": 29.4317,
+        "lon": -98.8063,
+        "theme": "violet",
+        "gaugeId": ""
+      }
+    },
+    "transition": {
+      "type": "dissolve",
+      "duration": 900
+    },
+    "advance": "manual",
+    "hold": 18
+  }
+]

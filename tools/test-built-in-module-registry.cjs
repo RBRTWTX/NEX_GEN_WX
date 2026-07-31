@@ -1,0 +1,113 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const childProcess = require('node:child_process');
+const Module = require('node:module');
+
+function loadTypeScript() {
+  try { return require('typescript'); }
+  catch {
+    const globalRoot = childProcess.execFileSync('npm', ['root', '-g'], { encoding: 'utf8' }).trim();
+    return require(path.join(globalRoot, 'typescript'));
+  }
+}
+const ts = loadTypeScript();
+function transpile(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const output = ts.transpileModule(source, {
+    fileName: filename,
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2022,
+      esModuleInterop: true,
+      jsx: ts.JsxEmit.ReactJSX,
+    },
+  });
+  module._compile(output.outputText, filename);
+}
+Module._extensions['.ts'] = transpile;
+Module._extensions['.tsx'] = transpile;
+
+global.document = {
+  createElement: () => ({
+    width: 1,
+    height: 1,
+    getContext: () => ({
+      clearRect: () => undefined,
+      drawImage: () => undefined,
+      createImageData: (width, height) => ({ data: new Uint8ClampedArray(width * height * 4) }),
+      putImageData: () => undefined,
+    }),
+    toDataURL: () => 'data:image/png;base64,',
+  }),
+};
+global.Image = class Image {};
+
+const originalLoad = Module._load;
+Module._load = function patchedLoad(request, parent, isMain) {
+  if (request === 'react') {
+    return {
+      createContext: (value) => ({ value, Provider: ({ children }) => children }),
+      useContext: (context) => context.value,
+      useMemo: (factory) => factory(),
+      useCallback: (callback) => callback,
+      useState: (value) => [typeof value === 'function' ? value() : value, () => undefined],
+      useEffect: () => undefined,
+    };
+  }
+  if (request === 'react/jsx-runtime') {
+    return { jsx: () => null, jsxs: () => null, Fragment: Symbol('Fragment') };
+  }
+  if (request === '@tauri-apps/api/core') return { invoke: async () => null };
+  if (request === '@tauri-apps/api/event') return { emitTo: async () => undefined, listen: async () => () => undefined };
+  if (request === '@tauri-apps/api/window') return { Window: class Window {}, getCurrentWindow: () => ({}) };
+  if (request === 'html-to-image') return { toPng: async () => '' };
+  if (request === 'maplibre-gl') {
+    class Map {}
+    class NavigationControl {}
+    return { Map, NavigationControl, setWorkerUrl: () => undefined };
+  }
+  if (request.includes('maplibre-gl-worker')) return 'worker.js';
+  return originalLoad.call(this, request, parent, isMain);
+};
+
+const { moduleRegistry } = require('../src/modules/registry.ts');
+const ids = moduleRegistry.definitions.map((definition) => definition.manifest.id);
+for (const id of [
+  'scene-engine', 'scene-objects', 'presentation', 'output', 'data-engine', 'map', 'boundaries', 'cities',
+  'roads', 'alerts', 'observations', 'temperature', 'radar', 'satellite', 'tropical',
+  'forecast', 'rainfall', 'outlooks', 'fronts', 'models', 'graphics', 'drawing', 'assets',
+  'color-tables',
+]) {
+  assert.ok(ids.includes(id), `built-in registry is missing ${id}`);
+}
+assert.equal(new Set(ids).size, ids.length, 'built-in module IDs must be unique');
+assert.deepEqual(
+  moduleRegistry.createMapControllers().map((controller) => controller.id),
+  ['basemap', 'layer-style', 'boundaries', 'cities', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
+  'built-in map controllers should be registry-ordered and complete',
+);
+const providers = moduleRegistry.getProviders();
+assert.deepEqual(
+  providers.map((provider) => provider.id),
+  ['basemap', 'states', 'counties', 'cities', 'alerts', 'observations'],
+  'provider health definitions should be registry-owned',
+);
+const mapScene = {
+  id: 'radar-scene', name: 'Radar', kind: 'map', category: 'Radar', tags: [],
+  transition: { type: 'cut', durationMs: 0 }, advance: 'manual', holdSeconds: 10,
+  activeModuleIds: ['radar'], moduleState: {}, elementOverrides: {}, customObjects: [],
+  camera: { center: [-98, 29], zoom: 7, bearing: 0, pitch: 0 }, baseMap: 'standard', projection: 'mercator',
+  product: { category: 'radar', id: 'reflectivity', opacity: 1, smoothing: 'balanced' },
+  overlays: { roads: true, states: true, counties: true, cities: true, alerts: true, observations: false, satellite: false },
+  display: { cityDensity: 50, cityLabelScale: 100, roadDensity: 50, boundaryWeight: 100, dimBasemapUnderWeather: false },
+  alerts: { minimumSeverity: 'unknown', showFill: true, showOutline: true, autoZoomOnSelect: true },
+  observations: { field: 'tempF', displayMode: 'broadcast', density: 50, labelScale: 100, showField: false, fieldOpacity: 75, showStations: false, showStationIds: false, smoothing: 'smooth' },
+  samples: [], header: { title: 'RADAR', subtitle: '', validLabel: 'CURRENT', visible: true, opacity: 1, scale: 1, legend: { kind: 'reflectivity', visible: true, lowLabel: 'LIGHT', highLabel: 'HEAVY', customLabel: '' } },
+};
+const normalized = moduleRegistry.normalizeSceneModuleState(mapScene);
+assert.deepEqual(normalized.moduleState.radar, { selectedSite: 'auto', animationEnabled: false, blendEnabled: false });
+assert.ok(moduleRegistry.getDialog('module:radar', normalized));
+assert.ok(moduleRegistry.getTools(normalized, 'quick').some((tool) => tool.id === 'radar-quick'));
+
+console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 10 map controllers verified.`);

@@ -1,0 +1,1042 @@
+{
+  "sourceVersion": "1.6.1-r3",
+  "generatedAt": "2026-07-24T21:36:18.017Z",
+  "counts": {
+    "mapScenes": 31,
+    "graphicScenes": 16,
+    "products": 113
+  },
+  "categoryCounts": {
+    "radar": 4,
+    "satellite": 5,
+    "observations": 4,
+    "temperature": 5,
+    "rainfall": 12,
+    "outlooks": 16,
+    "forecast": 9,
+    "climate": 4,
+    "winter": 6,
+    "tropical": 10,
+    "models": 36,
+    "airquality": 2
+  },
+  "products": [
+    {
+      "category": "radar",
+      "moduleId": "radar",
+      "id": "mrms-reflectivity",
+      "name": "MRMS National Reflectivity",
+      "renderer": "radar-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "radar",
+      "moduleId": "radar",
+      "id": "single-site",
+      "name": "NEXRAD Single Site",
+      "renderer": "radar-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "radar",
+      "moduleId": "radar",
+      "id": "local-level2",
+      "name": "Locally Processed Level II",
+      "renderer": "radar-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "radar",
+      "moduleId": "radar",
+      "id": "local-level3",
+      "name": "Direct NEXRAD Level III",
+      "renderer": "radar-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "satellite",
+      "moduleId": "satellite",
+      "id": "goes-visible",
+      "name": "GOES Visible",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "satellite",
+      "moduleId": "satellite",
+      "id": "goes-infrared",
+      "name": "GOES Enhanced Infrared",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "satellite",
+      "moduleId": "satellite",
+      "id": "goes-water-vapor",
+      "name": "GOES Water Vapor",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "satellite",
+      "moduleId": "satellite",
+      "id": "goes-merged-geocolor",
+      "name": "GOES East/West Merged GeoColor",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "satellite",
+      "moduleId": "satellite",
+      "id": "eumetsat-geocolor",
+      "name": "EUMETSAT MTG Geo Colour",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "observations",
+      "moduleId": "observations",
+      "id": "obs-temperature",
+      "name": "Surface Temperature Observations",
+      "renderer": "point-symbol",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "observations",
+      "moduleId": "observations",
+      "id": "obs-dewpoint",
+      "name": "Surface Dew Point Observations",
+      "renderer": "point-symbol",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "observations",
+      "moduleId": "observations",
+      "id": "obs-wind",
+      "name": "Surface Wind Observations",
+      "renderer": "point-symbol",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "observations",
+      "moduleId": "observations",
+      "id": "obs-flight-category",
+      "name": "METAR Flight Categories",
+      "renderer": "point-symbol",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "temperature",
+      "moduleId": "temperature",
+      "id": "ndfd-temp",
+      "name": "Current Temperature Analysis",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "temperature",
+      "moduleId": "temperature",
+      "id": "ndfd-apparent",
+      "name": "Apparent Temperature",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "temperature",
+      "moduleId": "temperature",
+      "id": "ndfd-rh",
+      "name": "Relative Humidity",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "temperature",
+      "moduleId": "temperature",
+      "id": "ndfd-highs",
+      "name": "Daytime Highs",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "temperature",
+      "moduleId": "temperature",
+      "id": "ndfd-lows",
+      "name": "Overnight Lows",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "mrms-qpe-1",
+      "name": "MRMS 1-Hour Rainfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "mrms-qpe-3",
+      "name": "MRMS 3-Hour Rainfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "mrms-qpe-6",
+      "name": "MRMS 6-Hour Rainfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "mrms-qpe-12",
+      "name": "MRMS 12-Hour Rainfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "mrms-qpe-24",
+      "name": "MRMS 24-Hour Rainfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "mrms-qpe-48",
+      "name": "MRMS 48-Hour Rainfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "mrms-qpe-72",
+      "name": "MRMS 72-Hour Rainfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "rfc-qpe-24",
+      "name": "RFC 24-Hour Observed Rainfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "wpc-qpf-day1",
+      "name": "WPC Day 1 QPF",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "wpc-qpf-day2",
+      "name": "WPC Day 2 QPF",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "wpc-qpf-day3",
+      "name": "WPC Day 3 QPF",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "rainfall",
+      "moduleId": "rainfall",
+      "id": "wpc-qpf-day7",
+      "name": "WPC 7-Day QPF",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day1",
+      "name": "SPC Day 1 Severe Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day2",
+      "name": "SPC Day 2 Severe Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day3",
+      "name": "SPC Day 3 Severe Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day4",
+      "name": "SPC Day 4 Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-md",
+      "name": "SPC Mesoscale Discussions",
+      "renderer": "vector-features",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day1-tornado",
+      "name": "SPC Day 1 Tornado Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day1-hail",
+      "name": "SPC Day 1 Hail Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day1-wind",
+      "name": "SPC Day 1 Wind Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day2-tornado",
+      "name": "SPC Day 2 Tornado Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day2-hail",
+      "name": "SPC Day 2 Hail Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day2-wind",
+      "name": "SPC Day 2 Wind Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day3-prob",
+      "name": "SPC Day 3 Severe Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day5",
+      "name": "SPC Day 5 Severe Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day6",
+      "name": "SPC Day 6 Severe Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day7",
+      "name": "SPC Day 7 Severe Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "outlooks",
+      "moduleId": "outlooks",
+      "id": "spc-day8",
+      "name": "SPC Day 8 Severe Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day1",
+      "name": "National Forecast Chart — Day 1",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day1-fronts",
+      "name": "Forecast Fronts & Pressure — Day 1",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day1-precip",
+      "name": "Forecast Precipitation — Day 1",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day2",
+      "name": "National Forecast Chart — Day 2",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day2-fronts",
+      "name": "Forecast Fronts & Pressure — Day 2",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day2-precip",
+      "name": "Forecast Precipitation — Day 2",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day3",
+      "name": "National Forecast Chart — Day 3",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day3-fronts",
+      "name": "Forecast Fronts & Pressure — Day 3",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "forecast",
+      "moduleId": "forecast",
+      "id": "natl-chart-day3-precip",
+      "name": "Forecast Precipitation — Day 3",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "climate",
+      "moduleId": "forecast",
+      "id": "cpc-6-10-temp",
+      "name": "CPC 6–10 Day Temperature Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "climate",
+      "moduleId": "forecast",
+      "id": "cpc-6-10-precip",
+      "name": "CPC 6–10 Day Precipitation Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "climate",
+      "moduleId": "forecast",
+      "id": "cpc-8-14-temp",
+      "name": "CPC 8–14 Day Temperature Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "climate",
+      "moduleId": "forecast",
+      "id": "cpc-8-14-precip",
+      "name": "CPC 8–14 Day Precipitation Outlook",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "winter",
+      "moduleId": "forecast",
+      "id": "wssi-day1",
+      "name": "Winter Storm Severity Index — Day 1",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "winter",
+      "moduleId": "forecast",
+      "id": "wssi-day2",
+      "name": "Winter Storm Severity Index — Day 2",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "winter",
+      "moduleId": "forecast",
+      "id": "wssi-day3",
+      "name": "Winter Storm Severity Index — Day 3",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "winter",
+      "moduleId": "forecast",
+      "id": "wssi-days1-3",
+      "name": "Winter Storm Severity Index — Days 1–3",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "winter",
+      "moduleId": "forecast",
+      "id": "wssi-snow-day1",
+      "name": "Snow Amount Potential — Day 1",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "winter",
+      "moduleId": "forecast",
+      "id": "wssi-ice-day1",
+      "name": "Ice Accumulation Potential — Day 1",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-outlook-2day",
+      "name": "NHC Two-Day Tropical Outlook",
+      "renderer": "vector-features",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-outlook-7day",
+      "name": "NHC Seven-Day Tropical Outlook",
+      "renderer": "vector-features",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-track-cone",
+      "name": "NHC Forecast Track, Cone and Watches",
+      "renderer": "vector-features",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-arrival-earliest",
+      "name": "Earliest Reasonable Tropical-Storm Winds",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-arrival-most-likely",
+      "name": "Most Likely Tropical-Storm Winds",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-surge-inundation",
+      "name": "NHC Storm-Surge Inundation",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-peak-storm-surge",
+      "name": "NHC Peak Storm Surge",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-wind-prob-34kt",
+      "name": "34-knot Wind Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-wind-prob-50kt",
+      "name": "50-knot Wind Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "tropical",
+      "moduleId": "tropical",
+      "id": "nhc-wind-prob-64kt",
+      "name": "64-knot Wind Probability",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "hrrr-refd",
+      "name": "HRRR Composite Reflectivity",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "hrrr-refp",
+      "name": "HRRR Precipitation Type",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-composite-reflectivity",
+      "name": "Composite Reflectivity",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-temp-2m",
+      "name": "2 m Temperature",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-dewpoint-2m",
+      "name": "2 m Dew Point",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-wind-10m",
+      "name": "10 m Wind",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-wind-gust",
+      "name": "Wind Gust",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-surface-cape",
+      "name": "Surface CAPE",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-ml-cape",
+      "name": "Mixed-Layer CAPE",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-mu-cape",
+      "name": "Most-Unstable CAPE",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-cin",
+      "name": "Convective Inhibition",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-lifted-index",
+      "name": "Lifted Index",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-srh-0-1",
+      "name": "0–1 km Storm-Relative Helicity",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-srh-0-3",
+      "name": "0–3 km Storm-Relative Helicity",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-updraft-helicity",
+      "name": "Updraft Helicity",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-temp-850",
+      "name": "850 mb Temperature",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-temp-500",
+      "name": "500 mb Temperature",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-height-500",
+      "name": "500 mb Geopotential Height",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-wind-500",
+      "name": "500 mb Wind",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-jet-250",
+      "name": "250 mb Jet Stream",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-cloud-cover",
+      "name": "Total Cloud Cover",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-visibility",
+      "name": "Surface Visibility",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-precip-type",
+      "name": "Precipitation Type",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-max-temp",
+      "name": "Daytime Maximum Temperature",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-min-temp",
+      "name": "Nighttime Minimum Temperature",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-relative-humidity-2m",
+      "name": "2 m Relative Humidity",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-apparent-temperature",
+      "name": "Apparent Temperature",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-mslp",
+      "name": "Mean Sea-Level Pressure",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-surface-pressure",
+      "name": "Surface Pressure",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-total-precip",
+      "name": "Accumulated Precipitation",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-precip-rate",
+      "name": "Precipitation Rate",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-snowfall",
+      "name": "Accumulated Snowfall",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-snow-depth",
+      "name": "Snow Depth",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-cloud-low",
+      "name": "Low Cloud Cover",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-cloud-mid",
+      "name": "Middle Cloud Cover",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "models",
+      "moduleId": "models",
+      "id": "model-cloud-high",
+      "name": "High Cloud Cover",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": false
+    },
+    {
+      "category": "airquality",
+      "moduleId": "air-quality",
+      "id": "airquality-ozone",
+      "name": "Ozone Air Quality Forecast",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    },
+    {
+      "category": "airquality",
+      "moduleId": "air-quality",
+      "id": "airquality-smoke",
+      "name": "Surface Smoke Forecast",
+      "renderer": "continuous-raster",
+      "layerOrder": "weather-data",
+      "sampleable": true
+    }
+  ]
+}

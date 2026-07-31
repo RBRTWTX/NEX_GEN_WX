@@ -1,0 +1,14 @@
+{
+  "homeRegion": {
+    "name": "EWX / South-Central Texas",
+    "center": [-98.52, 29.55],
+    "zoom": 7.25
+  },
+  "dataProviders": {
+    "nws": { "enabled": true },
+    "nhc": { "enabled": true },
+    "noaa": { "enabled": true },
+    "airNow": { "enabled": false, "apiKey": "" },
+    "nwws": { "enabled": false, "username": "", "password": "" }
+  }
+}

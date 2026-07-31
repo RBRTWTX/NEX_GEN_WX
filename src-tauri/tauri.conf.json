@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "NEX GEN WX",
+  "version": "0.6.5",
+  "identifier": "com.nexgenwx.studio",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "NEX GEN WX",
+        "width": 1600,
+        "height": 980,
+        "minWidth": 1100,
+        "minHeight": 700,
+        "resizable": true,
+        "fullscreen": false
+      },
+      {
+        "label": "output",
+        "title": "NEX GEN WX Output",
+        "url": "index.html?window=output",
+        "width": 1920,
+        "height": 1080,
+        "visible": false,
+        "decorations": false,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; connect-src 'self' ipc: http://ipc.localhost https://demotiles.maplibre.org https://tiles.openfreemap.org https://tile.openstreetmap.org https://*.noaa.gov https://*.weather.gov; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:"
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": [
+      "icons/icon.ico"
+    ]
+  }
+}

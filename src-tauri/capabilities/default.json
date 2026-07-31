@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Core permissions for the editor and clean output windows.",
+  "windows": ["main", "output"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-set-title",
+    "core:window:allow-show",
+    "core:window:allow-set-focus"
+  ]
+}

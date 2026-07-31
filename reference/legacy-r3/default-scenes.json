@@ -1,0 +1,1479 @@
+[
+  {
+    "id": "home-ewx",
+    "name": "EWX Home Radar",
+    "category": "Home",
+    "camera": {
+      "center": [
+        -98.52,
+        29.55
+      ],
+      "zoom": 7.25,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "radar",
+      "id": "mrms-reflectivity",
+      "opacity": 0.82,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": true,
+      "cities": true,
+      "roads": true,
+      "alerts": true,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "LIVE DOPPLER RADAR",
+      "subtitle": "EWX / SOUTH-CENTRAL TEXAS",
+      "valid": "CURRENT",
+      "legend": "reflectivity",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10,
+    "alertVisibleEvents": null
+  },
+  {
+    "id": "hill-country-radar",
+    "name": "Hill Country Radar",
+    "category": "Home",
+    "camera": {
+      "center": [
+        -99.45,
+        30.1
+      ],
+      "zoom": 7.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "radar",
+      "id": "mrms-reflectivity",
+      "opacity": 0.84,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": true,
+      "cities": true,
+      "roads": true,
+      "alerts": true,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "DOPPLER RADAR",
+      "subtitle": "TEXAS HILL COUNTRY",
+      "valid": "CURRENT",
+      "legend": "reflectivity",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10,
+    "alertVisibleEvents": null
+  },
+  {
+    "id": "conus-radar",
+    "name": "CONUS Radar",
+    "category": "National",
+    "camera": {
+      "center": [
+        -97.5,
+        38.6
+      ],
+      "zoom": 3.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "radar",
+      "id": "mrms-reflectivity",
+      "opacity": 0.8,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "DOPPLER RADAR",
+      "subtitle": "NATIONWIDE VIEW",
+      "valid": "CURRENT",
+      "legend": "reflectivity",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "conus-satellite",
+    "name": "Enhanced Satellite",
+    "category": "National",
+    "camera": {
+      "center": [
+        -95.8,
+        37.5
+      ],
+      "zoom": 3.05,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "satellite",
+      "id": "goes-infrared",
+      "opacity": 0.95,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "globe",
+    "header": {
+      "title": "ENHANCED SATELLITE",
+      "subtitle": "GOES INFRARED",
+      "valid": "CURRENT",
+      "legend": "infrared",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "visible-satellite",
+    "name": "Visible Satellite",
+    "category": "National",
+    "camera": {
+      "center": [
+        -96.0,
+        38.0
+      ],
+      "zoom": 3.1,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "satellite",
+      "id": "goes-visible",
+      "opacity": 0.92,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "globe",
+    "header": {
+      "title": "VISIBLE SATELLITE",
+      "subtitle": "GOES CONUS",
+      "valid": "CURRENT",
+      "legend": "visible",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "temperature-national",
+    "name": "Current Temperatures",
+    "category": "National",
+    "camera": {
+      "center": [
+        -97.0,
+        38.0
+      ],
+      "zoom": 3.1,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "temperature",
+      "id": "ndfd-temp",
+      "opacity": 0.9,
+      "smooth": true,
+      "renderMode": "smooth"
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": true,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "CURRENT TEMPERATURES",
+      "subtitle": "SURFACE TEMPERATURES",
+      "valid": "CURRENT",
+      "legend": "temperature",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10,
+    "observationDisplayMode": "broadcast",
+    "observationField": "tempF"
+  },
+  {
+    "id": "dewpoint-national",
+    "name": "Dew Point Tracker",
+    "category": "Observations",
+    "camera": {
+      "center": [
+        -96.8,
+        36.5
+      ],
+      "zoom": 3.55,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "observations",
+      "id": "obs-dewpoint",
+      "opacity": 1,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": true,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "DEW POINT TRACKER",
+      "subtitle": "SURFACE MOISTURE",
+      "valid": "CURRENT",
+      "legend": "dewpoint",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10,
+    "observationDisplayMode": "broadcast",
+    "observationField": "dewpointF"
+  },
+  {
+    "id": "spc-day1-national",
+    "name": "SPC Day 1 Outlook",
+    "category": "Severe",
+    "camera": {
+      "center": [
+        -97.0,
+        38.0
+      ],
+      "zoom": 3.1,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "outlooks",
+      "id": "spc-day1",
+      "opacity": 0.72,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "SEVERE WEATHER OUTLOOK",
+      "subtitle": "SPC DAY 1",
+      "valid": "CURRENT",
+      "legend": "spc",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "spc-md-national",
+    "name": "Mesoscale Discussions",
+    "category": "Severe",
+    "camera": {
+      "center": [
+        -97.0,
+        38.0
+      ],
+      "zoom": 3.25,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "outlooks",
+      "id": "spc-md",
+      "opacity": 1,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": true
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "MESOSCALE DISCUSSIONS",
+      "subtitle": "STORM PREDICTION CENTER",
+      "valid": "CURRENT",
+      "legend": "discussion",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "active-alerts-ewx",
+    "name": "Active Weather Alerts",
+    "category": "Severe",
+    "camera": {
+      "center": [
+        -98.52,
+        29.55
+      ],
+      "zoom": 7.0,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": null,
+    "overlays": {
+      "states": true,
+      "counties": true,
+      "cities": true,
+      "roads": true,
+      "alerts": true,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "ACTIVE WEATHER ALERTS",
+      "subtitle": "NATIONAL WEATHER SERVICE",
+      "valid": "CURRENT",
+      "legend": "spc",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10,
+    "alertVisibleEvents": null
+  },
+  {
+    "id": "ewx-rainfall",
+    "name": "24 Hour Rainfall",
+    "category": "Rainfall",
+    "camera": {
+      "center": [
+        -98.52,
+        29.55
+      ],
+      "zoom": 7.0,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "rainfall",
+      "id": "mrms-qpe-24",
+      "opacity": 0.82,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": true,
+      "cities": true,
+      "roads": true,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "ESTIMATED RAINFALL TOTALS",
+      "subtitle": "LAST 24 HOURS",
+      "valid": "CURRENT",
+      "legend": "rainfall",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "wpc-7day",
+    "name": "Potential Rainfall Tracker",
+    "category": "Rainfall",
+    "camera": {
+      "center": [
+        -97.0,
+        37.0
+      ],
+      "zoom": 3.55,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "rainfall",
+      "id": "wpc-qpf-day7",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "POTENTIAL RAINFALL TRACKER",
+      "subtitle": "NEXT 7 DAYS",
+      "valid": "CURRENT",
+      "legend": "rainfall",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "tropical-outlook",
+    "name": "Tropical Outlook",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -78.0,
+        23.5
+      ],
+      "zoom": 3.3,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-outlook-7day",
+      "opacity": 0.85,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "TROPICAL WEATHER OUTLOOK",
+      "subtitle": "NEXT 7 DAYS",
+      "valid": "CURRENT",
+      "legend": "tropical-outlook",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "hrrr-reflectivity",
+    "name": "HRRR Forecast Radar",
+    "category": "Models",
+    "camera": {
+      "center": [
+        -97.0,
+        37.0
+      ],
+      "zoom": 3.6,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "models",
+      "id": "hrrr-refd",
+      "opacity": 0.8,
+      "smooth": true,
+      "forecastHour": 0
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "HRRR MODEL FORECAST",
+      "subtitle": "COMPOSITE REFLECTIVITY",
+      "valid": "CURRENT",
+      "legend": "reflectivity",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "national-forecast-day1",
+    "name": "National Forecast Chart \u2014 Day 1",
+    "category": "Forecast",
+    "camera": {
+      "center": [
+        -97.5,
+        38.6
+      ],
+      "zoom": 3.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "forecast",
+      "id": "natl-chart-day1",
+      "opacity": 0.86,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "NATIONAL FORECAST CHART",
+      "subtitle": "DAY 1",
+      "valid": "CURRENT",
+      "legend": "forecast-chart",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "national-fronts-day1",
+    "name": "Forecast Fronts \u2014 Day 1",
+    "category": "Forecast",
+    "camera": {
+      "center": [
+        -97.5,
+        38.6
+      ],
+      "zoom": 3.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "forecast",
+      "id": "natl-chart-day1-fronts",
+      "opacity": 0.86,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "FORECAST FRONTS & PRESSURE",
+      "subtitle": "DAY 1",
+      "valid": "CURRENT",
+      "legend": "fronts",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "spc-day1-tornado-national",
+    "name": "SPC Day 1 Tornado Probability",
+    "category": "Outlooks",
+    "camera": {
+      "center": [
+        -97.5,
+        38.6
+      ],
+      "zoom": 3.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "outlooks",
+      "id": "spc-day1-tornado",
+      "opacity": 0.86,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "TORNADO PROBABILITY",
+      "subtitle": "SPC DAY 1",
+      "valid": "CURRENT",
+      "legend": "spc-tornado",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "wssi-day1-national",
+    "name": "Winter Storm Severity \u2014 Day 1",
+    "category": "Winter",
+    "camera": {
+      "center": [
+        -97.5,
+        38.6
+      ],
+      "zoom": 3.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "winter",
+      "id": "wssi-day1",
+      "opacity": 0.86,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "WINTER STORM SEVERITY",
+      "subtitle": "DAY 1",
+      "valid": "CURRENT",
+      "legend": "winter-impact",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "cpc-6-10-temp-national",
+    "name": "6\u201310 Day Temperature Outlook",
+    "category": "Climate",
+    "camera": {
+      "center": [
+        -97.5,
+        38.6
+      ],
+      "zoom": 3.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "climate",
+      "id": "cpc-6-10-temp",
+      "opacity": 0.86,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "TEMPERATURE OUTLOOK",
+      "subtitle": "6\u201310 DAY",
+      "valid": "CURRENT",
+      "legend": "climate-temperature",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "cpc-6-10-precip-national",
+    "name": "6\u201310 Day Precipitation Outlook",
+    "category": "Climate",
+    "camera": {
+      "center": [
+        -97.5,
+        38.6
+      ],
+      "zoom": 3.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "climate",
+      "id": "cpc-6-10-precip",
+      "opacity": 0.86,
+      "smooth": false
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "PRECIPITATION OUTLOOK",
+      "subtitle": "6\u201310 DAY",
+      "valid": "CURRENT",
+      "legend": "climate-precipitation",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "national-air-quality-ozone",
+    "name": "National Ozone Forecast",
+    "category": "Air Quality",
+    "camera": {
+      "center": [
+        -98.5,
+        38.4
+      ],
+      "zoom": 3.4,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "airquality",
+      "id": "airquality-ozone",
+      "opacity": 0.82,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": true,
+      "cities": true,
+      "roads": true,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "AIR QUALITY \u2014 OZONE",
+      "subtitle": "NOAA FORECAST GUIDANCE",
+      "valid": "CURRENT",
+      "legend": "air-quality",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "national-air-quality-smoke",
+    "name": "National Surface Smoke",
+    "category": "Air Quality",
+    "camera": {
+      "center": [
+        -98.5,
+        38.4
+      ],
+      "zoom": 3.4,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "airquality",
+      "id": "airquality-smoke",
+      "opacity": 0.82,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": true,
+      "cities": true,
+      "roads": true,
+      "alerts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "SURFACE SMOKE",
+      "subtitle": "NOAA FORECAST GUIDANCE",
+      "valid": "CURRENT",
+      "legend": "air-quality-smoke",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 10
+  },
+  {
+    "id": "nhc-outlook-2day",
+    "name": "NHC 2-Day Tropical Outlook",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -78.0,
+        23.5
+      ],
+      "zoom": 3.3,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-outlook-2day",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "TROPICAL WEATHER OUTLOOK",
+      "subtitle": "NEXT 2 DAYS",
+      "valid": "CURRENT",
+      "legend": "tropical-outlook",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "nhc-track-cone",
+    "name": "NHC Forecast Track and Cone",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -75.0,
+        24.0
+      ],
+      "zoom": 3.5,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-track-cone",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "dark",
+    "projection": "mercator",
+    "header": {
+      "title": "TROPICAL CYCLONE TRACK",
+      "subtitle": "OFFICIAL NHC FORECAST",
+      "valid": "CURRENT",
+      "legend": "tropical-track",
+      "scale": 1,
+      "opacity": 0.92,
+      "autoTropical": true
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12,
+    "satelliteOverlay": {
+      "enabled": true,
+      "productId": "goes-infrared",
+      "opacity": 0.58,
+      "smooth": true
+    }
+  },
+  {
+    "id": "nhc-arrival-earliest",
+    "name": "Earliest Tropical-Storm Winds",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -78.0,
+        24.0
+      ],
+      "zoom": 3.3,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-arrival-earliest",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "EARLIEST TROPICAL-STORM WINDS",
+      "subtitle": "NHC ARRIVAL TIME",
+      "valid": "CURRENT",
+      "legend": "arrival-time",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "nhc-arrival-most-likely",
+    "name": "Most Likely Tropical-Storm Winds",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -78.0,
+        24.0
+      ],
+      "zoom": 3.3,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-arrival-most-likely",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "MOST LIKELY TROPICAL-STORM WINDS",
+      "subtitle": "NHC ARRIVAL TIME",
+      "valid": "CURRENT",
+      "legend": "arrival-time",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "nhc-surge-inundation",
+    "name": "Potential Storm Surge Inundation",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -82.0,
+        27.0
+      ],
+      "zoom": 4.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-surge-inundation",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "POTENTIAL STORM SURGE",
+      "subtitle": "INUNDATION ABOVE GROUND",
+      "valid": "CURRENT",
+      "legend": "storm-surge",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "nhc-peak-storm-surge",
+    "name": "Peak Storm Surge Forecast",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -82.0,
+        27.0
+      ],
+      "zoom": 4.2,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-peak-storm-surge",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "PEAK STORM SURGE",
+      "subtitle": "OFFICIAL NHC FORECAST",
+      "valid": "CURRENT",
+      "legend": "storm-surge",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "nhc-wind-prob-34kt",
+    "name": "34-Knot Wind Probability",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -78.0,
+        24.0
+      ],
+      "zoom": 3.3,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-wind-prob-34kt",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "TROPICAL-STORM WIND PROBABILITY",
+      "subtitle": "34 KNOTS OR GREATER",
+      "valid": "CURRENT",
+      "legend": "wind-probability",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "nhc-wind-prob-50kt",
+    "name": "50-Knot Wind Probability",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -78.0,
+        24.0
+      ],
+      "zoom": 3.3,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-wind-prob-50kt",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "STRONG TROPICAL WIND PROBABILITY",
+      "subtitle": "50 KNOTS OR GREATER",
+      "valid": "CURRENT",
+      "legend": "wind-probability",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12
+  },
+  {
+    "id": "nhc-wind-prob-64kt",
+    "name": "Hurricane Wind Probability",
+    "category": "Tropical",
+    "camera": {
+      "center": [
+        -78.0,
+        24.0
+      ],
+      "zoom": 3.3,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "product": {
+      "category": "tropical",
+      "id": "nhc-wind-prob-64kt",
+      "opacity": 0.88,
+      "smooth": true
+    },
+    "overlays": {
+      "states": true,
+      "counties": false,
+      "cities": true,
+      "roads": false,
+      "alerts": false,
+      "fronts": false,
+      "radarSites": false,
+      "lsr": false,
+      "observations": false,
+      "mesoscale": false
+    },
+    "baseMap": "gray",
+    "projection": "mercator",
+    "header": {
+      "title": "HURRICANE WIND PROBABILITY",
+      "subtitle": "64 KNOTS OR GREATER",
+      "valid": "CURRENT",
+      "legend": "wind-probability",
+      "scale": 1,
+      "opacity": 0.92
+    },
+    "transition": {
+      "type": "fly",
+      "duration": 1800
+    },
+    "advance": "manual",
+    "hold": 12
+  }
+]
