@@ -1,7 +1,6 @@
 import type {
   Map as MapLibreMap,
   MapMouseEvent,
-  StyleSpecification,
 } from 'maplibre-gl';
 import type {
   CameraState,
@@ -10,6 +9,7 @@ import type {
   MapScene,
   ObservationSummary,
 } from '../../types/domain';
+import type { BasemapStyle } from '../basemap-styles';
 import type {
   ProviderId,
   ProviderState,
@@ -41,7 +41,7 @@ export interface MapControllerContext {
   readonly callbacks: MapControllerCallbacks;
 
   isStyleReady(): boolean;
-  reloadStyle(style: StyleSpecification): void;
+  reloadStyle(style: BasemapStyle): void;
   scheduleResize(): void;
   notifyLayerOrderChanged(): void;
 }

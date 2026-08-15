@@ -1,14 +1,17 @@
 import type {
   Map as MapLibreMap,
   MapMouseEvent,
-  StyleSpecification,
 } from 'maplibre-gl';
 import type {
   GeoJsonFeatureCollection,
   MapScene,
   ObservationSummary,
 } from '../../types/domain';
-import { createBasemapStyle } from '../basemap-styles';
+import {
+  createBasemapFallbackStyle,
+  createBasemapStyle,
+  type BasemapStyle,
+} from '../basemap-styles';
 import { moduleRegistry } from '../../modules/registry';
 import type {
   MapController,
@@ -40,6 +43,7 @@ export class MapControllerHost implements MapControllerContext {
   private disposed = false;
   private resizeFrame: number | null = null;
   private lastBasemapError = '';
+  private remoteStylePending = false;
   private readonly controllers: MapController[];
   private readonly onRenderReady?: () => void;
   private readyGeneration = 0;
@@ -91,11 +95,13 @@ export class MapControllerHost implements MapControllerContext {
   mount(container: HTMLDivElement): boolean {
     if (this.lifecycle.map || this.disposed) return false;
     try {
+      const style = createBasemapStyle(this.currentScene.baseMap);
+      this.remoteStylePending = typeof style === 'string';
       this.lifecycle.mount({
         container,
         scene: this.currentScene,
         interactive: this.interactive,
-        style: createBasemapStyle(this.currentScene.baseMap),
+        style,
         events: {
           onStyleLoad: this.handleStyleLoad,
           onMoveEnd: this.handleMoveEnd,
@@ -155,8 +161,9 @@ export class MapControllerHost implements MapControllerContext {
     return Boolean(this.lifecycle.map && this.styleReady && this.lifecycle.map.isStyleLoaded());
   }
 
-  reloadStyle(style: StyleSpecification): void {
+  reloadStyle(style: BasemapStyle): void {
     if (!this.lifecycle.map) return;
+    this.remoteStylePending = typeof style === 'string';
     this.styleReady = false;
     this.generation += 1;
     this.readyGeneration = 0;
@@ -190,6 +197,7 @@ export class MapControllerHost implements MapControllerContext {
     if (!this.lifecycle.map || this.disposed) return;
     this.styleReady = true;
     this.lastBasemapError = '';
+    this.remoteStylePending = false;
     this.scheduleResize();
     for (const controller of this.controllers) this.invoke(controller, 'onStyleReady');
   };
@@ -221,6 +229,18 @@ export class MapControllerHost implements MapControllerContext {
     const message = cleanProviderError(candidate ?? 'Basemap rendering error');
     if (!message || message === this.lastBasemapError) return;
     this.lastBasemapError = message;
+
+    if (!this.styleReady && this.remoteStylePending) {
+      this.remoteStylePending = false;
+      this.currentCallbacks.reportProviderStatus(
+        'basemap',
+        'degraded',
+        `Vector basemap failed; using raster fallback: ${message}`,
+      );
+      this.lifecycle.reloadStyle(createBasemapFallbackStyle(this.currentScene.baseMap));
+      return;
+    }
+
     this.currentCallbacks.reportProviderStatus('basemap', 'degraded', message);
   };
 

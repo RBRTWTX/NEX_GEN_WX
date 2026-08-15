@@ -4,10 +4,10 @@ import {
   setWorkerUrl,
   type Map as MapLibreMap,
   type MapMouseEvent,
-  type StyleSpecification,
 } from 'maplibre-gl';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import type { MapScene } from '../../types/domain';
+import type { BasemapStyle } from '../basemap-styles';
 
 setWorkerUrl(workerUrl);
 
@@ -23,7 +23,7 @@ interface MapLifecycleMountOptions {
   container: HTMLDivElement;
   scene: MapScene;
   interactive: boolean;
-  style: StyleSpecification;
+  style: BasemapStyle;
   events: MapLifecycleEvents;
 }
 
@@ -63,7 +63,7 @@ export class MapLifecycleController {
     return map;
   }
 
-  reloadStyle(style: StyleSpecification): void {
+  reloadStyle(style: BasemapStyle): void {
     this.mapInstance?.setStyle(style);
   }
 

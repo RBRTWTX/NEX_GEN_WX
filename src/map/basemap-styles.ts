@@ -1,57 +1,61 @@
 import type { StyleSpecification } from 'maplibre-gl';
 import type { BaseMapKind } from '../types/domain';
 
+export type BasemapStyle = StyleSpecification | string;
+
+const OPENFREE_STYLES: Record<'gray' | 'dark', string> = {
+  gray: 'https://tiles.openfreemap.org/styles/liberty',
+  dark: 'https://tiles.openfreemap.org/styles/dark',
+};
+
 const OSM_TILES = ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'];
+const WORLD_IMAGERY_TILES = [
+  'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+];
 
-interface RasterPaint {
-  'raster-opacity': number;
-  'raster-saturation': number;
-  'raster-contrast': number;
-  'raster-brightness-min': number;
-  'raster-brightness-max': number;
-}
-
-function rasterPaint(kind: BaseMapKind): RasterPaint {
-  if (kind === 'dark') {
-    return {
-      'raster-opacity': 1,
-      'raster-saturation': -0.9,
-      'raster-contrast': 0.3,
-      'raster-brightness-min': 0.08,
-      'raster-brightness-max': 0.55,
-    };
-  }
-  if (kind === 'satellite') {
-    // Satellite imagery is owned by the satellite module. Until that module is active,
-    // keep a neutral geographic basemap rather than presenting placeholder imagery.
-    return {
-      'raster-opacity': 1,
-      'raster-saturation': -0.15,
-      'raster-contrast': 0.08,
-      'raster-brightness-min': 0.18,
-      'raster-brightness-max': 0.92,
-    };
-  }
+function satelliteStyle(): StyleSpecification {
   return {
-    'raster-opacity': 1,
-    'raster-saturation': -0.82,
-    'raster-contrast': 0.06,
-    'raster-brightness-min': 0.28,
-    'raster-brightness-max': 0.96,
+    version: 8,
+    name: 'NEX GEN WX satellite basemap',
+    glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
+    sources: {
+      'nexgen-world-imagery': {
+        type: 'raster',
+        tiles: WORLD_IMAGERY_TILES,
+        tileSize: 256,
+        minzoom: 0,
+        maxzoom: 19,
+        attribution: 'Esri, Maxar, Earthstar Geographics, and the GIS User Community',
+      },
+    },
+    layers: [
+      {
+        id: 'nexgen-satellite-background',
+        type: 'background',
+        paint: { 'background-color': '#0a1119' },
+      },
+      {
+        id: 'nexgen-world-imagery',
+        type: 'raster',
+        source: 'nexgen-world-imagery',
+        paint: {
+          'raster-opacity': 1,
+          'raster-fade-duration': 0,
+          'raster-resampling': 'linear',
+        },
+      },
+    ],
   };
 }
 
-/**
- * A complete local style document keeps MapLibre's lifecycle independent from
- * optional remote style JSON. The only remote requests are ordinary raster
- * tiles, so a Census, NWS, or style-provider failure cannot blank the map.
- */
-export function createBasemapStyle(kind: BaseMapKind): StyleSpecification {
+function rasterFallbackStyle(kind: Exclude<BaseMapKind, 'satellite'>): StyleSpecification {
+  const dark = kind === 'dark';
   return {
     version: 8,
-    name: `NEX GEN WX ${kind} basemap`,
+    name: `NEX GEN WX ${kind} fallback basemap`,
+    glyphs: 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
     sources: {
-      'nexgen-osm': {
+      'nexgen-osm-fallback': {
         type: 'raster',
         tiles: OSM_TILES,
         tileSize: 256,
@@ -61,16 +65,42 @@ export function createBasemapStyle(kind: BaseMapKind): StyleSpecification {
     },
     layers: [
       {
-        id: 'nexgen-background',
+        id: 'nexgen-fallback-background',
         type: 'background',
-        paint: { 'background-color': kind === 'dark' ? '#111820' : '#b9bdc1' },
+        paint: { 'background-color': dark ? '#111820' : '#b9bdc1' },
       },
       {
-        id: 'nexgen-osm-raster',
+        id: 'nexgen-osm-fallback',
         type: 'raster',
-        source: 'nexgen-osm',
-        paint: rasterPaint(kind),
+        source: 'nexgen-osm-fallback',
+        paint: {
+          'raster-opacity': 1,
+          'raster-saturation': dark ? -0.9 : -0.82,
+          'raster-contrast': dark ? 0.3 : 0.06,
+          'raster-brightness-min': dark ? 0.08 : 0.28,
+          'raster-brightness-max': dark ? 0.55 : 0.96,
+        },
       },
     ],
   };
+}
+
+/**
+ * Standard and dark maps use OpenFreeMap vector styles so road hierarchy,
+ * route shields and road labels remain independently controllable. Satellite
+ * is real Esri World Imagery rather than a recolored street map.
+ */
+export function createBasemapStyle(kind: BaseMapKind): BasemapStyle {
+  if (kind === 'satellite') return satelliteStyle();
+  return OPENFREE_STYLES[kind];
+}
+
+/**
+ * If a remote vector style cannot initialize, retain the 0.6.1 isolation rule:
+ * fall back to a complete raster style so the map shell and weather providers
+ * remain usable instead of leaving the stage blank.
+ */
+export function createBasemapFallbackStyle(kind: BaseMapKind): StyleSpecification {
+  if (kind === 'satellite') return satelliteStyle();
+  return rasterFallbackStyle(kind);
 }
