@@ -14,6 +14,7 @@ const controllerFiles = [
   'src/map/controllers/LayerStyleController.ts',
   'src/map/controllers/BoundaryController.ts',
   'src/map/controllers/CitiesController.ts',
+  'src/map/controllers/RoadsController.ts',
   'src/map/controllers/AlertsController.ts',
   'src/map/controllers/ObservationsController.ts',
   'src/map/controllers/CameraController.ts',
@@ -86,7 +87,7 @@ const registryDefinitions = [
   await read('src/modules/builtin/map-definitions.tsx'),
 ].join('\n');
 for (const controller of [
-  'basemap', 'layer-style', 'boundaries', 'cities', 'alerts', 'observations',
+  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'alerts', 'observations',
   'camera', 'interaction', 'layer-order', 'resize',
 ]) {
   if (!registryDefinitions.includes(`id: '${controller}'`)) {
@@ -99,10 +100,12 @@ if (!registryDefinitions.includes("requireController<ObservationsController>('ob
 
 const boundary = await read('src/map/controllers/BoundaryController.ts');
 const cities = await read('src/map/controllers/CitiesController.ts');
+const roads = await read('src/map/controllers/RoadsController.ts');
 const observations = await read('src/map/controllers/ObservationsController.ts');
 for (const [name, source] of [
   ['boundaries', boundary],
   ['cities', cities],
+  ['roads', roads],
   ['observations', observations],
 ]) {
   if (!source.includes('requestEpoch') && !source.includes('stateEpoch')) {
@@ -116,6 +119,7 @@ if (!boundary.includes('fetchStateBoundaries') || !boundary.includes('fetchCount
   throw new Error('Boundary provider ownership is incomplete.');
 }
 if (!cities.includes('fetchPlaces')) throw new Error('Cities provider ownership is incomplete.');
+if (!roads.includes('fetchRoads')) throw new Error('Road provider ownership is incomplete.');
 if (!observations.includes('fetchSurfaceObservations')) throw new Error('Observation provider ownership is incomplete.');
 if (!observations.includes('TRANSPARENT_FIELD_IMAGE') || !observations.includes('clearData(context)')) {
   throw new Error('Observation controller must clear stale analyzed fields when product/view keys change.');

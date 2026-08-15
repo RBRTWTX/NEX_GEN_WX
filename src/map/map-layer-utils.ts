@@ -30,8 +30,9 @@ function isRoadLayer(layer: LayerSpecification): boolean {
 function roadTier(layerId: string): 'major' | 'secondary' | 'minor' | 'local' {
   const id = layerId.toLowerCase();
   if (/service|track|path|pedestrian|residential|local/.test(id)) return 'local';
-  if (/minor|tertiary|street/.test(id)) return 'minor';
-  if (/secondary|primary|link/.test(id)) return 'secondary';
+  if (/motorway|interstate|trunk|primary|major/.test(id)) return 'major';
+  if (/secondary|tertiary|link/.test(id)) return 'secondary';
+  if (/minor|street/.test(id)) return 'minor';
   return 'major';
 }
 

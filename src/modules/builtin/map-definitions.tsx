@@ -2,6 +2,7 @@ import { AlertsController } from '../../map/controllers/AlertsController';
 import { BoundaryController } from '../../map/controllers/BoundaryController';
 import { CitiesController } from '../../map/controllers/CitiesController';
 import { ObservationsController } from '../../map/controllers/ObservationsController';
+import { RoadsController } from '../../map/controllers/RoadsController';
 import type { StudioModuleDefinition } from '../../types/module';
 import { AlertsDialogPanel } from './panels/AlertsDialogPanel';
 import { AlertsSettingsPanel } from './panels/AlertsSettingsPanel';
@@ -46,6 +47,8 @@ export const mapModuleDefinitions: StudioModuleDefinition[] = [
       legacyFiles: ['public/broadcast-data-layers.js', 'server.js'], dependencies: ['map', 'data-engine'],
     },
     isActiveForScene: (scene) => scene.kind === 'map' && scene.overlays.roads,
+    providers: [{ id: 'roads', label: 'Roads and route context' }],
+    mapControllers: [{ id: 'roads', phase: 'data', order: 5, create: () => new RoadsController() }],
     settingsTabs: [{ id: 'roads', label: 'Roads', order: 40, sceneKinds: ['map'], component: RoadsSettingsPanel }],
     tools: [{ id: 'roads-layer', label: 'Roads', placement: 'dock-layer', order: 40, sceneKinds: ['map'], command: { kind: 'toggle-overlay', overlay: 'roads' } }],
   },

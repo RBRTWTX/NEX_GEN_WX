@@ -81,6 +81,11 @@ if (!census.includes('orderByFields') || !census.includes('POP100 DESC')) {
   throw new Error('Census places must request provider-side population ordering.');
 }
 
+const roadsProvider = await read('src-tauri/src/weather_engine/providers/roads.rs');
+for (const token of ['TIGERweb/Transportation', 'PRIMARY_ROADS_LAYER: u8 = 2', 'SECONDARY_ROADS_LAYER: u8 = 6', 'LOCAL_ROADS_LAYER: u8 = 8']) {
+  if (!roadsProvider.includes(token)) throw new Error(`Road provider repair missing: ${token}`);
+}
+
 const domain = await read('src/types/domain.ts');
 const migration = await read('src/core/project-migration.ts');
 const reducer = `${await read('src/state/project/scene-reducer.ts')}\n${await read('src/state/project/scene-object-reducer.ts')}`;

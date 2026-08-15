@@ -91,6 +91,20 @@ export async function fetchPlaces(
   }, 'Census places');
 }
 
+export async function fetchRoads(
+  bbox: BBox,
+  zoom: number,
+  density: number,
+  force = false,
+): Promise<GeoJsonFeatureCollection> {
+  return invokeFeatureCollection('fetch_roads', {
+    bbox: validateBBox(bbox),
+    zoom: Math.max(0, Math.min(24, zoom)),
+    density: Math.max(0, Math.min(100, Math.round(density))),
+    force,
+  }, 'Census roads');
+}
+
 export async function fetchSurfaceObservations(
   bbox: BBox,
   zoom: number,

@@ -23,6 +23,13 @@ export class LayerStyleController implements MapController {
     const { map, scene } = context;
     applyBasemapVisibility(map, scene);
 
+    const showCustomRoads = scene.baseMap === 'satellite' && scene.overlays.roads;
+    for (const roadLayer of [LAYER_IDS.roadMajor, LAYER_IDS.roadSecondary, LAYER_IDS.roadLocal, LAYER_IDS.roadLabels]) {
+      if (map.getLayer(roadLayer)) {
+        map.setLayoutProperty(roadLayer, 'visibility', showCustomRoads ? 'visible' : 'none');
+      }
+    }
+
     if (map.getLayer(LAYER_IDS.stateLines)) {
       map.setLayoutProperty(LAYER_IDS.stateLines, 'visibility', scene.overlays.states ? 'visible' : 'none');
       map.setPaintProperty(LAYER_IDS.stateLines, 'line-width', [

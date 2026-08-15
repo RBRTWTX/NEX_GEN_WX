@@ -88,6 +88,7 @@ const requiredFiles = [
   'src-tauri/src/weather_engine/providers/types.rs',
   'src-tauri/src/weather_engine/providers/alerts.rs',
   'src-tauri/src/weather_engine/providers/census.rs',
+  'src-tauri/src/weather_engine/providers/roads.rs',
   'src-tauri/src/weather_engine/providers/observations.rs',
   'docs/PRODUCT_DEFINITION.md',
   'docs/R3_FRONTEND_SPEC.md',
@@ -224,9 +225,10 @@ for (const behavior of ['fetchSurfaceObservations', 'renderObservationField', 'n
 const providerModules = [
   await read('src-tauri/src/weather_engine/providers/alerts.rs'),
   await read('src-tauri/src/weather_engine/providers/census.rs'),
+  await read('src-tauri/src/weather_engine/providers/roads.rs'),
   await read('src-tauri/src/weather_engine/providers/observations.rs'),
 ].join('\n');
-for (const provider of ['api.weather.gov/alerts/active', 'TIGERweb/State_County', 'TIGERweb/tigerWMS_Census2020', 'aviationweather.gov/data/cache/metars.cache.csv.gz']) {
+for (const provider of ['api.weather.gov/alerts/active', 'TIGERweb/State_County', 'TIGERweb/tigerWMS_Census2020', 'TIGERweb/Transportation', 'aviationweather.gov/data/cache/metars.cache.csv.gz']) {
   if (!providerModules.includes(provider)) throw new Error(`Rust provider adapters are missing ${provider}.`);
 }
 for (const behavior of ['parse_metar_csv_text', 'parse_metar_cache', 'select_station_labels', 'build_analysis_grid', 'surface_observations']) {
@@ -236,7 +238,7 @@ for (const behavior of ['parse_metar_csv_text', 'parse_metar_cache', 'select_sta
 }
 
 const nativeCommands = await read('src-tauri/src/lib.rs');
-for (const command of ['load_latest_project', 'fetch_active_alerts', 'fetch_state_boundaries', 'fetch_county_boundaries', 'fetch_places', 'fetch_surface_observations']) {
+for (const command of ['load_latest_project', 'fetch_active_alerts', 'fetch_state_boundaries', 'fetch_county_boundaries', 'fetch_places', 'fetch_roads', 'fetch_surface_observations']) {
   if (!nativeCommands.includes(command)) throw new Error(`Tauri command is missing: ${command}`);
 }
 

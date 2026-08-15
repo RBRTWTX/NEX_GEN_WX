@@ -6,6 +6,7 @@ import {
   EMPTY_FEATURE_COLLECTION, firstPlaceLabelLayer,
 } from './map-layer-utils';
 import { fieldColor, formatObservationValue, TRANSPARENT_FIELD_IMAGE } from './observation-field';
+import { addRoadContextLayers } from './road-runtime';
 
 export interface MutableImageSource {
   updateImage(options: {
@@ -18,6 +19,7 @@ export const SOURCE_IDS = {
   states: 'ngws-states',
   counties: 'ngws-counties',
   places: 'ngws-places',
+  roads: 'ngws-roads',
   observationField: 'ngws-observation-field',
   observations: 'ngws-observations',
   selectedObservation: 'ngws-selected-observation',
@@ -30,6 +32,10 @@ export const SOURCE_IDS = {
 
 export const LAYER_IDS = {
   dim: 'ngws-basemap-dim',
+  roadMajor: 'ngws-road-major',
+  roadSecondary: 'ngws-road-secondary',
+  roadLocal: 'ngws-road-local',
+  roadLabels: 'ngws-road-labels',
   stateLines: 'ngws-state-lines',
   countyLines: 'ngws-county-lines',
   observationField: 'ngws-observation-field-raster',
@@ -156,11 +162,15 @@ export function sampleCollection(samples: MapSample[]): GeoJsonFeatureCollection
 export function enforceStudioLayerOrder(map: MapLibreMap): void {
   const ordered = [
     LAYER_IDS.dim,
-    LAYER_IDS.stateLines,
-    LAYER_IDS.countyLines,
+    LAYER_IDS.roadMajor,
+    LAYER_IDS.roadSecondary,
+    LAYER_IDS.roadLocal,
+    LAYER_IDS.roadLabels,
     LAYER_IDS.observationField,
     LAYER_IDS.alertFill,
     LAYER_IDS.alertOutline,
+    LAYER_IDS.stateLines,
+    LAYER_IDS.countyLines,
     LAYER_IDS.observationDots,
     LAYER_IDS.observationLabels,
     LAYER_IDS.selectedAlert,
@@ -186,6 +196,7 @@ export function addStudioLayers(map: MapLibreMap, scene: MapScene): void {
   addGeoJsonSource(SOURCE_IDS.states, EMPTY_FEATURE_COLLECTION);
   addGeoJsonSource(SOURCE_IDS.counties, EMPTY_FEATURE_COLLECTION);
   addGeoJsonSource(SOURCE_IDS.places, EMPTY_FEATURE_COLLECTION);
+  addGeoJsonSource(SOURCE_IDS.roads, EMPTY_FEATURE_COLLECTION);
   addGeoJsonSource(SOURCE_IDS.observations, EMPTY_FEATURE_COLLECTION);
   addGeoJsonSource(SOURCE_IDS.selectedObservation, EMPTY_FEATURE_COLLECTION);
   addGeoJsonSource(SOURCE_IDS.samples, EMPTY_FEATURE_COLLECTION);
@@ -222,6 +233,13 @@ export function addStudioLayers(map: MapLibreMap, scene: MapScene): void {
       },
     }, before);
   }
+  addRoadContextLayers(map, before, SOURCE_IDS.roads, {
+    major: LAYER_IDS.roadMajor,
+    secondary: LAYER_IDS.roadSecondary,
+    local: LAYER_IDS.roadLocal,
+    labels: LAYER_IDS.roadLabels,
+  });
+
   if (!map.getLayer(LAYER_IDS.stateLines)) {
     map.addLayer({
       id: LAYER_IDS.stateLines,

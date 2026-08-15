@@ -73,6 +73,16 @@ async fn fetch_places(
 }
 
 #[tauri::command]
+async fn fetch_roads(
+    bbox: BBox,
+    zoom: f64,
+    density: u8,
+    force: bool,
+) -> Result<Value, error::StudioError> {
+    weather_engine::providers::roads(bbox, zoom, density, force).await
+}
+
+#[tauri::command]
 async fn fetch_surface_observations(
     bbox: BBox,
     zoom: f64,
@@ -100,6 +110,7 @@ pub fn run() {
             fetch_state_boundaries,
             fetch_county_boundaries,
             fetch_places,
+            fetch_roads,
             fetch_surface_observations
         ])
         .run(tauri::generate_context!())
