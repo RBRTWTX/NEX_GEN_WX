@@ -10,7 +10,12 @@ import {
   mrmsTileUrl,
 } from './radar-provider';
 import { clearRadarRuntime, publishRadarRuntime } from './radar-runtime-store';
-import { MAX_RADAR_RENDER_LAYERS, radarLayerId, radarSourceId } from './radar-layer-ids';
+import {
+  MAX_RADAR_RENDER_LAYERS,
+  RADAR_SOURCE_PREFIX,
+  radarLayerId,
+  radarSourceId,
+} from './radar-layer-ids';
 import {
   iemProductCode,
   isSiteRadarProduct,
@@ -49,6 +54,21 @@ function latestFrame(id: string): RadarFrame {
 function centerKey(context: MapControllerContext): string {
   const center = context.map.getCenter();
   return `${center.lat.toFixed(1)},${center.lng.toFixed(1)}`;
+}
+
+function radarMapError(event: unknown): { radar: boolean; detail: string } {
+  const object = event && typeof event === 'object' ? event as Record<string, unknown> : null;
+  const sourceId = String(object?.sourceId ?? object?.source ?? '');
+  const candidate = object && 'error' in object ? object.error : event;
+  const detail = cleanProviderError(candidate ?? 'Radar tile request failed');
+  const text = `${sourceId} ${detail}`.toLowerCase();
+  return {
+    radar: sourceId.startsWith(RADAR_SOURCE_PREFIX)
+      || text.includes('mapservices.weather.noaa.gov')
+      || text.includes('mesonet.agron.iastate.edu')
+      || text.includes('ridge::'),
+    detail,
+  };
 }
 
 function nearestFrame(frames: RadarFrame[], target: RadarFrame): RadarFrame | null {
@@ -127,6 +147,23 @@ export class RadarController implements MapController {
 
   onLayerOrderChanged(context: MapControllerContext): void {
     this.applyPaint(context.map, context);
+  }
+
+  onMapError(context: MapControllerContext, event: unknown): boolean {
+    if (context.scene.product.category !== 'radar') return false;
+    const failure = radarMapError(event);
+    if (!failure.radar) return false;
+    const product = radarProductForScene(context.scene);
+    const providerId = isSiteRadarProduct(product) ? 'radar-sites' : 'radar-mrms';
+    const message = `Radar imagery request failed: ${failure.detail}`;
+    context.callbacks.reportProviderStatus(providerId, 'degraded', message);
+    publishRadarRuntime(context.scene.id, {
+      loading: false,
+      error: message,
+      updatedAt: new Date().toISOString(),
+    }, context.renderPurpose);
+    context.setRenderPending(this.id, false);
+    return true;
   }
 
   dispose(): void {

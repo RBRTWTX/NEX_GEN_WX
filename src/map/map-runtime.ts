@@ -167,12 +167,12 @@ export function enforceStudioLayerOrder(map: MapLibreMap): void {
     LAYER_IDS.roadSecondary,
     LAYER_IDS.roadLocal,
     LAYER_IDS.roadLabels,
+    LAYER_IDS.stateLines,
+    LAYER_IDS.countyLines,
     LAYER_IDS.observationField,
     ...RADAR_LAYER_IDS,
     LAYER_IDS.alertFill,
     LAYER_IDS.alertOutline,
-    LAYER_IDS.stateLines,
-    LAYER_IDS.countyLines,
     LAYER_IDS.observationDots,
     LAYER_IDS.observationLabels,
     LAYER_IDS.selectedAlert,
@@ -262,9 +262,9 @@ export function addStudioLayers(map: MapLibreMap, scene: MapScene): void {
       source: SOURCE_IDS.counties,
       minzoom: 4,
       paint: {
-        'line-color': '#dce5f2',
-        'line-opacity': ['interpolate', ['linear'], ['zoom'], 4, 0.25, 7, 0.65, 10, 0.82],
-        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.35, 8, 0.8, 12, 1.2],
+        'line-color': '#c8d2de',
+        'line-opacity': ['interpolate', ['linear'], ['zoom'], 4, 0.14, 7, 0.28, 10, 0.42, 12, 0.50],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.25, 8, 0.45, 12, 0.75],
       },
     }, before);
   }

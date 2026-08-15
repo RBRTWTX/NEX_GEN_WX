@@ -34,7 +34,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' ipc: http://ipc.localhost; connect-src 'self' ipc: http://ipc.localhost https://demotiles.maplibre.org https://tiles.openfreemap.org https://tile.openstreetmap.org https://*.noaa.gov https://*.weather.gov; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:"
+      "csp": "default-src 'self' ipc: http://ipc.localhost; connect-src 'self' ipc: http://ipc.localhost https://demotiles.maplibre.org https://tiles.openfreemap.org https://tile.openstreetmap.org https://services.arcgisonline.com https://mapservices.weather.noaa.gov https://mesonet.agron.iastate.edu https://*.noaa.gov https://*.weather.gov; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:"
     }
   },
   "bundle": {

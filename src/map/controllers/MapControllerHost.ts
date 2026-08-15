@@ -163,7 +163,11 @@ export class MapControllerHost implements MapControllerContext {
   }
 
   isStyleReady(): boolean {
-    return Boolean(this.lifecycle.map && this.styleReady && this.lifecycle.map.isStyleLoaded());
+    // `style.load` establishes the lifecycle boundary. Do not depend on MapLibre's
+    // transient style-loaded flag here: source updates can temporarily clear it,
+    // which was starving later controllers (boundaries, cities, radar, observations)
+    // in the same controller pass.
+    return Boolean(this.lifecycle.map && this.styleReady);
   }
 
   reloadStyle(style: BasemapStyle): void {
@@ -214,6 +218,9 @@ export class MapControllerHost implements MapControllerContext {
     this.styleReady = true;
     this.lastBasemapError = '';
     this.remoteStylePending = false;
+    // Data controllers derive their first bbox from the rendered map. Resize synchronously
+    // before they run so startup requests do not use stale pre-layout bounds.
+    this.lifecycle.map.resize();
     this.scheduleResize();
     for (const controller of this.controllers) this.invoke(controller, 'onStyleReady');
   };
@@ -240,6 +247,16 @@ export class MapControllerHost implements MapControllerContext {
   };
 
   private readonly handleMapError = (event: unknown): void => {
+    for (const controller of this.controllers) {
+      const handler = controller.onMapError;
+      if (!handler) continue;
+      try {
+        if (handler.call(controller, this, event)) return;
+      } catch (error) {
+        console.error(`[MapController:${controller.id}] onMapError failed`, error);
+      }
+    }
+
     const candidate = event && typeof event === 'object' && 'error' in event
       ? (event as { error?: unknown }).error
       : event;

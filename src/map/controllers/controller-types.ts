@@ -57,6 +57,7 @@ export interface MapController {
   onSceneChange?(context: MapControllerContext, previous: MapScene): void | Promise<void>;
   onMoveEnd?(context: MapControllerContext): void | Promise<void>;
   onMapClick?(context: MapControllerContext, event: MapMouseEvent): boolean;
+  onMapError?(context: MapControllerContext, event: unknown): boolean;
   onAlertsChange?(context: MapControllerContext): void;
   onSelectedAlertChange?(context: MapControllerContext): void;
   onSelectedObservationChange?(context: MapControllerContext): void;

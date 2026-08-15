@@ -81,6 +81,34 @@ fn property_number(properties: &serde_json::Map<String, Value>, name: &str) -> O
     }
 }
 
+fn clean_place_display_name(properties: &serde_json::Map<String, Value>) -> String {
+    if let Some(basename) = properties
+        .get("BASENAME")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+    {
+        return basename.to_string();
+    }
+
+    let name = properties
+        .get("NAME")
+        .and_then(Value::as_str)
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .unwrap_or("Place");
+
+    for suffix in [" city", " town", " village", " borough", " municipality", " CDP"] {
+        if let Some(base) = name.strip_suffix(suffix) {
+            let cleaned = base.trim();
+            if !cleaned.is_empty() {
+                return cleaned.to_string();
+            }
+        }
+    }
+    name.to_string()
+}
+
 fn polygon_feature_to_point(feature: &Value) -> Option<Value> {
     let mut properties = feature
         .get("properties")
@@ -96,12 +124,8 @@ fn polygon_feature_to_point(feature: &Value) -> Option<Value> {
             Some(((west + east) / 2.0, (south + north) / 2.0))
         })?;
     if !properties.contains_key("displayName") {
-        let name = properties
-            .get("NAME")
-            .or_else(|| properties.get("BASENAME"))
-            .and_then(Value::as_str)
-            .unwrap_or("Place");
-        properties.insert("displayName".to_string(), Value::String(name.to_string()));
+        let name = clean_place_display_name(&properties);
+        properties.insert("displayName".to_string(), Value::String(name));
     }
     Some(json!({
         "type": "Feature",
@@ -119,12 +143,7 @@ fn arcgis_record_to_point(feature: &Value) -> Option<Value> {
         .unwrap_or_default();
     let coordinate = property_number(&properties, "INTPTLON")
         .zip(property_number(&properties, "INTPTLAT"))?;
-    let name = properties
-        .get("NAME")
-        .or_else(|| properties.get("BASENAME"))
-        .and_then(Value::as_str)
-        .unwrap_or("Place")
-        .to_string();
+    let name = clean_place_display_name(&properties);
     properties.insert("displayName".to_string(), Value::String(name));
     Some(json!({
         "type": "Feature",
@@ -395,6 +414,7 @@ mod tests {
                 "attributes": {
                     "GEOID": "4805000",
                     "NAME": "Example city",
+                    "BASENAME": "Example",
                     "INTPTLAT": "+29.5000000",
                     "INTPTLON": "-098.5000000",
                     "POP100": 120000,
@@ -405,6 +425,22 @@ mod tests {
         let points = place_features(&collection);
         assert_eq!(points.len(), 1);
         assert_eq!(points[0]["geometry"]["type"], "Point");
-        assert_eq!(points[0]["properties"]["displayName"], "Example city");
+        assert_eq!(points[0]["properties"]["displayName"], "Example");
+        assert_eq!(points[0]["properties"]["NAME"], "Example city");
+    }
+
+    #[test]
+    fn legal_place_suffixes_are_not_broadcast_labels() {
+        for (name, expected) in [
+            ("San Antonio city", "San Antonio"),
+            ("Hollywood Park town", "Hollywood Park"),
+            ("Timberwood Park CDP", "Timberwood Park"),
+        ] {
+            let properties = serde_json::Map::from_iter([(
+                "NAME".to_string(),
+                Value::String(name.to_string()),
+            )]);
+            assert_eq!(clean_place_display_name(&properties), expected);
+        }
     }
 }

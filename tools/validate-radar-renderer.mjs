@@ -28,8 +28,16 @@ for (const token of [
   'fetchSiteRadarCatalog',
   'notifyLayerOrderChanged',
   'clearRadarRuntime',
+  'onMapError',
+  'RADAR_SOURCE_PREFIX',
+  'Radar imagery request failed',
 ]) {
   if (!controller.includes(token)) throw new Error(`Radar renderer contract missing: ${token}`);
+}
+
+const tauriConfig = await read('src-tauri/tauri.conf.json');
+for (const host of ['https://mapservices.weather.noaa.gov', 'https://mesonet.agron.iastate.edu']) {
+  if (!tauriConfig.includes(host)) throw new Error(`Radar WebView CSP host missing: ${host}`);
 }
 
 const runtime = await read('src/radar/radar-runtime-store.ts');
@@ -46,11 +54,11 @@ const orderEnd = runtimeMap.indexOf('];', orderStart);
 if (orderStart < 0 || orderEnd < 0) throw new Error('Permanent map ordering array was not found.');
 const ordering = runtimeMap.slice(orderStart, orderEnd);
 const roadIndex = ordering.indexOf('LAYER_IDS.roadLabels');
-const radarIndex = ordering.indexOf('...RADAR_LAYER_IDS');
 const boundaryIndex = ordering.indexOf('LAYER_IDS.stateLines');
+const radarIndex = ordering.indexOf('...RADAR_LAYER_IDS');
 const cityIndex = ordering.indexOf('LAYER_IDS.cityLabels');
-if (!(roadIndex >= 0 && radarIndex > roadIndex && boundaryIndex > radarIndex && cityIndex > radarIndex)) {
-  throw new Error('Required map order is not roads < radar < boundaries/cities.');
+if (!(roadIndex >= 0 && boundaryIndex > roadIndex && radarIndex > boundaryIndex && cityIndex > radarIndex)) {
+  throw new Error('Required map order is not roads < boundaries < radar/weather < cities.');
 }
 
 const sceneStage = await read('src/components/SceneStage.tsx');

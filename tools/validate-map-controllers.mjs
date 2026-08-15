@@ -71,9 +71,14 @@ for (const required of [
 }
 
 const host = await read('src/map/controllers/MapControllerHost.ts');
+const styleReadyBlock = host.match(/isStyleReady\(\): boolean \{([\s\S]*?)\n  \}/)?.[1] ?? '';
+if (styleReadyBlock.includes('isStyleLoaded()')) {
+  throw new Error('Map controller readiness must not depend on transient MapLibre source loading.');
+}
 for (const required of [
   'moduleRegistry.createMapControllers()',
   'styleGeneration', 'reloadStyle', 'notifyLayerOrderChanged', 'updateCallbacks',
+  'this.lifecycle.map.resize();', 'controller.onMapError',
 ]) {
   if (!host.includes(required)) throw new Error(`Map controller host contract missing: ${required}`);
 }
