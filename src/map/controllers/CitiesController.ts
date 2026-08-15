@@ -33,7 +33,7 @@ export class CitiesController implements MapController {
   private applyCached(context: MapControllerContext): void {
     if (!context.isStyleReady()) return;
     const zoom = context.map.getZoom();
-    const key = context.scene.overlays.cities && zoom >= 4.25
+    const key = context.scene.overlays.cities && zoom >= 2.5
       ? dynamicDataKey(currentBBox(context.map), zoom, String(context.scene.display.cityDensity))
       : null;
     setGeoJson(
@@ -46,13 +46,13 @@ export class CitiesController implements MapController {
   private async refresh(context: MapControllerContext, force: boolean): Promise<void> {
     if (!context.isStyleReady()) return;
     const zoom = context.map.getZoom();
-    if (!context.scene.overlays.cities || zoom < 4.25) {
+    if (!context.scene.overlays.cities || zoom < 2.5) {
       this.requestEpoch += 1;
       setGeoJson(context.map, SOURCE_IDS.places, EMPTY_FEATURE_COLLECTION);
       context.callbacks.reportProviderStatus(
         'cities',
         'idle',
-        context.scene.overlays.cities ? 'Visible at closer zoom' : 'Layer disabled',
+        context.scene.overlays.cities ? 'Visible at regional and closer zoom' : 'Layer disabled',
       );
       return;
     }

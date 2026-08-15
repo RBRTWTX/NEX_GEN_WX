@@ -7,12 +7,12 @@ use super::types::BBox;
 
 const TIGER_STATE_COUNTY_URL: &str =
     "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer";
-const TIGER_PLACES_URL: &str =
-    "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer";
+const CENSUS_2020_PLACES_URL: &str =
+    "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Census2020/MapServer";
 const STATE_LAYER: u8 = 6;
 const COUNTY_LAYER: u8 = 7;
-const INCORPORATED_PLACE_LAYER: u8 = 4;
-const CENSUS_DESIGNATED_PLACE_LAYER: u8 = 5;
+const INCORPORATED_PLACE_LAYER: u8 = 26;
+const CENSUS_DESIGNATED_PLACE_LAYER: u8 = 28;
 
 fn arc_url(service: &str, layer: u8) -> Result<Url, StudioError> {
     Url::parse(&format!("{service}/{layer}/query"))
@@ -154,7 +154,9 @@ fn place_features(collection: &Value) -> Vec<Value> {
 }
 
 fn place_limit(zoom: f64, density: u8) -> usize {
-    let base = if zoom < 5.0 {
+    let base = if zoom < 4.25 {
+        70
+    } else if zoom < 5.0 {
         120
     } else if zoom < 6.5 {
         240
@@ -167,6 +169,14 @@ fn place_limit(zoom: f64, density: u8) -> usize {
     };
     let density_factor = 0.35 + (f64::from(density.min(100)) / 100.0) * 1.15;
     ((base as f64) * density_factor).round().clamp(40.0, 1500.0) as usize
+}
+
+fn population(feature: &Value) -> f64 {
+    feature
+        .get("properties")
+        .and_then(Value::as_object)
+        .and_then(|properties| property_number(properties, "POP100"))
+        .unwrap_or(0.0)
 }
 
 fn area_land(feature: &Value) -> f64 {
@@ -232,7 +242,7 @@ pub async fn county_boundaries(
 }
 
 fn places_query_url(layer: u8, bbox: BBox, provider_record_limit: usize) -> Result<Url, StudioError> {
-    let mut url = arc_url(TIGER_PLACES_URL, layer)?;
+    let mut url = arc_url(CENSUS_2020_PLACES_URL, layer)?;
     let envelope = bbox.envelope();
     url.query_pairs_mut()
         .append_pair("where", "1=1")
@@ -240,7 +250,8 @@ fn places_query_url(layer: u8, bbox: BBox, provider_record_limit: usize) -> Resu
         .append_pair("geometryType", "esriGeometryEnvelope")
         .append_pair("spatialRel", "esriSpatialRelIntersects")
         .append_pair("inSR", "4326")
-        .append_pair("outFields", "GEOID,NAME,BASENAME,LSADC,STATE,INTPTLAT,INTPTLON,AREALAND")
+        .append_pair("outFields", "GEOID,NAME,BASENAME,LSADC,STATE,INTPTLAT,INTPTLON,POP100,AREALAND")
+        .append_pair("orderByFields", "POP100 DESC")
         .append_pair("returnGeometry", "false")
         .append_pair("resultRecordCount", &provider_record_limit.to_string())
         .append_pair("returnExceededLimitFeatures", "true")
@@ -255,17 +266,20 @@ pub async fn places(
     force: bool,
 ) -> Result<Value, StudioError> {
     let bbox = bbox.validate()?;
-    if zoom < 4.25 {
+    if zoom < 2.5 {
         return Ok(json!({
             "type": "FeatureCollection",
             "features": [],
-            "provider": "U.S. Census TIGERweb",
+            "provider": "U.S. Census Bureau 2020 places",
             "cacheStatus": "not-requested"
         }));
     }
 
     let limit = place_limit(zoom, density);
-    let provider_record_limit = if zoom < 6.0 { 8000 } else { 16000 };
+    // The Census service supports server-side ordering. Fetch only a bounded
+    // population-ranked candidate set, then merge incorporated places and CDPs
+    // locally. This keeps CONUS and move-end requests responsive.
+    let provider_record_limit = (limit.saturating_mul(4)).clamp(240, 5000);
     let mut features = Vec::new();
     let mut warnings = Vec::new();
     let mut cache_status = "live".to_string();
@@ -295,9 +309,14 @@ pub async fn places(
     }
 
     features.sort_by(|left, right| {
-        area_land(right)
-            .partial_cmp(&area_land(left))
+        population(right)
+            .partial_cmp(&population(left))
             .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| {
+                area_land(right)
+                    .partial_cmp(&area_land(left))
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
     });
     let mut seen = HashSet::new();
     features.retain(|feature| {
@@ -324,7 +343,7 @@ pub async fn places(
     let mut result = json!({
         "type": "FeatureCollection",
         "features": features,
-        "provider": "U.S. Census TIGERweb",
+        "provider": "U.S. Census Bureau 2020 places",
         "labelLimit": limit,
         "cacheStatus": cache_status
     });
@@ -342,8 +361,8 @@ mod tests {
     fn current_tiger_layers_are_pinned() {
         assert_eq!(STATE_LAYER, 6);
         assert_eq!(COUNTY_LAYER, 7);
-        assert_eq!(INCORPORATED_PLACE_LAYER, 4);
-        assert_eq!(CENSUS_DESIGNATED_PLACE_LAYER, 5);
+        assert_eq!(INCORPORATED_PLACE_LAYER, 26);
+        assert_eq!(CENSUS_DESIGNATED_PLACE_LAYER, 28);
     }
 
     #[test]
@@ -362,7 +381,8 @@ mod tests {
         assert!(query.contains("INTPTLAT"));
         assert!(query.contains("INTPTLON"));
         assert!(query.contains("AREALAND"));
-        assert!(!query.contains("POP100"));
+        assert!(query.contains("POP100"));
+        assert!(query.contains("orderByFields=POP100+DESC") || query.contains("orderByFields=POP100%20DESC"));
         assert!(query.contains("returnGeometry=false"));
         assert!(query.contains("geometryType=esriGeometryEnvelope"));
         assert!(query.contains("f=json"));
@@ -377,6 +397,7 @@ mod tests {
                     "NAME": "Example city",
                     "INTPTLAT": "+29.5000000",
                     "INTPTLON": "-098.5000000",
+                    "POP100": 120000,
                     "AREALAND": "12345"
                 }
             }]

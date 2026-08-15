@@ -28,10 +28,12 @@ await Promise.all(required.map(exists));
 const basemap = await read('src/map/basemap-styles.ts');
 for (const token of [
   'export function createBasemapStyle',
-  "type: 'raster'",
-  "type: 'background'",
-  'tile.openstreetmap.org/{z}/{x}/{y}.png',
-  '© OpenStreetMap contributors',
+  'export function createBasemapFallbackStyle',
+  'https://tiles.openfreemap.org/styles/liberty',
+  'https://tiles.openfreemap.org/styles/dark',
+  'World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  'nexgen-osm-fallback',
+  'tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',
 ]) {
   if (!basemap.includes(token)) throw new Error(`Basemap independence requirement missing: ${token}`);
 }
@@ -62,9 +64,9 @@ const census = await read('src-tauri/src/weather_engine/providers/census.rs');
 for (const token of [
   'const STATE_LAYER: u8 = 6',
   'const COUNTY_LAYER: u8 = 7',
-  'const INCORPORATED_PLACE_LAYER: u8 = 4',
-  'const CENSUS_DESIGNATED_PLACE_LAYER: u8 = 5',
-  'GEOID,NAME,BASENAME,LSADC,STATE,INTPTLAT,INTPTLON,AREALAND',
+  'const INCORPORATED_PLACE_LAYER: u8 = 26',
+  'const CENSUS_DESIGNATED_PLACE_LAYER: u8 = 28',
+  'GEOID,NAME,BASENAME,LSADC,STATE,INTPTLAT,INTPTLON,POP100,AREALAND',
   'polygon_feature_to_point',
   'arcgis_record_to_point',
   '.append_pair("f", "json")',
@@ -72,8 +74,11 @@ for (const token of [
 ]) {
   if (!census.includes(token)) throw new Error(`Census functional repair missing: ${token}`);
 }
-if (census.includes('GEOID,NAME,BASENAME,LSADC,POP100')) {
-  throw new Error('Unsupported Census POP100 field remains in the places query.');
+if (!census.includes('population(right)')) {
+  throw new Error('Census places must be ranked by population before land area.');
+}
+if (!census.includes('orderByFields') || !census.includes('POP100 DESC')) {
+  throw new Error('Census places must request provider-side population ordering.');
 }
 
 const domain = await read('src/types/domain.ts');

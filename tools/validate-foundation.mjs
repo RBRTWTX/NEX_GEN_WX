@@ -226,7 +226,7 @@ const providerModules = [
   await read('src-tauri/src/weather_engine/providers/census.rs'),
   await read('src-tauri/src/weather_engine/providers/observations.rs'),
 ].join('\n');
-for (const provider of ['api.weather.gov/alerts/active', 'TIGERweb/State_County', 'TIGERweb/Places_CouSub_ConCity_SubMCD', 'aviationweather.gov/data/cache/metars.cache.csv.gz']) {
+for (const provider of ['api.weather.gov/alerts/active', 'TIGERweb/State_County', 'TIGERweb/tigerWMS_Census2020', 'aviationweather.gov/data/cache/metars.cache.csv.gz']) {
   if (!providerModules.includes(provider)) throw new Error(`Rust provider adapters are missing ${provider}.`);
 }
 for (const behavior of ['parse_metar_csv_text', 'parse_metar_cache', 'select_station_labels', 'build_analysis_grid', 'surface_observations']) {
