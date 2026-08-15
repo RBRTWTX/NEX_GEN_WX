@@ -16,7 +16,7 @@ fn client() -> Result<&'static Client, StudioError> {
         .connect_timeout(Duration::from_secs(12))
         .timeout(Duration::from_secs(35))
         .pool_idle_timeout(Duration::from_secs(90))
-        .user_agent("NEX-GEN-WX/0.7.0 (+https://github.com/RBRTWTX/NEX_GEN_WX)")
+        .user_agent("NEX-GEN-WX/0.8.0 (+https://github.com/RBRTWTX/NEX_GEN_WX)")
         .build()?;
     let _ = HTTP_CLIENT.set(value);
     HTTP_CLIENT

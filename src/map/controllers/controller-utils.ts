@@ -21,6 +21,16 @@ export function cleanProviderError(error: unknown): string {
     .trim();
 }
 
+export function isTransientMapLibreSignalRace(
+  message: string,
+  styleReady: boolean,
+  remoteStylePending: boolean,
+): boolean {
+  return styleReady
+    && !remoteStylePending
+    && message.includes("Cannot read properties of undefined (reading 'signal')");
+}
+
 export function reportProviderFailure(
   context: MapControllerContext,
   provider: ProviderId,

@@ -16,6 +16,7 @@ const controllerFiles = [
   'src/map/controllers/CitiesController.ts',
   'src/map/controllers/RoadsController.ts',
   'src/radar/RadarController.ts',
+  'src/satellite/SatelliteController.ts',
   'src/map/controllers/AlertsController.ts',
   'src/map/controllers/ObservationsController.ts',
   'src/map/controllers/CameraController.ts',
@@ -78,7 +79,7 @@ if (styleReadyBlock.includes('isStyleLoaded()')) {
 for (const required of [
   'moduleRegistry.createMapControllers()',
   'styleGeneration', 'reloadStyle', 'notifyLayerOrderChanged', 'updateCallbacks',
-  'this.lifecycle.map.resize();', 'controller.onMapError',
+  'this.lifecycle.map.resize();', 'controller.onMapError', 'isTransientMapLibreSignalRace',
 ]) {
   if (!host.includes(required)) throw new Error(`Map controller host contract missing: ${required}`);
 }
@@ -94,7 +95,7 @@ const registryDefinitions = [
   await read('src/modules/builtin/weather-definitions.tsx'),
 ].join('\n');
 for (const controller of [
-  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'radar', 'alerts', 'observations',
+  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'alerts', 'observations',
   'camera', 'interaction', 'layer-order', 'resize',
 ]) {
   if (!registryDefinitions.includes(`id: '${controller}'`)) {
@@ -109,12 +110,14 @@ const boundary = await read('src/map/controllers/BoundaryController.ts');
 const cities = await read('src/map/controllers/CitiesController.ts');
 const roads = await read('src/map/controllers/RoadsController.ts');
 const radar = await read('src/radar/RadarController.ts');
+const satellite = await read('src/satellite/SatelliteController.ts');
 const observations = await read('src/map/controllers/ObservationsController.ts');
 for (const [name, source] of [
   ['boundaries', boundary],
   ['cities', cities],
   ['roads', roads],
   ['radar', radar],
+  ['satellite', satellite],
   ['observations', observations],
 ]) {
   if (!source.includes('requestEpoch') && !source.includes('stateEpoch')) {
@@ -146,6 +149,19 @@ for (const token of [
 ]) {
   if (!radar.includes(token)) {
     throw new Error(`Radar controller lacks its dedicated provider-failure contract: ${token}`);
+  }
+}
+for (const token of [
+  'cleanProviderError',
+  'onMapError',
+  'reportProviderStatus',
+  "'degraded'",
+  "'offline'",
+  'publishSatelliteRuntime',
+  'fetchSatelliteFrameCatalog',
+]) {
+  if (!satellite.includes(token)) {
+    throw new Error(`Satellite controller lacks its dedicated provider/failure contract: ${token}`);
   }
 }
 if (!boundary.includes('fetchStateBoundaries') || !boundary.includes('fetchCountyBoundaries')) {

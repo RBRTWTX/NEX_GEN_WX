@@ -192,3 +192,9 @@ export async function fetchRadarSiteCatalog(
     force,
   });
 }
+
+export async function fetchSatelliteCatalog(
+  force = false,
+): Promise<unknown> {
+  return invoke<unknown>('fetch_satellite_catalog', { force });
+}

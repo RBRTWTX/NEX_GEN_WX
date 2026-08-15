@@ -13,6 +13,7 @@ import {
   broadcastContextLayerIds,
 } from './broadcast-context';
 import { RADAR_LAYER_IDS } from '../radar/radar-layer-ids';
+import { SATELLITE_LAYER_IDS } from '../satellite/satellite-layer-ids';
 
 export interface MutableImageSource {
   updateImage(options: {
@@ -175,6 +176,7 @@ export function enforceStudioLayerOrder(map: MapLibreMap): void {
     LAYER_IDS.roadLocal,
     LAYER_IDS.roadLabels,
     LAYER_IDS.observationField,
+    ...SATELLITE_LAYER_IDS,
     ...RADAR_LAYER_IDS,
     ...contextLayers,
     LAYER_IDS.countyCasing,

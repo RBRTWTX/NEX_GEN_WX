@@ -21,6 +21,10 @@ const checks = [
   'validate:broadcast-context',
   'test:radar-runtime',
   'test:radar-controller',
+  'validate:satellite-provider',
+  'test:satellite-provider',
+  'validate:satellite-renderer',
+  'test:satellite-runtime',
   'check',
 ];
 

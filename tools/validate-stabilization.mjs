@@ -94,6 +94,7 @@ if (!layerOrder) throw new Error('Unable to inspect the studio layer-order contr
 
 const baseRoadPosition = layerOrder.indexOf('LAYER_IDS.roadMajor');
 const weatherPosition = layerOrder.indexOf('LAYER_IDS.observationField');
+const satellitePosition = layerOrder.indexOf('...SATELLITE_LAYER_IDS');
 const radarPosition = layerOrder.indexOf('...RADAR_LAYER_IDS');
 const contextPosition = layerOrder.indexOf('...contextLayers');
 const countyPosition = layerOrder.indexOf('LAYER_IDS.countyLines');
@@ -104,7 +105,8 @@ const cityPosition = layerOrder.indexOf('LAYER_IDS.cityLabels');
 if (!(
   baseRoadPosition >= 0
   && weatherPosition > baseRoadPosition
-  && radarPosition > weatherPosition
+  && satellitePosition > weatherPosition
+  && radarPosition > satellitePosition
   && contextPosition > radarPosition
   && countyPosition > contextPosition
   && statePosition > countyPosition
@@ -112,7 +114,7 @@ if (!(
   && cityPosition > alertPosition
 )) {
   throw new Error(
-    'Runtime layer order must keep base roads below weather, broadcast context/boundaries above weather, alerts above context, and cities above alerts.',
+    'Runtime layer order must keep base roads below weather, satellite/radar in the weather stack, broadcast context/boundaries above weather, alerts above context, and cities above alerts.',
   );
 }
 

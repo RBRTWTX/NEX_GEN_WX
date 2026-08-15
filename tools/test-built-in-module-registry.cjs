@@ -99,13 +99,13 @@ for (const id of [
 assert.equal(new Set(ids).size, ids.length, 'built-in module IDs must be unique');
 assert.deepEqual(
   moduleRegistry.createMapControllers().map((controller) => controller.id),
-  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'radar', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
+  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
   'built-in map controllers should be registry-ordered and complete',
 );
 const providers = moduleRegistry.getProviders();
 assert.deepEqual(
   providers.map((provider) => provider.id),
-  ['basemap', 'states', 'counties', 'cities', 'roads', 'alerts', 'observations', 'radar-mrms', 'radar-sites'],
+  ['basemap', 'states', 'counties', 'cities', 'roads', 'alerts', 'observations', 'radar-mrms', 'radar-sites', 'satellite-goes'],
   'provider health definitions should be registry-owned',
 );
 const mapScene = {
@@ -131,4 +131,21 @@ assert.equal(normalized.moduleState.radar.autoRefreshEnabled, true);
 assert.ok(moduleRegistry.getDialog('module:radar', normalized));
 assert.ok(moduleRegistry.getTools(normalized, 'quick').some((tool) => tool.id === 'radar-quick'));
 
-console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 12 map controllers verified.`);
+const satelliteScene = {
+  ...mapScene,
+  id: 'satellite-scene',
+  name: 'Satellite',
+  category: 'Satellite',
+  activeModuleIds: ['satellite'],
+  moduleState: {},
+  product: { category: 'satellite', id: 'goes-infrared', opacity: 0.95, smoothing: 'smooth' },
+};
+const normalizedSatellite = moduleRegistry.normalizeSceneModuleState(satelliteScene);
+assert.equal(normalizedSatellite.moduleState.satellite.source, 'east');
+assert.equal(normalizedSatellite.moduleState.satellite.product, 'goes-infrared');
+assert.equal(normalizedSatellite.moduleState.satellite.frameCount, 12);
+assert.equal(normalizedSatellite.moduleState.satellite.autoRefreshEnabled, true);
+assert.ok(moduleRegistry.getDialog('module:satellite', normalizedSatellite));
+assert.ok(moduleRegistry.getTools(normalizedSatellite, 'quick').some((tool) => tool.id === 'satellite-quick'));
+
+console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 13 map controllers verified.`);

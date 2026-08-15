@@ -19,7 +19,7 @@ import type {
   MapControllerContext,
   MapRenderPurpose,
 } from './controller-types';
-import { cleanProviderError } from './controller-utils';
+import { cleanProviderError, isTransientMapLibreSignalRace } from './controller-utils';
 import { MapLifecycleController } from './MapLifecycleController';
 
 interface MapControllerHostOptions {
@@ -261,7 +261,7 @@ export class MapControllerHost implements MapControllerContext {
       ? (event as { error?: unknown }).error
       : event;
     const message = cleanProviderError(candidate ?? 'Basemap rendering error');
-    if (!message || message === this.lastBasemapError) return;
+    if (isTransientMapLibreSignalRace(message, this.styleReady, this.remoteStylePending) || !message || message === this.lastBasemapError) return;
     this.lastBasemapError = message;
 
     if (!this.styleReady && this.remoteStylePending) {

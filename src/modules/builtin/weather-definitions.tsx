@@ -1,6 +1,8 @@
 import type { StudioModuleDefinition } from '../../types/module';
 import { RadarController } from '../../radar/RadarController';
 import { DEFAULT_RADAR_SCENE_STATE, normalizeRadarSceneState } from '../../radar/radar-types';
+import { SatelliteController } from '../../satellite/SatelliteController';
+import { DEFAULT_SATELLITE_SCENE_STATE, normalizeSatelliteSceneState } from '../../satellite/satellite-types';
 import { ModelLabDialogPanel } from './panels/ModelLabDialogPanel';
 import { RadarDialogPanel } from './panels/RadarDialogPanel';
 import { SatelliteDialogPanel } from './panels/SatelliteDialogPanel';
@@ -33,18 +35,28 @@ export const weatherModuleDefinitions: StudioModuleDefinition[] = [
   {
     manifest: {
       id: 'satellite', name: 'Satellite', domain: 'weather', maturity: 'migration-next',
-      description: 'Independent GOES products, frame catalog, animation and overlay behavior.',
-      sceneKinds: ['map'], tools: ['Product', 'Frame', 'Play', 'Speed', 'Opacity', 'Overlay'],
+      description: 'GOES East/West satellite imagery with IEM live tiles and archive composites, NOAA/NESDIS GeoColor history, animation, export-safe rendering and independent overlay state.',
+      sceneKinds: ['map'], tools: ['Satellite', 'Product', 'Frame', 'Play', 'Speed', 'Opacity', 'Overlay'],
       legacyFiles: ['public/map-engine.js', 'server.js'], dependencies: ['map', 'data-engine'],
     },
-    isActiveForScene: (scene) => scene.kind === 'map' && scene.product.category === 'satellite',
+    isActiveForScene: (scene) => scene.kind === 'map' && (
+      scene.product.category === 'satellite'
+      || Boolean((scene.moduleState.satellite as { overlayEnabled?: boolean } | undefined)?.overlayEnabled)
+    ),
+    providers: [
+      { id: 'satellite-goes', label: 'IEM / NOAA GOES satellite' },
+    ],
+    mapControllers: [{ id: 'satellite', phase: 'data', order: 24, create: () => new SatelliteController() }],
     dialogs: [{ id: 'module:satellite', title: 'Satellite Controls', className: 'tool-window--satellite', order: 20, sceneKinds: ['map'], component: SatelliteDialogPanel }],
     tools: [
       { id: 'satellite-dock', label: 'Satellite', placement: 'dock-tool', order: 30, sceneKinds: ['map'], command: { kind: 'open-dialog', dialog: 'module:satellite' } },
       { id: 'satellite-quick', label: 'Satellite', placement: 'quick', order: 20, sceneKinds: ['map'], command: { kind: 'open-dialog', dialog: 'module:satellite' } },
       { id: 'satellite-context', label: 'Satellite', placement: 'context', order: 110, sceneKinds: ['map'], command: { kind: 'open-dialog', dialog: 'module:satellite' } },
     ],
-    defaultSceneState: { channel: 'enhanced', overlayEnabled: false, animationEnabled: false },
+    defaultSceneState: { ...DEFAULT_SATELLITE_SCENE_STATE },
+    migrateSceneState: (value, scene) => scene.kind === 'map'
+      ? { ...normalizeSatelliteSceneState(value, scene) }
+      : { ...value },
   },
   {
     manifest: {
