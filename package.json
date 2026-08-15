@@ -13,7 +13,7 @@
     "tauri:build": "tauri build",
     "check": "tsc -b --pretty false",
     "validate:reference": "node tools/validate-reference.mjs",
-    "validate": "npm run validate:reference && npm run validate:tauri-versions && npm run audit && npm run validate:foundation && npm run validate:stabilization && npm run validate:functional-repair && npm run validate:map-controllers && npm run validate:module-architecture && npm run validate:scene-objects && npm run validate:render-pipeline && npm run test:state && npm run test:modules && npm run test:scene-objects && npm run check",
+    "validate": "npm run validate:reference && npm run validate:tauri-versions && npm run audit && npm run validate:foundation && npm run validate:stabilization && npm run validate:functional-repair && npm run validate:map-controllers && npm run validate:module-architecture && npm run validate:scene-objects && npm run validate:render-pipeline && npm run test:state && npm run test:modules && npm run test:scene-objects && npm run validate:radar-provider && npm run test:radar-provider && npm run check",
     "validate:foundation": "node tools/validate-foundation.mjs",
     "audit": "node tools/audit-codebase.mjs",
     "validate:stabilization": "node tools/validate-stabilization.mjs",
@@ -25,7 +25,9 @@
     "validate:tauri-versions": "node tools/validate-tauri-versions.mjs",
     "validate:scene-objects": "node tools/validate-scene-objects.mjs",
     "test:scene-objects": "node tools/test-scene-object-state.cjs",
-    "validate:render-pipeline": "node tools/validate-render-pipeline.mjs"
+    "validate:render-pipeline": "node tools/validate-render-pipeline.mjs",
+    "validate:radar-provider": "node tools/validate-radar-provider-foundation.mjs",
+    "test:radar-provider": "node tools/test-radar-provider.cjs"
   },
   "dependencies": {
     "@tauri-apps/api": "2.11.1",

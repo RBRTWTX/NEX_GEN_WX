@@ -122,3 +122,73 @@ export async function fetchSurfaceObservations(
     force,
   }, 'NOAA surface observations');
 }
+const RADAR_SITE_PRODUCTS = new Set(['N0B', 'N0U', 'N0S', 'NET']);
+
+function validateRadarSite(site: string): string {
+  const value = site.trim().toUpperCase().replace(/^K(?=[A-Z0-9]{3}$)/, '');
+  if (!/^[A-Z0-9]{3,4}$/.test(value)) {
+    throw new Error('A valid three- or four-character NEXRAD site identifier is required.');
+  }
+  return value;
+}
+
+function validateRadarProductCode(productCode: string): string {
+  const value = productCode.trim().toUpperCase();
+  if (!RADAR_SITE_PRODUCTS.has(value)) {
+    throw new Error(`Unsupported single-site radar product: ${value || 'empty'}.`);
+  }
+  return value;
+}
+
+function validateUtcMinute(value: string, label: string): string {
+  const candidate = value.trim();
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}Z$/.test(candidate)) {
+    throw new Error(`${label} must use UTC format YYYY-MM-DDTHH:MMZ.`);
+  }
+  return candidate;
+}
+
+export async function fetchRadarMrmsCatalog(force = false): Promise<unknown> {
+  return invoke<unknown>('fetch_radar_mrms_catalog', { force });
+}
+
+export async function fetchRadarSites(
+  latitude: number,
+  longitude: number,
+  timestamp: string,
+  force = false,
+): Promise<unknown> {
+  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
+    throw new Error('Radar latitude is outside -90 to 90.');
+  }
+  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+    throw new Error('Radar longitude is outside -180 to 180.');
+  }
+  return invoke<unknown>('fetch_radar_sites', {
+    latitude,
+    longitude,
+    timestamp: validateUtcMinute(timestamp, 'Radar lookup time'),
+    force,
+  });
+}
+
+export async function fetchRadarSiteCatalog(
+  site: string,
+  productCode: string,
+  start: string,
+  end: string,
+  force = false,
+): Promise<unknown> {
+  const normalizedStart = validateUtcMinute(start, 'Radar catalog start time');
+  const normalizedEnd = validateUtcMinute(end, 'Radar catalog end time');
+  if (normalizedStart > normalizedEnd) {
+    throw new Error('Radar catalog start time must not be after the end time.');
+  }
+  return invoke<unknown>('fetch_radar_site_catalog', {
+    site: validateRadarSite(site),
+    productCode: validateRadarProductCode(productCode),
+    start: normalizedStart,
+    end: normalizedEnd,
+    force,
+  });
+}

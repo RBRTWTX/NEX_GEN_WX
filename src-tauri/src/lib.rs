@@ -94,6 +94,32 @@ async fn fetch_surface_observations(
     weather_engine::providers::surface_observations(bbox, zoom, density, mode, field, force).await
 }
 
+#[tauri::command]
+async fn fetch_radar_mrms_catalog(force: bool) -> Result<Value, error::StudioError> {
+    weather_engine::providers::mrms_catalog(force).await
+}
+
+#[tauri::command]
+async fn fetch_radar_sites(
+    latitude: f64,
+    longitude: f64,
+    timestamp: String,
+    force: bool,
+) -> Result<Value, error::StudioError> {
+    weather_engine::providers::radar_sites(latitude, longitude, timestamp, force).await
+}
+
+#[tauri::command]
+async fn fetch_radar_site_catalog(
+    site: String,
+    product_code: String,
+    start: String,
+    end: String,
+    force: bool,
+) -> Result<Value, error::StudioError> {
+    weather_engine::providers::radar_site_catalog(site, product_code, start, end, force).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -111,7 +137,10 @@ pub fn run() {
             fetch_county_boundaries,
             fetch_places,
             fetch_roads,
-            fetch_surface_observations
+            fetch_surface_observations,
+            fetch_radar_mrms_catalog,
+            fetch_radar_sites,
+            fetch_radar_site_catalog
         ])
         .run(tauri::generate_context!())
         .expect("error while running NEX GEN WX");

@@ -90,7 +90,7 @@ assert.deepEqual(
 const providers = moduleRegistry.getProviders();
 assert.deepEqual(
   providers.map((provider) => provider.id),
-  ['basemap', 'states', 'counties', 'cities', 'roads', 'alerts', 'observations'],
+  ['basemap', 'states', 'counties', 'cities', 'roads', 'alerts', 'observations', 'radar-mrms', 'radar-sites'],
   'provider health definitions should be registry-owned',
 );
 const mapScene = {
@@ -106,7 +106,13 @@ const mapScene = {
   samples: [], header: { title: 'RADAR', subtitle: '', validLabel: 'CURRENT', visible: true, opacity: 1, scale: 1, legend: { kind: 'reflectivity', visible: true, lowLabel: 'LIGHT', highLabel: 'HEAVY', customLabel: '' } },
 };
 const normalized = moduleRegistry.normalizeSceneModuleState(mapScene);
-assert.deepEqual(normalized.moduleState.radar, { selectedSite: 'auto', animationEnabled: false, blendEnabled: false });
+assert.equal(normalized.moduleState.radar.mode, 'national');
+assert.equal(normalized.moduleState.radar.selectedSite, 'auto');
+assert.equal(normalized.moduleState.radar.animationEnabled, false);
+assert.equal(normalized.moduleState.radar.blendEnabled, false);
+assert.equal(normalized.moduleState.radar.frameCount, 12);
+assert.equal(normalized.moduleState.radar.playbackRateMs, 900);
+assert.equal(normalized.moduleState.radar.autoRefreshEnabled, true);
 assert.ok(moduleRegistry.getDialog('module:radar', normalized));
 assert.ok(moduleRegistry.getTools(normalized, 'quick').some((tool) => tool.id === 'radar-quick'));
 
