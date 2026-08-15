@@ -1,5 +1,11 @@
 import { useWeatherData } from '../../../data/weather-data-context';
 
+function formatUpdated(value: string): string {
+  if (!value) return 'not requested';
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? date.toLocaleTimeString() : value;
+}
+
 export function DataSourcesDialogPanel() {
   const { providers, providerIssues, refreshAlerts, refreshObservations } = useWeatherData();
   return (
@@ -15,7 +21,11 @@ export function DataSourcesDialogPanel() {
         {Object.values(providers).map((provider) => (
           <article key={provider.id} className={`source-status-row state-${provider.state}`}>
             <i aria-hidden="true" />
-            <div><strong>{provider.label}</strong><span>{provider.message || (provider.state === 'idle' ? 'Waiting for this layer to be requested' : 'Operating normally')}</span></div>
+            <div>
+              <strong>{provider.label}</strong>
+              <span>{provider.message || (provider.state === 'idle' ? 'Waiting for this layer to be requested' : 'Operating normally')}</span>
+              <span className="source-status-meta">Updated: {formatUpdated(provider.updatedAt)}{provider.cacheStatus ? ` · ${provider.cacheStatus}` : ''}</span>
+            </div>
             <small>{provider.state.toUpperCase()}</small>
           </article>
         ))}
