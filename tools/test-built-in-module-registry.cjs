@@ -84,7 +84,7 @@ for (const id of [
 assert.equal(new Set(ids).size, ids.length, 'built-in module IDs must be unique');
 assert.deepEqual(
   moduleRegistry.createMapControllers().map((controller) => controller.id),
-  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
+  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'radar', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
   'built-in map controllers should be registry-ordered and complete',
 );
 const providers = moduleRegistry.getProviders();
@@ -116,4 +116,4 @@ assert.equal(normalized.moduleState.radar.autoRefreshEnabled, true);
 assert.ok(moduleRegistry.getDialog('module:radar', normalized));
 assert.ok(moduleRegistry.getTools(normalized, 'quick').some((tool) => tool.id === 'radar-quick'));
 
-console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 11 map controllers verified.`);
+console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 12 map controllers verified.`);

@@ -70,6 +70,7 @@ export function OutputApp() {
         scene={scene}
         branding={branding}
         interactive={false}
+        renderPurpose="output"
         transitionsEnabled
       />
     </main>

@@ -4,6 +4,7 @@ import type {
   CustomSceneObject,
   HeaderState,
   MapSample,
+  ProductSelection,
   SceneElementStyle,
   SceneElementTransform,
   StudioBranding,
@@ -19,11 +20,13 @@ import { BroadcastHeader } from './BroadcastHeader';
 import { GraphicStage } from './GraphicStage';
 import { ObservationCallout } from './ObservationCallout';
 import { ObservationLegend } from './ObservationLegend';
+import { RadarQuickToolbar } from '../radar/RadarQuickToolbar';
 
 export interface SceneStageProps {
   scene: StudioScene;
   branding?: StudioBranding;
   interactive: boolean;
+  renderPurpose?: 'operator' | 'output' | 'export';
   contextMenuOpen?: boolean;
   selectedElementId?: string | null;
   onToggleContextMenu?: () => void;
@@ -42,6 +45,8 @@ export interface SceneStageProps {
   onCameraChange?: (camera: CameraState) => void;
   onAddSample?: (sample: Omit<MapSample, 'id' | 'createdAt'>) => void;
   onRemoveSample?: (sampleId: string) => void;
+  onModuleStateChange?: (moduleId: string, patch: Record<string, unknown>) => void;
+  onProductChange?: (patch: Partial<ProductSelection>) => void;
   onRenderReady?: () => void;
 }
 
@@ -52,6 +57,7 @@ export const SceneStage = forwardRef<HTMLDivElement, SceneStageProps>(function S
     scene,
     branding,
     interactive,
+    renderPurpose = interactive ? 'operator' : 'output',
     contextMenuOpen,
     selectedElementId = null,
     onToggleContextMenu,
@@ -70,6 +76,8 @@ export const SceneStage = forwardRef<HTMLDivElement, SceneStageProps>(function S
     onCameraChange,
     onAddSample,
     onRemoveSample,
+    onModuleStateChange,
+    onProductChange,
     onRenderReady,
   },
   forwardedRef,
@@ -149,11 +157,20 @@ export const SceneStage = forwardRef<HTMLDivElement, SceneStageProps>(function S
             <MapStage
               scene={scene}
               interactive={interactive}
+              renderPurpose={renderPurpose}
               onCameraChange={onCameraChange}
               onAddSample={onAddSample}
               onRemoveSample={onRemoveSample}
               onRenderReady={markRenderReady}
             />
+            {interactive && scene.product.category === 'radar' && onModuleStateChange && onProductChange && (
+              <RadarQuickToolbar
+                scene={scene}
+                onModuleStateChange={(patch) => onModuleStateChange('radar', patch)}
+                onProductChange={onProductChange}
+                onHeaderLegendChange={(legend) => onHeaderChange?.('legend', legend)}
+              />
+            )}
             <BroadcastHeader
               scene={scene}
               studioName={branding?.shortName ?? 'NEX GEN WX'}

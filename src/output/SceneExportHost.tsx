@@ -78,7 +78,7 @@ export const SceneExportHost = forwardRef<SceneExportHostHandle>(function SceneE
   return (
     <div className="scene-export-host" data-operator-only="true" aria-hidden="true">
       <div className="scene-export-surface">
-        <SceneStage ref={stageRef} scene={job.scene} branding={job.branding} interactive={false} />
+        <SceneStage ref={stageRef} scene={job.scene} branding={job.branding} interactive={false} renderPurpose="export" />
       </div>
     </div>
   );

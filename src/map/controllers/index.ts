@@ -1,2 +1,2 @@
 export { MapControllerHost } from './MapControllerHost';
-export type { MapControllerCallbacks } from './controller-types';
+export type { MapControllerCallbacks, MapRenderPurpose } from './controller-types';

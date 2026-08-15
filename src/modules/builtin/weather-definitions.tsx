@@ -1,4 +1,5 @@
 import type { StudioModuleDefinition } from '../../types/module';
+import { RadarController } from '../../radar/RadarController';
 import { DEFAULT_RADAR_SCENE_STATE, normalizeRadarSceneState } from '../../radar/radar-types';
 import { ModelLabDialogPanel } from './panels/ModelLabDialogPanel';
 import { RadarDialogPanel } from './panels/RadarDialogPanel';
@@ -7,9 +8,9 @@ import { SatelliteDialogPanel } from './panels/SatelliteDialogPanel';
 export const weatherModuleDefinitions: StudioModuleDefinition[] = [
   {
     manifest: {
-      id: 'radar', name: 'Radar', domain: 'weather', maturity: 'migration-next',
-      description: 'MRMS, NEXRAD Level II/III, multi-site blending, sweep controls, products and animation.',
-      sceneKinds: ['map'], tools: ['Product', 'Site', 'Blend', 'Sweep', 'Smoothing', 'Timeline'],
+      id: 'radar', name: 'Radar', domain: 'weather', maturity: 'operational',
+      description: 'Nationwide NOAA MRMS reflectivity and IEM NEXRAD Level III site products with latest-first rendering, animation, site selection and export-safe state.',
+      sceneKinds: ['map'], tools: ['Product', 'Site', 'Composite', 'Playback', 'Smoothing', 'Timeline'],
       legacyFiles: ['public/map-engine.js', 'workers/radar_worker.py', 'workers/level3_worker.py'], dependencies: ['map', 'data-engine'],
     },
     isActiveForScene: (scene) => scene.kind === 'map' && scene.product.category === 'radar',
@@ -17,11 +18,12 @@ export const weatherModuleDefinitions: StudioModuleDefinition[] = [
       { id: 'radar-mrms', label: 'NOAA MRMS radar' },
       { id: 'radar-sites', label: 'IEM NEXRAD radar' },
     ],
-    dialogs: [{ id: 'module:radar', title: 'Radar Controls', className: 'tool-window--radar', order: 10, sceneKinds: ['map'], component: RadarDialogPanel }],
+    mapControllers: [{ id: 'radar', phase: 'data', order: 25, create: () => new RadarController() }],
+    dialogs: [{ id: 'module:radar', title: 'Radar Controls', className: 'tool-window--radar', order: 10, sceneKinds: ['map'], requiresActiveModule: true, component: RadarDialogPanel }],
     tools: [
-      { id: 'radar-dock', label: 'Radar', placement: 'dock-tool', order: 20, sceneKinds: ['map'], command: { kind: 'open-dialog', dialog: 'module:radar' } },
-      { id: 'radar-quick', label: 'Radar', placement: 'quick', order: 10, sceneKinds: ['map'], command: { kind: 'open-dialog', dialog: 'module:radar' } },
-      { id: 'radar-context', label: 'Sweep', placement: 'context', order: 120, sceneKinds: ['map'], command: { kind: 'open-dialog', dialog: 'module:radar' } },
+      { id: 'radar-dock', label: 'Radar', placement: 'dock-tool', order: 20, sceneKinds: ['map'], requiresActiveModule: true, command: { kind: 'open-dialog', dialog: 'module:radar' } },
+      { id: 'radar-quick', label: 'Radar', placement: 'quick', order: 10, sceneKinds: ['map'], requiresActiveModule: true, command: { kind: 'open-dialog', dialog: 'module:radar' } },
+      { id: 'radar-context', label: 'Radar', placement: 'context', order: 120, sceneKinds: ['map'], requiresActiveModule: true, command: { kind: 'open-dialog', dialog: 'module:radar' } },
     ],
     defaultSceneState: { ...DEFAULT_RADAR_SCENE_STATE },
     migrateSceneState: (value, scene) => scene.kind === 'map'

@@ -17,6 +17,7 @@ import type {
   MapController,
   MapControllerCallbacks,
   MapControllerContext,
+  MapRenderPurpose,
 } from './controller-types';
 import { cleanProviderError } from './controller-utils';
 import { MapLifecycleController } from './MapLifecycleController';
@@ -24,6 +25,7 @@ import { MapLifecycleController } from './MapLifecycleController';
 interface MapControllerHostOptions {
   scene: MapScene;
   interactive: boolean;
+  renderPurpose: MapRenderPurpose;
   callbacks: MapControllerCallbacks;
   alerts: GeoJsonFeatureCollection;
   selectedAlertId: string | null;
@@ -47,12 +49,15 @@ export class MapControllerHost implements MapControllerContext {
   private readonly controllers: MapController[];
   private readonly onRenderReady?: () => void;
   private readyGeneration = 0;
+  private readonly pendingRenderControllers = new Set<string>();
 
   readonly interactive: boolean;
+  readonly renderPurpose: MapRenderPurpose;
 
   constructor(options: MapControllerHostOptions) {
     this.currentScene = options.scene;
     this.interactive = options.interactive;
+    this.renderPurpose = options.renderPurpose;
     this.currentCallbacks = options.callbacks;
     this.currentAlerts = options.alerts;
     this.currentSelectedAlertId = options.selectedAlertId;
@@ -184,11 +189,22 @@ export class MapControllerHost implements MapControllerContext {
     for (const controller of this.controllers) this.invoke(controller, 'onLayerOrderChanged');
   }
 
+  setRenderPending(id: string, pending: boolean): void {
+    if (pending) {
+      this.pendingRenderControllers.add(id);
+      this.readyGeneration = 0;
+      return;
+    }
+    this.pendingRenderControllers.delete(id);
+    this.lifecycle.map?.triggerRepaint();
+  }
+
   destroy(): void {
     if (this.disposed) return;
     this.disposed = true;
     if (this.resizeFrame != null) cancelAnimationFrame(this.resizeFrame);
     this.resizeFrame = null;
+    this.pendingRenderControllers.clear();
     for (const controller of [...this.controllers].reverse()) controller.dispose?.();
     this.lifecycle.destroy();
   }
@@ -217,6 +233,7 @@ export class MapControllerHost implements MapControllerContext {
 
   private readonly handleIdle = (): void => {
     if (!this.lifecycle.map || this.disposed || !this.styleReady) return;
+    if (this.pendingRenderControllers.size > 0) return;
     if (this.readyGeneration === this.generation) return;
     this.readyGeneration = this.generation;
     this.onRenderReady?.();

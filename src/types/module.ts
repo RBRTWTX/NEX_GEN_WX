@@ -13,7 +13,7 @@ export type ModuleDomain =
   | 'presentation'
   | 'output';
 
-export type ModuleMaturity = 'foundation' | 'migration-next' | 'planned';
+export type ModuleMaturity = 'foundation' | 'operational' | 'migration-next' | 'planned';
 export type ModuleSceneKind = 'map' | 'graphic';
 
 export interface StudioModuleManifest {

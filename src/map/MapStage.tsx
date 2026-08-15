@@ -6,11 +6,12 @@ import type {
   MapSample,
   MapScene,
 } from '../types/domain';
-import { MapControllerHost, type MapControllerCallbacks } from './controllers';
+import { MapControllerHost, type MapControllerCallbacks, type MapRenderPurpose } from './controllers';
 
 interface MapStageProps {
   scene: MapScene;
   interactive: boolean;
+  renderPurpose: MapRenderPurpose;
   onCameraChange?: (camera: CameraState) => void;
   onAddSample?: (sample: Omit<MapSample, 'id' | 'createdAt'>) => void;
   onRemoveSample?: (sampleId: string) => void;
@@ -20,6 +21,7 @@ interface MapStageProps {
 export function MapStage({
   scene,
   interactive,
+  renderPurpose,
   onCameraChange,
   onAddSample,
   onRemoveSample,
@@ -57,6 +59,7 @@ export function MapStage({
     const host = new MapControllerHost({
       scene,
       interactive,
+      renderPurpose,
       callbacks,
       alerts: alerts.data,
       selectedAlertId,
@@ -74,7 +77,7 @@ export function MapStage({
     };
     // The remaining effects update the mounted host without rebuilding MapLibre.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interactive]);
+  }, [interactive, renderPurpose]);
 
   useEffect(() => {
     hostRef.current?.updateCallbacks(callbacks);
@@ -109,6 +112,7 @@ export function MapStage({
       data-product={scene.product.id}
       data-basemap={scene.baseMap}
       data-render-ready="false"
+      data-render-purpose={renderPurpose}
       aria-label="Interactive weather map"
     />
   );

@@ -392,6 +392,12 @@ export function StudioApp() {
           onRemoveSample={(sampleId) => dispatch({
             type: 'scene/remove-map-sample', sceneId: selectedScene.id, sampleId,
           })}
+          onModuleStateChange={(moduleId, patch) => dispatch({
+            type: 'scene/merge-module-state', sceneId: selectedScene.id, moduleId, patch,
+          })}
+          onProductChange={(product) => dispatch({
+            type: 'scene/set-product', sceneId: selectedScene.id, product,
+          })}
         />
 
         {mapScene && (

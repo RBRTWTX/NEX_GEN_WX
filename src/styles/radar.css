@@ -1,0 +1,127 @@
+/* NEX GEN WX 0.7.0 operational Radar controls. Operator-only elements are excluded from output/export. */
+.radar-toolbar {
+  position: absolute;
+  z-index: 46;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(137, 167, 198, .62);
+  border-radius: 6px;
+  background: rgba(7, 14, 23, .94);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .42);
+  color: #eef5fd;
+  backdrop-filter: blur(8px);
+}
+.radar-toolbar--compact {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  max-width: calc(100% - 150px);
+  padding: 5px 7px;
+  white-space: nowrap;
+}
+.radar-toolbar--compact strong {
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 10px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.radar-toolbar button,
+.radar-controls button {
+  min-height: 25px;
+  border: 1px solid #40546b;
+  border-radius: 4px;
+  background: #172536;
+  color: #eaf3fc;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.radar-toolbar button:hover:not(:disabled),
+.radar-controls button:hover:not(:disabled),
+.radar-toolbar button.active,
+.radar-controls button.active {
+  border-color: #58a9ed;
+  background: #1f5d91;
+}
+.radar-toolbar button:disabled,
+.radar-controls button:disabled { opacity: .42; cursor: not-allowed; }
+.radar-frame-label {
+  min-width: 145px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #aebfd1;
+  font-size: 9px;
+}
+.radar-health-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #49d483;
+  box-shadow: 0 0 8px rgba(73, 212, 131, .72);
+}
+.radar-health-dot.loading { background: #f4c04f; box-shadow: 0 0 8px rgba(244, 192, 79, .72); }
+.radar-health-dot.offline { background: #ef5b69; box-shadow: 0 0 8px rgba(239, 91, 105, .72); }
+.radar-toolbar--expanded {
+  width: min(760px, calc(100% - 120px));
+  max-height: min(480px, calc(100% - 120px));
+  overflow: auto;
+  padding: 11px;
+}
+.radar-controls { display: grid; gap: 11px; min-width: 0; }
+.radar-controls__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(117, 145, 174, .28);
+}
+.radar-controls__header > div { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 7px; min-width: 0; }
+.radar-controls__header strong { font-size: 12px; letter-spacing: .04em; }
+.radar-controls__header small { grid-column: 2; color: #8fa5bc; font-size: 9px; }
+.radar-control-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 11px; }
+.radar-control-grid label { display: grid; grid-template-columns: 1fr auto; gap: 5px 8px; align-items: center; color: #a8b8ca; font-size: 10px; }
+.radar-control-grid label > select,
+.radar-control-grid label > input:not([type="range"]),
+.radar-control-grid label > .radar-site-entry { grid-column: 1 / -1; }
+.radar-control-grid select,
+.radar-control-grid input:not([type="range"]) {
+  width: 100%;
+  min-width: 0;
+  min-height: 28px;
+  border: 1px solid #3b4d62;
+  border-radius: 4px;
+  background: #0e1926;
+  color: #eef5fd;
+}
+.radar-control-grid input[type="range"] { min-width: 0; }
+.radar-control-grid output { color: #e5eef8; font-size: 9px; }
+.radar-site-entry { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.radar-control-checks { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.radar-control-checks .setting-check { color: #b6c5d4; }
+.radar-playback-row { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+.radar-playback-row button { padding: 4px 10px; }
+.radar-playback-row span { margin-left: auto; color: #91a5ba; font-size: 9px; }
+.radar-status {
+  display: grid;
+  gap: 3px;
+  padding: 8px 10px;
+  border-left: 3px solid #4aa2df;
+  background: #0d1825;
+}
+.radar-status strong { font-size: 10px; }
+.radar-status small { color: #8fa5ba; font-size: 9px; line-height: 1.35; }
+.radar-status--error { border-left-color: #ef5b69; }
+.tool-panel-grid--radar { grid-template-columns: minmax(0, 1fr); }
+.tool-panel-grid--radar .radar-dialog-section { padding: 13px; }
+@media (max-width: 900px) {
+  .radar-toolbar--compact { max-width: calc(100% - 30px); }
+  .radar-toolbar--expanded { width: calc(100% - 30px); }
+  .radar-control-grid { grid-template-columns: 1fr; }
+}

@@ -15,6 +15,7 @@ const controllerFiles = [
   'src/map/controllers/BoundaryController.ts',
   'src/map/controllers/CitiesController.ts',
   'src/map/controllers/RoadsController.ts',
+  'src/radar/RadarController.ts',
   'src/map/controllers/AlertsController.ts',
   'src/map/controllers/ObservationsController.ts',
   'src/map/controllers/CameraController.ts',
@@ -85,9 +86,10 @@ for (const forbidden of [
 const registryDefinitions = [
   await read('src/modules/builtin/core-definitions.tsx'),
   await read('src/modules/builtin/map-definitions.tsx'),
+  await read('src/modules/builtin/weather-definitions.tsx'),
 ].join('\n');
 for (const controller of [
-  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'alerts', 'observations',
+  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'radar', 'alerts', 'observations',
   'camera', 'interaction', 'layer-order', 'resize',
 ]) {
   if (!registryDefinitions.includes(`id: '${controller}'`)) {
@@ -101,11 +103,13 @@ if (!registryDefinitions.includes("requireController<ObservationsController>('ob
 const boundary = await read('src/map/controllers/BoundaryController.ts');
 const cities = await read('src/map/controllers/CitiesController.ts');
 const roads = await read('src/map/controllers/RoadsController.ts');
+const radar = await read('src/radar/RadarController.ts');
 const observations = await read('src/map/controllers/ObservationsController.ts');
 for (const [name, source] of [
   ['boundaries', boundary],
   ['cities', cities],
   ['roads', roads],
+  ['radar', radar],
   ['observations', observations],
 ]) {
   if (!source.includes('requestEpoch') && !source.includes('stateEpoch')) {

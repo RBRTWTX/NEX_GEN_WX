@@ -15,6 +15,8 @@ import type {
   ProviderState,
 } from '../../data/weather-data-context';
 
+export type MapRenderPurpose = 'operator' | 'output' | 'export';
+
 export interface MapControllerCallbacks {
   onCameraChange?: (camera: CameraState) => void;
   onAddSample?: (sample: Omit<MapSample, 'id' | 'createdAt'>) => void;
@@ -34,6 +36,7 @@ export interface MapControllerContext {
   readonly map: MapLibreMap;
   readonly scene: MapScene;
   readonly interactive: boolean;
+  readonly renderPurpose: MapRenderPurpose;
   readonly styleGeneration: number;
   readonly alerts: GeoJsonFeatureCollection;
   readonly selectedAlertId: string | null;
@@ -44,6 +47,7 @@ export interface MapControllerContext {
   reloadStyle(style: BasemapStyle): void;
   scheduleResize(): void;
   notifyLayerOrderChanged(): void;
+  setRenderPending(id: string, pending: boolean): void;
 }
 
 export interface MapController {

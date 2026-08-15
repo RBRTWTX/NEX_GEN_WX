@@ -7,6 +7,7 @@ import {
 } from './map-layer-utils';
 import { fieldColor, formatObservationValue, TRANSPARENT_FIELD_IMAGE } from './observation-field';
 import { addRoadContextLayers } from './road-runtime';
+import { RADAR_LAYER_IDS } from '../radar/radar-layer-ids';
 
 export interface MutableImageSource {
   updateImage(options: {
@@ -167,6 +168,7 @@ export function enforceStudioLayerOrder(map: MapLibreMap): void {
     LAYER_IDS.roadLocal,
     LAYER_IDS.roadLabels,
     LAYER_IDS.observationField,
+    ...RADAR_LAYER_IDS,
     LAYER_IDS.alertFill,
     LAYER_IDS.alertOutline,
     LAYER_IDS.stateLines,
@@ -182,9 +184,10 @@ export function enforceStudioLayerOrder(map: MapLibreMap): void {
     LAYER_IDS.sampleLabels,
   ];
   const before = firstPlaceLabelLayer(map);
-  if (!before) return;
   for (const id of ordered) {
-    if (map.getLayer(id)) map.moveLayer(id, before);
+    if (!map.getLayer(id)) continue;
+    if (before && map.getLayer(before)) map.moveLayer(id, before);
+    else map.moveLayer(id);
   }
 }
 

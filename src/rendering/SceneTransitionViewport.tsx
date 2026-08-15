@@ -116,6 +116,7 @@ export const SceneTransitionViewport = forwardRef<HTMLDivElement, SceneTransitio
               scene={layers.previous}
               branding={stageProps.branding}
               interactive={false}
+              renderPurpose={stageProps.renderPurpose ?? (stageProps.interactive ? 'operator' : 'output')}
             />
           </div>
         )}
