@@ -4,6 +4,8 @@ export type TransitionKind = 'cut' | 'dissolve' | 'ease' | 'fly';
 export type BaseMapKind = 'gray' | 'dark' | 'satellite';
 export type ProjectionKind = 'mercator' | 'globe';
 export type ObservationDisplayMode = 'broadcast' | 'standard' | 'detailed';
+export type BroadcastContextMode = 'off' | 'auto' | 'custom';
+export type BroadcastContextDetail = 'low' | 'broadcast' | 'high';
 export type SceneCategory =
   | 'Home'
   | 'National'
@@ -87,6 +89,9 @@ export interface MapDisplaySettings {
   roadDensity: number;
   boundaryWeight: number;
   dimBasemapUnderWeather: boolean;
+  contextMode: BroadcastContextMode;
+  contextOpacity: number;
+  contextDetail: BroadcastContextDetail;
 }
 
 export interface AlertDisplaySettings {

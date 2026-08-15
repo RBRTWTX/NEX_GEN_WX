@@ -31,7 +31,7 @@ export type StudioAction =
   | { type: 'scene/set-projection'; sceneId: string; projection: ProjectionKind }
   | { type: 'scene/set-product'; sceneId: string; product: Partial<ProductSelection> }
   | { type: 'scene/set-overlay'; sceneId: string; overlay: keyof LayerVisibility; value: boolean }
-  | { type: 'scene/set-map-display'; sceneId: string; key: keyof MapDisplaySettings; value: number | boolean }
+  | { type: 'scene/set-map-display'; sceneId: string; key: keyof MapDisplaySettings; value: MapDisplaySettings[keyof MapDisplaySettings] }
   | { type: 'scene/set-alert-display'; sceneId: string; key: keyof AlertDisplaySettings; value: AlertDisplaySettings[keyof AlertDisplaySettings] }
   | { type: 'scene/set-observation-display'; sceneId: string; key: keyof ObservationDisplaySettings; value: ObservationDisplaySettings[keyof ObservationDisplaySettings] }
   | { type: 'scene/set-header'; sceneId: string; key: keyof HeaderState; value: HeaderState[keyof HeaderState] }

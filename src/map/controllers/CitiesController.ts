@@ -34,7 +34,7 @@ export class CitiesController implements MapController {
     if (!context.isStyleReady()) return;
     const zoom = context.map.getZoom();
     const key = context.scene.overlays.cities && zoom >= 2.5
-      ? dynamicDataKey(currentBBox(context.map), zoom, String(context.scene.display.cityDensity))
+      ? dynamicDataKey(currentBBox(context.map), zoom, 'population-ranked-city-inventory')
       : null;
     setGeoJson(
       context.map,
@@ -58,7 +58,7 @@ export class CitiesController implements MapController {
     }
 
     const bbox = currentBBox(context.map);
-    const key = dynamicDataKey(bbox, zoom, String(context.scene.display.cityDensity));
+    const key = dynamicDataKey(bbox, zoom, 'population-ranked-city-inventory');
     if (this.data?.key === key && !force) {
       setGeoJson(context.map, SOURCE_IDS.places, this.data.value);
       return;
@@ -68,7 +68,7 @@ export class CitiesController implements MapController {
     const styleGeneration = context.styleGeneration;
     context.callbacks.reportProviderStatus('cities', 'loading', 'Loading cities and places');
     try {
-      const data = await fetchPlaces(bbox, zoom, context.scene.display.cityDensity, force);
+      const data = await fetchPlaces(bbox, zoom, 100, force);
       if (!isRequestCurrent(context, styleGeneration, requestEpoch, this.requestEpoch)) return;
       this.data = { key, value: data };
       reportProviderFreshness(context, 'cities', data);

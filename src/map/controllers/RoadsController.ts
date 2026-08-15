@@ -1,6 +1,7 @@
 import { fetchRoads } from '../../engine/tauri-commands';
 import type { GeoJsonFeatureCollection } from '../../types/domain';
 import { EMPTY_FEATURE_COLLECTION } from '../map-layer-utils';
+import { effectiveBroadcastRoadDensity } from '../broadcast-context';
 import { currentBBox, setGeoJson, SOURCE_IDS } from '../map-runtime';
 import type { MapController, MapControllerContext } from './controller-types';
 import {
@@ -41,7 +42,8 @@ export class RoadsController implements MapController {
       return;
     }
     const zoom = context.map.getZoom();
-    const key = dynamicDataKey(currentBBox(context.map), zoom, String(context.scene.display.roadDensity));
+    const density = effectiveBroadcastRoadDensity(context.scene, zoom);
+    const key = dynamicDataKey(currentBBox(context.map), zoom, String(density));
     setGeoJson(
       context.map,
       SOURCE_IDS.roads,
@@ -75,7 +77,8 @@ export class RoadsController implements MapController {
     }
 
     const bbox = currentBBox(context.map);
-    const key = dynamicDataKey(bbox, zoom, String(context.scene.display.roadDensity));
+    const density = effectiveBroadcastRoadDensity(context.scene, zoom);
+    const key = dynamicDataKey(bbox, zoom, String(density));
     if (this.data?.key === key && !force) {
       setGeoJson(context.map, SOURCE_IDS.roads, this.data.value);
       reportProviderFreshness(context, 'roads', this.data.value);
@@ -86,7 +89,7 @@ export class RoadsController implements MapController {
     const styleGeneration = context.styleGeneration;
     context.callbacks.reportProviderStatus('roads', 'loading', 'Loading satellite road context…');
     try {
-      const data = await fetchRoads(bbox, zoom, context.scene.display.roadDensity, force);
+      const data = await fetchRoads(bbox, zoom, density, force);
       if (!isRequestCurrent(context, styleGeneration, requestEpoch, this.requestEpoch)) return;
       this.data = { key, value: data };
       reportProviderFreshness(context, 'roads', data);

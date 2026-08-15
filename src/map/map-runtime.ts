@@ -7,6 +7,11 @@ import {
 } from './map-layer-utils';
 import { fieldColor, formatObservationValue, TRANSPARENT_FIELD_IMAGE } from './observation-field';
 import { addRoadContextLayers } from './road-runtime';
+import {
+  addBasemapBroadcastContextLayers,
+  addSatelliteBroadcastContextLayers,
+  broadcastContextLayerIds,
+} from './broadcast-context';
 import { RADAR_LAYER_IDS } from '../radar/radar-layer-ids';
 
 export interface MutableImageSource {
@@ -38,6 +43,7 @@ export const LAYER_IDS = {
   roadLocal: 'ngws-road-local',
   roadLabels: 'ngws-road-labels',
   stateLines: 'ngws-state-lines',
+  countyCasing: 'ngws-county-casing',
   countyLines: 'ngws-county-lines',
   observationField: 'ngws-observation-field-raster',
   alertFill: 'ngws-alert-fill',
@@ -161,16 +167,19 @@ export function sampleCollection(samples: MapSample[]): GeoJsonFeatureCollection
 }
 
 export function enforceStudioLayerOrder(map: MapLibreMap): void {
+  const contextLayers = broadcastContextLayerIds(map);
   const ordered = [
     LAYER_IDS.dim,
     LAYER_IDS.roadMajor,
     LAYER_IDS.roadSecondary,
     LAYER_IDS.roadLocal,
     LAYER_IDS.roadLabels,
-    LAYER_IDS.stateLines,
-    LAYER_IDS.countyLines,
     LAYER_IDS.observationField,
     ...RADAR_LAYER_IDS,
+    ...contextLayers,
+    LAYER_IDS.countyCasing,
+    LAYER_IDS.countyLines,
+    LAYER_IDS.stateLines,
     LAYER_IDS.alertFill,
     LAYER_IDS.alertOutline,
     LAYER_IDS.observationDots,
@@ -193,6 +202,7 @@ export function enforceStudioLayerOrder(map: MapLibreMap): void {
 
 export function addStudioLayers(map: MapLibreMap, scene: MapScene): void {
   const before = firstPlaceLabelLayer(map);
+  addBasemapBroadcastContextLayers(map, before);
   const addGeoJsonSource = (id: string, data: GeoJsonFeatureCollection) => {
     if (!map.getSource(id)) map.addSource(id, { type: 'geojson', data: data as never });
   };
@@ -206,6 +216,7 @@ export function addStudioLayers(map: MapLibreMap, scene: MapScene): void {
   addGeoJsonSource(SOURCE_IDS.alerts, EMPTY_FEATURE_COLLECTION);
   addGeoJsonSource(SOURCE_IDS.selectedAlert, EMPTY_FEATURE_COLLECTION);
   addGeoJsonSource(SOURCE_IDS.alertLeader, EMPTY_FEATURE_COLLECTION);
+  addSatelliteBroadcastContextLayers(map, before, SOURCE_IDS.roads);
   addGeoJsonSource(SOURCE_IDS.dim, {
     type: 'FeatureCollection',
     features: [{
@@ -255,6 +266,19 @@ export function addStudioLayers(map: MapLibreMap, scene: MapScene): void {
       },
     }, before);
   }
+  if (!map.getLayer(LAYER_IDS.countyCasing)) {
+    map.addLayer({
+      id: LAYER_IDS.countyCasing,
+      type: 'line',
+      source: SOURCE_IDS.counties,
+      minzoom: 4,
+      paint: {
+        'line-color': '#07101c',
+        'line-opacity': 0,
+        'line-width': 1.8,
+      },
+    }, before);
+  }
   if (!map.getLayer(LAYER_IDS.countyLines)) {
     map.addLayer({
       id: LAYER_IDS.countyLines,
@@ -262,9 +286,9 @@ export function addStudioLayers(map: MapLibreMap, scene: MapScene): void {
       source: SOURCE_IDS.counties,
       minzoom: 4,
       paint: {
-        'line-color': '#c8d2de',
-        'line-opacity': ['interpolate', ['linear'], ['zoom'], 4, 0.14, 7, 0.28, 10, 0.42, 12, 0.50],
-        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.25, 8, 0.45, 12, 0.75],
+        'line-color': '#f2f6fb',
+        'line-opacity': 0,
+        'line-width': 0.75,
       },
     }, before);
   }

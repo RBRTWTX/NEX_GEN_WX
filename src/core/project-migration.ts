@@ -21,6 +21,9 @@ export const DEFAULT_MAP_DISPLAY: MapDisplaySettings = {
   roadDensity: 65,
   boundaryWeight: 100,
   dimBasemapUnderWeather: false,
+  contextMode: 'auto',
+  contextOpacity: 72,
+  contextDetail: 'broadcast',
 };
 
 export const DEFAULT_ALERT_DISPLAY: AlertDisplaySettings = {

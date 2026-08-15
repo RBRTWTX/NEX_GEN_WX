@@ -54,11 +54,14 @@ const orderEnd = runtimeMap.indexOf('];', orderStart);
 if (orderStart < 0 || orderEnd < 0) throw new Error('Permanent map ordering array was not found.');
 const ordering = runtimeMap.slice(orderStart, orderEnd);
 const roadIndex = ordering.indexOf('LAYER_IDS.roadLabels');
-const boundaryIndex = ordering.indexOf('LAYER_IDS.stateLines');
 const radarIndex = ordering.indexOf('...RADAR_LAYER_IDS');
+const contextIndex = ordering.indexOf('...contextLayers');
+const countyCasingIndex = ordering.indexOf('LAYER_IDS.countyCasing');
+const countyIndex = ordering.indexOf('LAYER_IDS.countyLines');
+const boundaryIndex = ordering.indexOf('LAYER_IDS.stateLines');
 const cityIndex = ordering.indexOf('LAYER_IDS.cityLabels');
-if (!(roadIndex >= 0 && boundaryIndex > roadIndex && radarIndex > boundaryIndex && cityIndex > radarIndex)) {
-  throw new Error('Required map order is not roads < boundaries < radar/weather < cities.');
+if (!(roadIndex >= 0 && radarIndex > roadIndex && contextIndex > radarIndex && countyCasingIndex > contextIndex && countyIndex > countyCasingIndex && boundaryIndex > countyIndex && cityIndex > boundaryIndex)) {
+  throw new Error('Required map order is not base roads < radar/weather < broadcast roads < county context < states < cities.');
 }
 
 const sceneStage = await read('src/components/SceneStage.tsx');

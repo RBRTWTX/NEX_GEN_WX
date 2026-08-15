@@ -1,5 +1,7 @@
 import { OBSERVATION_FIELD_META } from '../observation-field';
 import { applyBasemapVisibility } from '../map-layer-utils';
+import { applyBroadcastContext } from '../broadcast-context';
+import { applyLocationContext } from '../location-context';
 import {
   addStudioLayers,
   LAYER_IDS,
@@ -19,9 +21,24 @@ export class LayerStyleController implements MapController {
     this.apply(context);
   }
 
+  onMoveEnd(context: MapControllerContext): void {
+    if (!context.isStyleReady()) return;
+    applyBroadcastContext(context.map, context.scene);
+    applyLocationContext(context.map, context.scene);
+    context.notifyLayerOrderChanged();
+  }
+
+  onLayerOrderChanged(context: MapControllerContext): void {
+    if (!context.isStyleReady()) return;
+    applyBroadcastContext(context.map, context.scene);
+    applyLocationContext(context.map, context.scene);
+  }
+
   private apply(context: MapControllerContext): void {
     const { map, scene } = context;
     applyBasemapVisibility(map, scene);
+    applyBroadcastContext(map, scene);
+    applyLocationContext(map, scene);
 
     const showCustomRoads = scene.baseMap === 'satellite' && scene.overlays.roads;
     for (const roadLayer of [LAYER_IDS.roadMajor, LAYER_IDS.roadSecondary, LAYER_IDS.roadLocal, LAYER_IDS.roadLabels]) {
@@ -39,9 +56,7 @@ export class LayerStyleController implements MapController {
         10, 2.1 * scene.display.boundaryWeight / 100,
       ]);
     }
-    if (map.getLayer(LAYER_IDS.countyLines)) {
-      map.setLayoutProperty(LAYER_IDS.countyLines, 'visibility', scene.overlays.counties ? 'visible' : 'none');
-    }
+    // County visibility, opacity and line weight are owned by applyLocationContext().
     if (map.getLayer(LAYER_IDS.cityDots)) {
       map.setLayoutProperty(LAYER_IDS.cityDots, 'visibility', scene.overlays.cities ? 'visible' : 'none');
     }

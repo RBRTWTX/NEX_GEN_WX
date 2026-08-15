@@ -21,13 +21,13 @@ export function firstPlaceLabelLayer(map: MapLibreMap): string | undefined {
   return layers.find((layer) => layer.type === 'symbol')?.id;
 }
 
-function isRoadLayer(layer: LayerSpecification): boolean {
+export function isRoadLayer(layer: LayerSpecification): boolean {
   const sourceLayer = 'source-layer' in layer ? String(layer['source-layer'] ?? '').toLowerCase() : '';
   const id = layer.id.toLowerCase();
   return sourceLayer.includes('transportation') || /road|highway|motorway|trunk|street|bridge|tunnel/.test(id);
 }
 
-function roadTier(layerId: string): 'major' | 'secondary' | 'minor' | 'local' {
+export function roadTier(layerId: string): 'major' | 'secondary' | 'minor' | 'local' {
   const id = layerId.toLowerCase();
   if (/service|track|path|pedestrian|residential|local/.test(id)) return 'local';
   if (/motorway|interstate|trunk|primary|major/.test(id)) return 'major';

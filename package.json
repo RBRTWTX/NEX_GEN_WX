@@ -13,7 +13,7 @@
     "tauri:build": "tauri build",
     "check": "tsc -b --pretty false",
     "validate:reference": "node tools/validate-reference.mjs",
-    "validate": "npm run validate:reference && npm run validate:tauri-versions && npm run audit && npm run validate:foundation && npm run validate:stabilization && npm run validate:functional-repair && npm run validate:map-controllers && npm run validate:module-architecture && npm run validate:scene-objects && npm run validate:render-pipeline && npm run test:state && npm run test:modules && npm run test:scene-objects && npm run validate:radar-provider && npm run test:radar-provider && npm run validate:radar-renderer && npm run test:radar-runtime && npm run test:radar-controller && npm run check",
+    "validate": "npm run validate:reference && npm run validate:tauri-versions && npm run audit && npm run validate:foundation && npm run validate:stabilization && npm run validate:functional-repair && npm run validate:map-controllers && npm run validate:module-architecture && npm run validate:scene-objects && npm run validate:render-pipeline && npm run test:state && npm run test:modules && npm run test:scene-objects && npm run validate:radar-provider && npm run test:radar-provider && npm run validate:radar-renderer && npm run validate:broadcast-context && npm run test:radar-runtime && npm run test:radar-controller && npm run check",
     "validate:foundation": "node tools/validate-foundation.mjs",
     "audit": "node tools/audit-codebase.mjs",
     "validate:stabilization": "node tools/validate-stabilization.mjs",
@@ -30,7 +30,8 @@
     "test:radar-provider": "node tools/test-radar-provider.cjs",
     "validate:radar-renderer": "node tools/validate-radar-renderer.mjs",
     "test:radar-runtime": "node tools/test-radar-runtime-store.cjs",
-    "test:radar-controller": "node tools/test-radar-controller.cjs"
+    "test:radar-controller": "node tools/test-radar-controller.cjs",
+    "validate:broadcast-context": "node tools/validate-broadcast-context.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "2.11.1",

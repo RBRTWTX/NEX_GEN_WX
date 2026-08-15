@@ -42,13 +42,11 @@ export class BoundaryController implements MapController {
       SOURCE_IDS.states,
       context.scene.overlays.states && this.stateData ? this.stateData : EMPTY_FEATURE_COLLECTION,
     );
-    const countyKey = context.scene.overlays.counties && context.map.getZoom() >= 4
-      ? dynamicDataKey(currentBBox(context.map), context.map.getZoom())
-      : null;
+    const countiesVisible = context.scene.overlays.counties && context.map.getZoom() >= 4;
     setGeoJson(
       context.map,
       SOURCE_IDS.counties,
-      countyKey && this.countyData?.key === countyKey ? this.countyData.data : EMPTY_FEATURE_COLLECTION,
+      countiesVisible && this.countyData ? this.countyData.data : EMPTY_FEATURE_COLLECTION,
     );
   }
 
@@ -107,6 +105,13 @@ export class BoundaryController implements MapController {
     if (this.countyData?.key === key && !force) {
       setGeoJson(context.map, SOURCE_IDS.counties, this.countyData.data);
       return;
+    }
+
+    // Keep the most recently loaded county geometry on-screen while the
+    // background request catches up to a new padded extent. This prevents
+    // panel resizes and small map moves from making counties blink/disappear.
+    if (this.countyData && !force) {
+      setGeoJson(context.map, SOURCE_IDS.counties, this.countyData.data);
     }
 
     const requestEpoch = ++this.countyEpoch;

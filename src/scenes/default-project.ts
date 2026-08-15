@@ -110,6 +110,9 @@ function mapSceneFromLegacy(raw: Record<string, any>): MapScene {
       roadDensity: raw.overlays?.roads ? 65 : 35,
       boundaryWeight: 100,
       dimBasemapUnderWeather: productCategory !== 'satellite',
+      contextMode: 'auto',
+      contextOpacity: 72,
+      contextDetail: 'broadcast',
     },
     alerts: {
       minimumSeverity: 'unknown',
