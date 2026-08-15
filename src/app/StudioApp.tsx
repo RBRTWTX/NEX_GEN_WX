@@ -13,10 +13,7 @@ import { createExportController } from '../output/use-export-controller';
 import { loadLatestProject, saveProject } from '../engine/tauri-commands';
 import { migrateProject } from '../core/project-migration';
 import { useWeatherData } from '../data/weather-data-context';
-import type {
-  HeaderState,
-  StudioScene,
-} from '../types/domain';
+import type { HeaderState } from '../types/domain';
 import type { ModuleCommand } from '../types/module';
 import { useModuleRegistry } from '../modules/module-context';
 import { studioReducer } from '../state/studio-reducer';
@@ -24,6 +21,7 @@ import { createInitialStudioState, type StudioDialogId } from '../state/studio-s
 import { selectActiveScene } from '../state/selectors';
 import { StudioDialogs } from './StudioDialogs';
 import { useSceneThumbnails } from '../thumbnails/use-scene-thumbnails';
+import { scenePositionLabel } from './scene-position-label';
 
 const LOCAL_PROJECT_KEY = 'nex-gen-wx-project-v8';
 const LEGACY_PROJECT_KEYS = [
@@ -38,11 +36,6 @@ const LEGACY_PROJECT_KEYS = [
 
 const initialState = createInitialStudioState(structuredClone(defaultProject));
 
-function scenePositionLabel(scene: StudioScene): string {
-  if (scene.kind === 'graphic') return 'GRAPHIC SCENE';
-  const scale = scene.camera.zoom < 4.5 ? 'CONUS' : scene.camera.zoom < 7 ? 'REGIONAL' : 'LOCAL';
-  return `${scene.camera.center[1].toFixed(3)}°, ${scene.camera.center[0].toFixed(3)}° Z${scene.camera.zoom.toFixed(1)} · ${scale}`;
-}
 
 function readLocalProject(): unknown {
   for (const key of [LOCAL_PROJECT_KEY, ...LEGACY_PROJECT_KEYS]) {

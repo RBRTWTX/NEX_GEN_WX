@@ -4,6 +4,7 @@ mod weather_engine;
 
 use serde::Serialize;
 use serde_json::Value;
+use tauri::Manager;
 use weather_engine::providers::BBox;
 
 #[derive(Debug, Serialize)]
@@ -126,6 +127,16 @@ pub fn run() {
         .setup(|_| {
             storage::ensure_directories()?;
             Ok(())
+        })
+        .on_window_event(|window, event| {
+            // The output window is intentionally hidden/reused. Closing the main
+            // operator window must terminate the whole application so no hidden
+            // output process or Vite dev server remains alive on port 1420.
+            if window.label() == "main"
+                && matches!(event, tauri::WindowEvent::CloseRequested { .. })
+            {
+                window.app_handle().exit(0);
+            }
         })
         .invoke_handler(tauri::generate_handler![
             engine_status,

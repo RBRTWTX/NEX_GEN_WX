@@ -67,7 +67,7 @@ for (const forbidden of ['new BoundaryController', 'new CitiesController', 'new 
 }
 for (const token of [
   'new Map({', "map.on('style.load'", "map.on('error'",
-  'preserveDrawingBuffer: true', 'attributionControl: { compact: true }',
+  'preserveDrawingBuffer: true', 'attributionControl: options.interactive ? { compact: true } : false',
 ]) {
   if (!lifecycle.includes(token)) throw new Error(`Independent map lifecycle behavior missing: ${token}`);
 }
@@ -87,11 +87,33 @@ const runtime = await read('src/map/map-runtime.ts');
 for (const id of ['stateLines', 'countyLines', 'observationField', 'alertFill', 'cityLabels']) {
   if (!runtime.includes(`LAYER_IDS.${id}`)) throw new Error(`Map runtime layer missing: ${id}`);
 }
-const statePosition = runtime.indexOf('LAYER_IDS.stateLines');
-const weatherPosition = runtime.indexOf('LAYER_IDS.observationField');
-const cityPosition = runtime.indexOf('LAYER_IDS.cityLabels');
-if (!(statePosition >= 0 && weatherPosition > statePosition && cityPosition > weatherPosition)) {
-  throw new Error('Runtime layer order must keep boundaries below weather and cities above weather.');
+const layerOrder = runtime.match(
+  /export function enforceStudioLayerOrder\(map: MapLibreMap\): void \{[\s\S]*?const ordered = \[([\s\S]*?)\];/,
+)?.[1] ?? '';
+if (!layerOrder) throw new Error('Unable to inspect the studio layer-order contract.');
+
+const baseRoadPosition = layerOrder.indexOf('LAYER_IDS.roadMajor');
+const weatherPosition = layerOrder.indexOf('LAYER_IDS.observationField');
+const radarPosition = layerOrder.indexOf('...RADAR_LAYER_IDS');
+const contextPosition = layerOrder.indexOf('...contextLayers');
+const countyPosition = layerOrder.indexOf('LAYER_IDS.countyLines');
+const statePosition = layerOrder.indexOf('LAYER_IDS.stateLines');
+const alertPosition = layerOrder.indexOf('LAYER_IDS.alertFill');
+const cityPosition = layerOrder.indexOf('LAYER_IDS.cityLabels');
+
+if (!(
+  baseRoadPosition >= 0
+  && weatherPosition > baseRoadPosition
+  && radarPosition > weatherPosition
+  && contextPosition > radarPosition
+  && countyPosition > contextPosition
+  && statePosition > countyPosition
+  && alertPosition > statePosition
+  && cityPosition > alertPosition
+)) {
+  throw new Error(
+    'Runtime layer order must keep base roads below weather, broadcast context/boundaries above weather, alerts above context, and cities above alerts.',
+  );
 }
 
 const providerClient = await read('src-tauri/src/weather_engine/provider_client.rs');
@@ -106,14 +128,19 @@ const census = await read('src-tauri/src/weather_engine/providers/census.rs');
 for (const token of [
   'const STATE_LAYER: u8 = 6',
   'const COUNTY_LAYER: u8 = 7',
-  'const INCORPORATED_PLACE_LAYER: u8 = 4',
-  'const CENSUS_DESIGNATED_PLACE_LAYER: u8 = 5',
-  'GEOID,NAME,BASENAME,LSADC,STATE,INTPTLAT,INTPTLON,AREALAND',
+  'const INCORPORATED_PLACE_LAYER: u8 = 26',
+  'const CENSUS_DESIGNATED_PLACE_LAYER: u8 = 28',
+  'GEOID,NAME,BASENAME,LSADC,STATE,INTPTLAT,INTPTLON,POP100,AREALAND',
   'bbox.validate()?',
 ]) {
   if (!census.includes(token)) throw new Error(`Current Census adapter requirement missing: ${token}`);
 }
-if (census.includes('GEOID,NAME,BASENAME,LSADC,POP100') || census.includes('STUSAB')) throw new Error('Current Census adapters must not request unsupported POP100 or obsolete STUSAB fields.');
+if (census.includes('STUSAB')) {
+  throw new Error('Current Census adapters must not request obsolete STUSAB fields.');
+}
+if (!census.includes('population(right)') || !census.includes('POP100 DESC')) {
+  throw new Error('Current Census place labels must remain population ranked.');
+}
 
 const css = `${await read('src/styles/r3-base.css')}\n${await read('src/styles/nex-gen-wx.css')}`;
 for (const token of [

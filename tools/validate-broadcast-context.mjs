@@ -39,9 +39,23 @@ for (const token of [
   'effectiveBroadcastRoadDensity',
   'emergenceOpacity',
   "case 'radar': return 0",
-  "tier === 'local'",
 ]) {
   if (!runtime.includes(token)) throw new Error(`Broadcast context runtime missing: ${token}`);
+}
+
+const minimumZoomBlock = runtime.match(
+  /function minimumZoomForTier\([\s\S]*?\n\}/,
+)?.[0] ?? '';
+if (
+  !minimumZoomBlock.includes("tier === 'major'")
+  || !minimumZoomBlock.includes("tier === 'secondary'")
+  || !minimumZoomBlock.includes("tier === 'minor'")
+  || !minimumZoomBlock.includes(': 11.0;')
+) {
+  throw new Error('Broadcast context road tiers must preserve major, secondary, minor, and local fallback zoom thresholds.');
+}
+if (!runtime.includes("(['major', 'secondary', 'minor', 'local'] as RoadTier[])")) {
+  throw new Error('Broadcast context must preserve local as a selectable visible road tier.');
 }
 
 const mapRuntime = await read('src/map/map-runtime.ts');

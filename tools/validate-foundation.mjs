@@ -209,7 +209,7 @@ for (const forbidden of ['fetchSurfaceObservations', 'renderObservationField', '
 const lifecycle = await read('src/map/controllers/MapLifecycleController.ts');
 for (const behavior of [
   'canvasContextAttributes: { preserveDrawingBuffer: true',
-  'attributionControl: { compact: true }',
+  'attributionControl: options.interactive ? { compact: true } : false',
   'createBasemapStyle',
 ]) {
   const source = behavior === 'createBasemapStyle'
@@ -255,8 +255,11 @@ if (!packageJson.scripts?.validate?.includes('validate:module-architecture') || 
 const tauriConfig = JSON.parse(await read('src-tauri/tauri.conf.json'));
 const cargoToml = await read('src-tauri/Cargo.toml');
 if (packageJson.name !== 'nex-gen-wx' || tauriConfig.productName !== 'NEX GEN WX') throw new Error('Project naming is not synchronized.');
-if (packageJson.version !== '0.6.5' || tauriConfig.version !== '0.6.5' || !cargoToml.includes('version = "0.6.5"')) {
-  throw new Error('Package, Tauri and Rust versions must all be 0.6.5.');
+if (
+  !packageJson.scripts?.validate?.includes('validate:release-version')
+  || packageJson.scripts?.['validate:release-version'] !== 'node tools/validate-release-version.mjs'
+) {
+  throw new Error('Release-version consistency validation is not part of the release pipeline.');
 }
 for (const dependency of ['csv =', 'flate2 =', 'tokio =']) {
   if (!cargoToml.includes(dependency)) throw new Error(`Rust dependency is missing: ${dependency}`);
@@ -277,4 +280,4 @@ if (!setupScript.includes('cargo test --manifest-path')) {
   throw new Error('Windows setup must compile and run native Rust regression tests.');
 }
 
-console.log('Foundation validation passed: R3 shell, modular state, split map runtime, native provider adapters, schema 8, real module registration, and synchronized 0.6.5 versions verified.');
+console.log('Foundation validation passed: R3 shell, modular state, split map runtime, native provider adapters, schema 8, real module registration, and shared release-version validation verified.');

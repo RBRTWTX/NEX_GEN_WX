@@ -116,6 +116,15 @@ for (const token of ['exportSelectedShow', 'Exporting show slide', 'padStart(2']
   if (!exportController.includes(token)) throw new Error(`Show PNG export is missing ${token}.`);
 }
 
+const tauriLib = await read('src-tauri/src/lib.rs');
+if (
+  !tauriLib.includes('.on_window_event(|window, event|')
+  || !tauriLib.includes('window.label() == "main"')
+  || !tauriLib.includes('window.app_handle().exit(0)')
+) {
+  throw new Error('Closing the main operator window must terminate the persistent output process.');
+}
+
 const lifecycle = await read('src/map/controllers/MapLifecycleController.ts');
 if (!lifecycle.includes("attributionControl: options.interactive ? { compact: true } : false")) {
   throw new Error('Clean output/export must suppress MapLibre attribution while keeping it on the operator map.');

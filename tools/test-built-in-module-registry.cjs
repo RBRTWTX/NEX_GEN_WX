@@ -28,6 +28,19 @@ function transpile(module, filename) {
 Module._extensions['.ts'] = transpile;
 Module._extensions['.tsx'] = transpile;
 
+// This is a Node/CommonJS registry smoke test, not a browser bundler test.
+// UI modules may legitimately import styles/assets; keep those imports inert.
+for (const extension of ['.css', '.scss', '.sass', '.less']) {
+  Module._extensions[extension] = (module) => {
+    module.exports = {};
+  };
+}
+for (const extension of ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.woff', '.woff2']) {
+  Module._extensions[extension] = (module, filename) => {
+    module.exports = filename;
+  };
+}
+
 global.document = {
   createElement: () => ({
     width: 1,
@@ -53,6 +66,8 @@ Module._load = function patchedLoad(request, parent, isMain) {
       useCallback: (callback) => callback,
       useState: (value) => [typeof value === 'function' ? value() : value, () => undefined],
       useEffect: () => undefined,
+      useRef: (value) => ({ current: value }),
+      useSyncExternalStore: (_subscribe, getSnapshot) => getSnapshot(),
     };
   }
   if (request === 'react/jsx-runtime') {

@@ -65,9 +65,11 @@ for (const token of [
   if (!definitions.includes(token)) throw new Error(`Radar module provider/state registration missing: ${token}`);
 }
 
+const packageJson = JSON.parse(await read('package.json'));
 const client = await read('src-tauri/src/weather_engine/provider_client.rs');
-if (!client.includes('NEX-GEN-WX/0.7.0')) {
-  throw new Error('Native HTTP User-Agent is not identified as NEX GEN WX 0.7.0.');
+const expectedUserAgent = `NEX-GEN-WX/${packageJson.version}`;
+if (!client.includes(expectedUserAgent)) {
+  throw new Error(`Native HTTP User-Agent is not identified as ${expectedUserAgent}.`);
 }
 
 console.log('Radar provider foundation validation passed: native MRMS/IEM contracts, typed commands, normalized scene state, latest-frame paths, and provider registration verified.');

@@ -148,13 +148,14 @@ for (const token of [
 if (css.includes('.graphic-footer')) throw new Error('Obsolete graphic footer CSS remains in the active stylesheet.');
 
 const packageJson = JSON.parse(await read('package.json'));
-const tauri = JSON.parse(await read('src-tauri/tauri.conf.json'));
-const cargo = await read('src-tauri/Cargo.toml');
-if (packageJson.version !== '0.6.5' || tauri.version !== '0.6.5' || !cargo.includes('version = "0.6.5"')) {
-  throw new Error('0.6.5 version is not synchronized across npm, Tauri, and Cargo.');
+if (
+  !packageJson.scripts?.validate?.includes('validate:release-version')
+  || packageJson.scripts?.['validate:release-version'] !== 'node tools/validate-release-version.mjs'
+) {
+  throw new Error('Functional repair validation requires the shared release-version consistency validator.');
 }
 if (!packageJson.scripts?.validate?.includes('validate:functional-repair')) {
   throw new Error('Functional repair validation is not part of the release validation pipeline.');
 }
 
-console.log('Functional repair validation passed: independent basemap lifecycle, current Census adapters, editable scene text/styles, full-stage graphics, clean exports, schema 8, and synchronized 0.6.5 versions verified.');
+console.log('Functional repair validation passed: independent basemap lifecycle, current Census adapters, editable scene text/styles, full-stage graphics, clean exports, schema 8, and shared release-version validation verified.');

@@ -1,6 +1,6 @@
 [package]
 name = "nex-gen-wx"
-version = "0.6.5"
+version = "0.7.0"
 description = "Local weather presentation authoring and rendering workstation"
 authors = ["NEX GEN WX"]
 edition = "2021"

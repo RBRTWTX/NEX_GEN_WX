@@ -64,7 +64,7 @@ for (const required of [
   "map.on('click'",
   "map.on('error'",
   'preserveDrawingBuffer: true',
-  'attributionControl: { compact: true }',
+  'attributionControl: options.interactive ? { compact: true } : false',
   'map?.remove()',
 ]) {
   if (!lifecycle.includes(required)) throw new Error(`Map lifecycle behavior missing: ${required}`);
@@ -120,8 +120,32 @@ for (const [name, source] of [
   if (!source.includes('requestEpoch') && !source.includes('stateEpoch')) {
     throw new Error(`${name} controller lacks an independent request epoch.`);
   }
-  for (const token of ['styleGeneration', 'isRequestCurrent', 'reportProviderFailure']) {
+  for (const token of ['styleGeneration', 'isRequestCurrent']) {
     if (!source.includes(token)) throw new Error(`${name} controller lacks stale-request isolation: ${token}`);
+  }
+}
+
+for (const [name, source] of [
+  ['boundaries', boundary],
+  ['cities', cities],
+  ['roads', roads],
+  ['observations', observations],
+]) {
+  if (!source.includes('reportProviderFailure')) {
+    throw new Error(`${name} controller lacks shared provider-failure reporting.`);
+  }
+}
+
+for (const token of [
+  'cleanProviderError',
+  'onMapError',
+  'reportProviderStatus',
+  "'degraded'",
+  "'offline'",
+  'publishRadarRuntime',
+]) {
+  if (!radar.includes(token)) {
+    throw new Error(`Radar controller lacks its dedicated provider-failure contract: ${token}`);
   }
 }
 if (!boundary.includes('fetchStateBoundaries') || !boundary.includes('fetchCountyBoundaries')) {
