@@ -51,7 +51,7 @@ export function BroadcastHeader({
       elementId="map.header"
       label="Broadcast header"
       kind="container"
-      className={`broadcast-header ${logoDataUrl ? 'has-custom-logo' : ''}`}
+      className={`broadcast-header ${interactive ? 'is-interactive' : ''} ${logoDataUrl ? 'has-custom-logo' : ''}`.trim()}
       style={{
         '--scene-header-opacity': scene.header.opacity,
         '--scene-header-scale': scene.header.scale,

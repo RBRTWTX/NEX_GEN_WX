@@ -159,7 +159,7 @@ export function StudioApp() {
   // Hooks must always run in the same order, including while project hydration is pending.
   // The output controller accepts a nullable scene and stays dormant until both the project
   // and active scene are ready.
-  const { openOutput } = useOutputController({
+  const { openOutput, hideOutput } = useOutputController({
     scene: selectedScene,
     branding: project.branding,
     hydrated: state.project.hydrated,
@@ -311,6 +311,7 @@ export function StudioApp() {
         mapPosition={scenePositionLabel(selectedScene)}
         outputStatus={state.presentation.outputStatus}
         outputDetail={state.presentation.outputDetail}
+        outputOpen={state.presentation.outputOpen}
         leftPanelOpen={state.ui.leftPanelOpen}
         onToggleLeftPanel={() => dispatch({ type: 'ui/toggle-left-panel' })}
         onSearch={(query) => dispatch({ type: 'status/set', message: `Place search queued: ${query}` })}
@@ -320,7 +321,7 @@ export function StudioApp() {
         onOpenModelLab={() => openDialog('module:model-lab')}
         onOpenSources={() => openDialog('module:sources')}
         onOpenSettings={() => openDialog('settings')}
-        onPresent={() => void openOutput()}
+        onPresent={() => void (state.presentation.outputOpen ? hideOutput() : openOutput())}
       />
 
       {state.ui.leftPanelOpen && (

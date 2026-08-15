@@ -1,5 +1,5 @@
 import { useEffect, type Dispatch } from 'react';
-import { Window } from '@tauri-apps/api/window';
+import { getCurrentWindow, Window } from '@tauri-apps/api/window';
 import type { StudioBranding, StudioScene } from '../types/domain';
 import type { StudioAction } from '../state/studio-actions';
 import { outputBridge } from './output-bridge';
@@ -11,7 +11,10 @@ interface UseOutputControllerOptions {
   dispatch: Dispatch<StudioAction>;
 }
 
-export function useOutputController(options: UseOutputControllerOptions): { openOutput: () => Promise<void> } {
+export function useOutputController(options: UseOutputControllerOptions): {
+  openOutput: () => Promise<void>;
+  hideOutput: () => Promise<void>;
+} {
   const { scene, branding, hydrated, dispatch } = options;
 
   useEffect(() => {
@@ -34,6 +37,18 @@ export function useOutputController(options: UseOutputControllerOptions): { open
     void outputBridge.subscribeControls((message) => {
       if (message.kind === 'sync-request') {
         void outputBridge.republishLatest();
+        return;
+      }
+      if (message.kind === 'visibility') {
+        dispatch({ type: 'presentation/set-output-open', value: message.visible });
+        if (!message.visible) {
+          dispatch({
+            type: 'status/set',
+            message: message.reason === 'escape'
+              ? 'Output hidden with Esc; press Present to reopen.'
+              : 'Output hidden; press Present to reopen.',
+          });
+        }
         return;
       }
       dispatch({
@@ -60,6 +75,24 @@ export function useOutputController(options: UseOutputControllerOptions): { open
     };
   }, [dispatch]);
 
+  async function hideOutput(): Promise<void> {
+    try {
+      const existing = await Window.getByLabel('output');
+      if (existing) await existing.hide();
+      await outputBridge.reportVisibility(false, 'operator').catch(() => undefined);
+      dispatch({ type: 'presentation/set-output-open', value: false });
+      dispatch({ type: 'status/set', message: 'Output hidden; press Present to reopen.' });
+      await getCurrentWindow().show().catch(() => undefined);
+      await getCurrentWindow().setFocus().catch(() => undefined);
+    } catch (error) {
+      dispatch({
+        type: 'status/set',
+        message: `Unable to hide output: ${String(error)}`,
+        level: 'warning',
+      });
+    }
+  }
+
   async function openOutput(): Promise<void> {
     if (!scene) {
       dispatch({ type: 'status/set', message: 'The output cannot open until an active scene is ready.', level: 'warning' });
@@ -72,6 +105,7 @@ export function useOutputController(options: UseOutputControllerOptions): { open
       await existing.show();
       await existing.setFocus();
       dispatch({ type: 'presentation/set-output-open', value: true });
+      await outputBridge.reportVisibility(true, 'operator').catch(() => undefined);
       const message = await outputBridge.publish(scene, branding);
       dispatch({ type: 'presentation/output-sync-start', renderId: message.renderId, sceneId: message.scene.id });
     } catch {
@@ -84,5 +118,5 @@ export function useOutputController(options: UseOutputControllerOptions): { open
     }
   }
 
-  return { openOutput };
+  return { openOutput, hideOutput };
 }

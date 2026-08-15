@@ -35,7 +35,17 @@ export interface OutputSyncRequest {
   requestedAt: string;
 }
 
-export type OutputControlMessage = OutputAcknowledgement | OutputSyncRequest;
+export interface OutputVisibilityMessage {
+  kind: 'visibility';
+  visible: boolean;
+  reason: 'operator' | 'escape' | 'close-request';
+  changedAt: string;
+}
+
+export type OutputControlMessage =
+  | OutputAcknowledgement
+  | OutputSyncRequest
+  | OutputVisibilityMessage;
 
 export class OutputBridge {
   private readonly sceneChannel = typeof BroadcastChannel !== 'undefined'
@@ -111,6 +121,24 @@ export class OutputBridge {
 
   async requestSync(): Promise<void> {
     const message: OutputSyncRequest = { kind: 'sync-request', requestedAt: new Date().toISOString() };
+    this.controlChannel?.postMessage(message);
+    try {
+      await emitTo('main', CONTROL_EVENT_NAME, message);
+    } catch {
+      // Browser-only development.
+    }
+  }
+
+  async reportVisibility(
+    visible: boolean,
+    reason: OutputVisibilityMessage['reason'],
+  ): Promise<void> {
+    const message: OutputVisibilityMessage = {
+      kind: 'visibility',
+      visible,
+      reason,
+      changedAt: new Date().toISOString(),
+    };
     this.controlChannel?.postMessage(message);
     try {
       await emitTo('main', CONTROL_EVENT_NAME, message);

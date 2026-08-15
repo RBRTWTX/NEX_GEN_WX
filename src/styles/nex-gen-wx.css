@@ -799,3 +799,17 @@ body.thumbnail-capture-mode .scene-transition-viewport { transition: none !impor
   background: #080e16;
   color: #d8e7f5;
 }
+/* 0.7.0 acceptance: restore universal header/key editing in operator mode.
+   The broadcast header itself stays pointer-transparent so it cannot interfere
+   with map interaction; only the editable copy block is re-enabled. */
+.broadcast-header.is-interactive .header-copy {
+  pointer-events: auto;
+}
+.broadcast-header.is-interactive .scene-editable-text,
+.broadcast-header.is-interactive .header-time,
+.broadcast-header.is-interactive .header-legend {
+  pointer-events: auto;
+}
+.broadcast-header.is-interactive .scene-editable-text {
+  cursor: text;
+}

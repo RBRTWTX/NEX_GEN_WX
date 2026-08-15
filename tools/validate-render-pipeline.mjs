@@ -53,6 +53,8 @@ for (const token of [
   "kind: 'scene'",
   "kind: 'ack'",
   "kind: 'sync-request'",
+  "kind: 'visibility'",
+  'reportVisibility',
   'renderId',
   'signature',
   'republishLatest',
@@ -68,6 +70,11 @@ for (const token of [
   'outputBridge.acknowledge',
   'message.transition.durationMs',
   'sceneRenderSignature',
+  "event.key !== 'Escape'",
+  'onCloseRequested',
+  "hideOutput('escape')",
+  "hideOutput('close-request')",
+  "Window.getByLabel('main')",
 ]) {
   if (!outputApp.includes(token)) throw new Error(`Verified clean output is missing ${token}.`);
 }
@@ -110,6 +117,9 @@ for (const token of ['exportSelectedShow', 'Exporting show slide', 'padStart(2']
 }
 
 const lifecycle = await read('src/map/controllers/MapLifecycleController.ts');
+if (!lifecycle.includes("attributionControl: options.interactive ? { compact: true } : false")) {
+  throw new Error('Clean output/export must suppress MapLibre attribution while keeping it on the operator map.');
+}
 const host = await read('src/map/controllers/MapControllerHost.ts');
 const mapStage = await read('src/map/MapStage.tsx');
 if (!lifecycle.includes("map.on('idle'") || !host.includes('handleIdle') || !mapStage.includes('data-render-ready')) {
@@ -119,11 +129,25 @@ if (!lifecycle.includes("map.on('idle'") || !host.includes('handleIdle') || !map
 const state = await read('src/state/studio-state.ts');
 const actions = await read('src/state/studio-actions.ts');
 const reducer = await read('src/state/reducers/presentation-state-reducer.ts');
+const capabilities = await read('src-tauri/capabilities/default.json');
+if (!capabilities.includes('"core:window:allow-hide"')) {
+  throw new Error('Native output hide workflow is missing core:window:allow-hide permission.');
+}
+const syncCase = reducer.match(/case 'presentation\/output-sync-start':([\s\S]*?)case 'presentation\/output-ack':/)?.[1] ?? '';
+const ackCase = reducer.match(/case 'presentation\/output-ack':([\s\S]*?)case 'presentation\/output-error':/)?.[1] ?? '';
+if (syncCase.includes('outputOpen: true') || ackCase.includes('outputOpen: true')) {
+  throw new Error('Background output synchronization must not mark the hidden output window open.');
+}
 for (const token of ['outputStatus', 'outputRenderId', 'outputDetail']) {
   if (!state.includes(token)) throw new Error(`Output verification state is missing ${token}.`);
 }
 for (const token of ['presentation/output-sync-start', 'presentation/output-ack', 'presentation/output-error']) {
   if (!actions.includes(token) || !reducer.includes(token)) throw new Error(`Output verification action is missing ${token}.`);
+}
+
+const header = await read('src/components/BroadcastHeader.tsx');
+if (!header.includes("interactive ? 'is-interactive' : ''")) {
+  throw new Error('Broadcast header does not expose operator-only interactive editing mode.');
 }
 
 const css = await read('src/styles/nex-gen-wx.css');
@@ -133,8 +157,9 @@ for (const token of [
   '.scene-thumbnail.has-live-thumbnail',
   '.scene-export-host',
   '.top-action.output-ready',
+  '.broadcast-header.is-interactive .header-copy',
 ]) {
   if (!css.includes(token)) throw new Error(`Render-pipeline CSS is missing ${token}.`);
 }
 
-console.log('Render pipeline validation passed: captured thumbnails, four scene transitions, output acknowledgements, canonical 1920×1080 exports, show-slide export, and map readiness verification are wired.');
+console.log('Render pipeline validation passed: captured thumbnails, reusable hideable output, clean attribution-free broadcast/export maps, editable header copy, canonical 1920×1080 exports, transitions, and map readiness verification are wired.');

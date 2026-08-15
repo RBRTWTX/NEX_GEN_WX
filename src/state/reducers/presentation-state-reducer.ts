@@ -13,7 +13,6 @@ export function reducePresentationState(state: PresentationState, action: Studio
     case 'presentation/output-sync-start':
       return {
         ...state,
-        outputOpen: true,
         outputStatus: 'syncing',
         outputRenderId: action.renderId,
         outputSceneId: action.sceneId,
@@ -23,7 +22,6 @@ export function reducePresentationState(state: PresentationState, action: Studio
       if (state.outputRenderId !== action.renderId) return state;
       return {
         ...state,
-        outputOpen: true,
         outputStatus: action.ready ? 'ready' : 'degraded',
         outputSceneId: action.sceneId,
         outputWidth: action.width,

@@ -7,6 +7,7 @@ interface TopBarProps {
   mapPosition: string;
   outputStatus: 'closed' | 'syncing' | 'ready' | 'degraded';
   outputDetail: string;
+  outputOpen: boolean;
   leftPanelOpen: boolean;
   onToggleLeftPanel: () => void;
   onSearch: (query: string) => void;
@@ -86,7 +87,9 @@ export function TopBar(props: TopBarProps) {
           className={`top-action accent output-${props.outputStatus}`}
           title={props.outputDetail}
           onClick={props.onPresent}
-        >{props.outputStatus === 'ready' ? 'Output Ready' : props.outputStatus === 'syncing' ? 'Syncing…' : 'Present'}</button>
+        >{props.outputOpen
+          ? (props.outputStatus === 'syncing' ? 'Syncing...' : 'Hide Output')
+          : 'Present'}</button>
       </nav>
     </header>
   );

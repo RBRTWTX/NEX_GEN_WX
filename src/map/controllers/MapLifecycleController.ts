@@ -47,7 +47,7 @@ export class MapLifecycleController {
       bearing: options.scene.camera.bearing,
       interactive: options.interactive,
       canvasContextAttributes: { preserveDrawingBuffer: true, antialias: true },
-      attributionControl: { compact: true },
+      attributionControl: options.interactive ? { compact: true } : false,
       crossSourceCollisions: true,
     });
     if (options.interactive) {
