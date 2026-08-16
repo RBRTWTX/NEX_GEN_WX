@@ -5,10 +5,14 @@ use serde_json::{json, Value};
 const NHC_SUMMARY_SERVICE: &str =
     "https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather_summary/MapServer";
 const TROPICAL_TTL_SECONDS: u64 = 180;
+const OUTLOOK_TWO_DAY_LOCATION_LAYER: u8 = 1;
+const OUTLOOK_SEVEN_DAY_LOCATION_LAYER: u8 = 2;
+const OUTLOOK_SEVEN_DAY_REGION_LAYER: u8 = 3;
 const FORECAST_POINTS_LAYER: u8 = 5;
 const FORECAST_TRACK_LAYER: u8 = 6;
 const FORECAST_CONE_LAYER: u8 = 7;
 const WATCH_WARNING_LAYER: u8 = 8;
+const OUTLOOK_SEVEN_DAY_MOTION_LAYER: u8 = 33;
 
 fn layer_query_url(layer: u8) -> Result<Url, StudioError> {
     let mut url = Url::parse(&format!("{NHC_SUMMARY_SERVICE}/{layer}/query"))
@@ -57,6 +61,29 @@ fn is_feature_collection(value: &Value) -> bool {
         && value.get("features").and_then(Value::as_array).is_some()
 }
 
+fn combined_status(results: &[&Result<Value, StudioError>]) -> (String, Vec<String>) {
+    let successful = results
+        .iter()
+        .filter_map(|result| result.as_ref().ok())
+        .filter(|value| is_feature_collection(value))
+        .collect::<Vec<_>>();
+    let status = if successful.iter().any(|value| cache_status(value) == "stale") {
+        "stale"
+    } else if !successful.is_empty()
+        && successful.iter().all(|value| cache_status(value) == "fresh-cache")
+    {
+        "fresh-cache"
+    } else {
+        "live"
+    };
+    let warnings = successful
+        .iter()
+        .filter_map(|value| cache_warning(value))
+        .map(str::to_string)
+        .collect::<Vec<_>>();
+    (status.to_string(), warnings)
+}
+
 fn combine_catalog(
     points_result: Result<Value, StudioError>,
     track_result: Result<Value, StudioError>,
@@ -85,28 +112,7 @@ fn combine_catalog(
         )));
     }
 
-    let (status, mut failures) = {
-        let successful = [&points_result, &track_result, &cone_result, &warnings_result]
-            .into_iter()
-            .filter_map(|result| result.as_ref().ok())
-            .collect::<Vec<_>>();
-        let status = if successful.iter().any(|value| cache_status(value) == "stale") {
-            "stale"
-        } else if !successful.is_empty()
-            && successful.iter().all(|value| cache_status(value) == "fresh-cache")
-        {
-            "fresh-cache"
-        } else {
-            "live"
-        };
-        let warnings = successful
-            .iter()
-            .filter_map(|value| cache_warning(value))
-            .map(str::to_string)
-            .collect::<Vec<_>>();
-        (status.to_string(), warnings)
-    };
-
+    let (status, mut failures) = combined_status(&results);
     let points = collection_or_failure("NHC forecast points", points_result, &mut failures);
     let track = collection_or_failure("NHC forecast track", track_result, &mut failures);
     let cone = collection_or_failure("NHC forecast cone", cone_result, &mut failures);
@@ -128,28 +134,164 @@ fn combine_catalog(
     Ok(output)
 }
 
+fn combine_two_day_outlook(
+    locations_result: Result<Value, StudioError>,
+) -> Result<Value, StudioError> {
+    let locations = match locations_result {
+        Ok(value) if is_feature_collection(&value) => value,
+        Ok(_) => {
+            return Err(StudioError::Provider(
+                "NHC 2-Day Tropical Weather Outlook did not return GeoJSON locations".to_string(),
+            ))
+        }
+        Err(error) => {
+            return Err(StudioError::Provider(format!(
+                "NHC 2-Day Tropical Weather Outlook unavailable: {error}"
+            )))
+        }
+    };
+    let status = cache_status(&locations).to_string();
+    let warning = cache_warning(&locations).map(str::to_string);
+    let mut output = json!({
+        "provider": "NOAA/NWS/NHC Tropical Weather Summary",
+        "period": "2day",
+        "locations": locations,
+        "regions": empty_collection(),
+        "motion": empty_collection(),
+        "cacheStatus": status,
+    });
+    if let Some(warning) = warning {
+        if let Some(object) = output.as_object_mut() {
+            object.insert("cacheWarning".to_string(), Value::String(warning));
+        }
+    }
+    Ok(output)
+}
+
+fn combine_outlook_catalog(
+    period: &str,
+    locations_result: Result<Value, StudioError>,
+    regions_result: Result<Value, StudioError>,
+    motion_result: Result<Value, StudioError>,
+) -> Result<Value, StudioError> {
+    let results = [&locations_result, &regions_result, &motion_result];
+    let valid_count = results
+        .iter()
+        .filter_map(|result| result.as_ref().ok())
+        .filter(|value| is_feature_collection(value))
+        .count();
+    if valid_count == 0 {
+        let errors = results
+            .iter()
+            .filter_map(|result| result.as_ref().err())
+            .map(ToString::to_string)
+            .collect::<Vec<_>>();
+        let detail = if errors.is_empty() {
+            "all NHC outlook layers returned invalid GeoJSON".to_string()
+        } else {
+            errors.join("; ")
+        };
+        return Err(StudioError::Provider(format!(
+            "NHC Tropical Weather Outlook failed: {detail}"
+        )));
+    }
+
+    let (status, mut failures) = combined_status(&results);
+    let locations = collection_or_failure("NHC outlook locations", locations_result, &mut failures);
+    let regions = collection_or_failure("NHC outlook regions", regions_result, &mut failures);
+    let motion = collection_or_failure("NHC outlook motion", motion_result, &mut failures);
+
+    let mut output = json!({
+        "provider": "NOAA/NWS/NHC Tropical Weather Summary",
+        "period": period,
+        "locations": locations,
+        "regions": regions,
+        "motion": motion,
+        "cacheStatus": status,
+    });
+    if !failures.is_empty() {
+        if let Some(object) = output.as_object_mut() {
+            object.insert("cacheWarning".to_string(), Value::String(failures.join("; ")));
+        }
+    }
+    Ok(output)
+}
+
 pub async fn tropical_catalog(force: bool) -> Result<Value, StudioError> {
     let points = provider_client::fetch_json_cached(
-        layer_query_url(FORECAST_POINTS_LAYER)?, TROPICAL_TTL_SECONDS, force,
+        layer_query_url(FORECAST_POINTS_LAYER)?,
+        TROPICAL_TTL_SECONDS,
+        force,
         "application/geo+json,application/json",
     )
     .await;
     let track = provider_client::fetch_json_cached(
-        layer_query_url(FORECAST_TRACK_LAYER)?, TROPICAL_TTL_SECONDS, force,
+        layer_query_url(FORECAST_TRACK_LAYER)?,
+        TROPICAL_TTL_SECONDS,
+        force,
         "application/geo+json,application/json",
     )
     .await;
     let cone = provider_client::fetch_json_cached(
-        layer_query_url(FORECAST_CONE_LAYER)?, TROPICAL_TTL_SECONDS, force,
+        layer_query_url(FORECAST_CONE_LAYER)?,
+        TROPICAL_TTL_SECONDS,
+        force,
         "application/geo+json,application/json",
     )
     .await;
     let warnings = provider_client::fetch_json_cached(
-        layer_query_url(WATCH_WARNING_LAYER)?, TROPICAL_TTL_SECONDS, force,
+        layer_query_url(WATCH_WARNING_LAYER)?,
+        TROPICAL_TTL_SECONDS,
+        force,
         "application/geo+json,application/json",
     )
     .await;
     combine_catalog(points, track, cone, warnings)
+}
+
+pub async fn tropical_outlook_catalog(
+    period: &str,
+    force: bool,
+) -> Result<Value, StudioError> {
+    match period.trim().to_ascii_lowercase().as_str() {
+        "2day" => {
+            let locations = provider_client::fetch_json_cached(
+                layer_query_url(OUTLOOK_TWO_DAY_LOCATION_LAYER)?,
+                TROPICAL_TTL_SECONDS,
+                force,
+                "application/geo+json,application/json",
+            )
+            .await;
+            combine_two_day_outlook(locations)
+        }
+        "7day" => {
+            let locations = provider_client::fetch_json_cached(
+                layer_query_url(OUTLOOK_SEVEN_DAY_LOCATION_LAYER)?,
+                TROPICAL_TTL_SECONDS,
+                force,
+                "application/geo+json,application/json",
+            )
+            .await;
+            let regions = provider_client::fetch_json_cached(
+                layer_query_url(OUTLOOK_SEVEN_DAY_REGION_LAYER)?,
+                TROPICAL_TTL_SECONDS,
+                force,
+                "application/geo+json,application/json",
+            )
+            .await;
+            let motion = provider_client::fetch_json_cached(
+                layer_query_url(OUTLOOK_SEVEN_DAY_MOTION_LAYER)?,
+                TROPICAL_TTL_SECONDS,
+                force,
+                "application/geo+json,application/json",
+            )
+            .await;
+            combine_outlook_catalog("7day", locations, regions, motion)
+        }
+        _ => Err(StudioError::Provider(
+            "NHC Tropical Weather Outlook period must be 2day or 7day".to_string(),
+        )),
+    }
 }
 
 #[cfg(test)]
@@ -162,7 +304,16 @@ mod tests {
 
     #[test]
     fn official_tropical_layers_are_geojson_queries() {
-        for layer in [FORECAST_POINTS_LAYER, FORECAST_TRACK_LAYER, FORECAST_CONE_LAYER, WATCH_WARNING_LAYER] {
+        for layer in [
+            OUTLOOK_TWO_DAY_LOCATION_LAYER,
+            OUTLOOK_SEVEN_DAY_LOCATION_LAYER,
+            OUTLOOK_SEVEN_DAY_REGION_LAYER,
+            FORECAST_POINTS_LAYER,
+            FORECAST_TRACK_LAYER,
+            FORECAST_CONE_LAYER,
+            WATCH_WARNING_LAYER,
+            OUTLOOK_SEVEN_DAY_MOTION_LAYER,
+        ] {
             let url = layer_query_url(layer).unwrap();
             assert_eq!(url.host_str(), Some("mapservices.weather.noaa.gov"));
             assert!(url.as_str().contains("NHC_tropical_weather_summary"));
@@ -183,13 +334,15 @@ mod tests {
         assert_eq!(result.get("cacheStatus").and_then(Value::as_str), Some("live"));
         assert!(result.get("cacheWarning").and_then(Value::as_str).is_some());
         assert_eq!(
-            result.get("warnings")
+            result
+                .get("warnings")
                 .and_then(|value| value.get("features"))
                 .and_then(Value::as_array)
                 .map(Vec::len),
             Some(0)
         );
     }
+
     #[test]
     fn all_structurally_invalid_tropical_layers_are_fatal() {
         let result = combine_catalog(
@@ -201,4 +354,44 @@ mod tests {
         assert!(result.is_err());
     }
 
+    #[test]
+    fn two_day_outlook_requires_location_geojson() {
+        let result = combine_two_day_outlook(Ok(json!({"error": "invalid"})));
+        assert!(result.is_err());
+        let valid = combine_two_day_outlook(Ok(collection("fresh-cache"))).unwrap();
+        assert_eq!(valid.get("period").and_then(Value::as_str), Some("2day"));
+        assert_eq!(valid.get("cacheStatus").and_then(Value::as_str), Some("fresh-cache"));
+    }
+
+    #[test]
+    fn seven_day_outlook_partial_failure_is_degraded_not_fatal() {
+        let result = combine_outlook_catalog(
+            "7day",
+            Ok(collection("live")),
+            Ok(collection("live")),
+            Err(StudioError::Provider("motion layer down".to_string())),
+        )
+        .unwrap();
+        assert_eq!(result.get("period").and_then(Value::as_str), Some("7day"));
+        assert!(result.get("cacheWarning").and_then(Value::as_str).is_some());
+        assert_eq!(
+            result
+                .get("motion")
+                .and_then(|value| value.get("features"))
+                .and_then(Value::as_array)
+                .map(Vec::len),
+            Some(0)
+        );
+    }
+
+    #[test]
+    fn all_structurally_invalid_outlook_layers_are_fatal() {
+        let result = combine_outlook_catalog(
+            "7day",
+            Ok(json!({"error": "invalid"})),
+            Ok(json!({"type": "FeatureCollection"})),
+            Ok(json!({})),
+        );
+        assert!(result.is_err());
+    }
 }

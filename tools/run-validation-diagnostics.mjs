@@ -29,6 +29,9 @@ const checks = [
   'test:tropical-provider',
   'validate:tropical-renderer',
   'test:tropical-runtime',
+  'validate:tropical-outlook',
+  'test:tropical-outlook-provider',
+  'test:tropical-outlook-runtime',
   'check',
 ];
 

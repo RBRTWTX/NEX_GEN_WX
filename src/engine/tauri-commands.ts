@@ -204,3 +204,10 @@ export async function fetchTropicalCatalog(
 ): Promise<unknown> {
   return invoke<unknown>('fetch_tropical_catalog', { force });
 }
+
+export async function fetchTropicalOutlookCatalog(
+  period: '2day' | '7day',
+  force = false,
+): Promise<unknown> {
+  return invoke<unknown>('fetch_tropical_outlook_catalog', { period, force });
+}

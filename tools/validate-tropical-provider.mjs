@@ -56,8 +56,12 @@ if (!commands.includes("invoke<unknown>('fetch_tropical_catalog', { force })")) 
 if (!lib.includes('fetch_tropical_catalog') || !lib.includes('providers::tropical_catalog(force)')) {
   throw new Error('Tauri Tropical catalog command is not registered.');
 }
-if (!mod.includes('mod tropical;') || !mod.includes('pub use tropical::tropical_catalog;')) {
-  throw new Error('Native Tropical provider module is not exported.');
+if (
+  !mod.includes('mod tropical;')
+  || !mod.includes('tropical_catalog')
+  || !mod.includes('tropical_outlook_catalog')
+) {
+  throw new Error('Native Tropical provider module exports are incomplete.');
 }
 
 console.log('Tropical provider validation passed: official NOAA/NWS/NHC summary GeoJSON layers 5-8, caching, normalization, and Tauri boundary verified.');

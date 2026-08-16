@@ -56,7 +56,7 @@ const definitions = await read('src/modules/builtin/weather-definitions.tsx');
 for (const token of [
   "id: 'tropical'",
   "id: 'tropical-nhc'",
-  "mapControllers: [{ id: 'tropical'",
+  "id: 'tropical', phase: 'data', order: 26",
   'DEFAULT_TROPICAL_SCENE_STATE',
   'normalizeTropicalSceneState',
   "dialog: 'module:tropical'",

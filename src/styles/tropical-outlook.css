@@ -1,0 +1,57 @@
+.tropical-outlook-controls {
+  display: grid;
+  gap: 12px;
+  min-width: 440px;
+}
+
+.tropical-outlook-controls__header > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  align-items: center;
+}
+
+.tropical-outlook-controls__header small {
+  grid-column: 2;
+  opacity: .72;
+}
+
+.tropical-outlook-health-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #55d98b;
+  box-shadow: 0 0 0 3px rgb(85 217 139 / 12%);
+}
+
+.tropical-outlook-health-dot.loading { background: #e7bc54; }
+.tropical-outlook-health-dot.degraded { background: #f07c62; }
+
+.tropical-outlook-control-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.tropical-outlook-action-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.tropical-outlook-action-row span {
+  opacity: .76;
+}
+
+.tropical-outlook-status {
+  display: grid;
+  gap: 3px;
+  padding: 9px 10px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 5px;
+  background: rgb(255 255 255 / 3%);
+}
+
+.tropical-outlook-status small { opacity: .72; }
+.tropical-outlook-status--warning { border-color: rgb(240 124 98 / 45%); }

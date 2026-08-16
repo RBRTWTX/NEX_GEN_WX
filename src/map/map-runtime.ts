@@ -14,7 +14,7 @@ import {
 } from './broadcast-context';
 import { RADAR_LAYER_IDS } from '../radar/radar-layer-ids';
 import { SATELLITE_LAYER_IDS } from '../satellite/satellite-layer-ids';
-import { TROPICAL_LAYER_IDS } from '../tropical/tropical-layer-ids';
+import { TROPICAL_LAYER_IDS, TROPICAL_OUTLOOK_LAYER_IDS } from '../tropical/tropical-layer-ids';
 
 export interface MutableImageSource {
   updateImage(options: {
@@ -181,6 +181,7 @@ export function enforceStudioLayerOrder(map: MapLibreMap): void {
     ...RADAR_LAYER_IDS,
     ...contextLayers,
     ...TROPICAL_LAYER_IDS,
+    ...TROPICAL_OUTLOOK_LAYER_IDS,
     LAYER_IDS.countyCasing,
     LAYER_IDS.countyLines,
     LAYER_IDS.stateLines,
