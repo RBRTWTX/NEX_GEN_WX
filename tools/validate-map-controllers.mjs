@@ -17,6 +17,7 @@ const controllerFiles = [
   'src/map/controllers/RoadsController.ts',
   'src/radar/RadarController.ts',
   'src/satellite/SatelliteController.ts',
+  'src/tropical/TropicalController.ts',
   'src/map/controllers/AlertsController.ts',
   'src/map/controllers/ObservationsController.ts',
   'src/map/controllers/CameraController.ts',
@@ -95,7 +96,7 @@ const registryDefinitions = [
   await read('src/modules/builtin/weather-definitions.tsx'),
 ].join('\n');
 for (const controller of [
-  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'alerts', 'observations',
+  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'tropical', 'alerts', 'observations',
   'camera', 'interaction', 'layer-order', 'resize',
 ]) {
   if (!registryDefinitions.includes(`id: '${controller}'`)) {
@@ -111,6 +112,7 @@ const cities = await read('src/map/controllers/CitiesController.ts');
 const roads = await read('src/map/controllers/RoadsController.ts');
 const radar = await read('src/radar/RadarController.ts');
 const satellite = await read('src/satellite/SatelliteController.ts');
+const tropical = await read('src/tropical/TropicalController.ts');
 const observations = await read('src/map/controllers/ObservationsController.ts');
 for (const [name, source] of [
   ['boundaries', boundary],
@@ -118,6 +120,7 @@ for (const [name, source] of [
   ['roads', roads],
   ['radar', radar],
   ['satellite', satellite],
+  ['tropical', tropical],
   ['observations', observations],
 ]) {
   if (!source.includes('requestEpoch') && !source.includes('stateEpoch')) {
@@ -172,6 +175,32 @@ if (!roads.includes('fetchRoads')) throw new Error('Road provider ownership is i
 if (!observations.includes('fetchSurfaceObservations')) throw new Error('Observation provider ownership is incomplete.');
 if (!observations.includes('TRANSPARENT_FIELD_IMAGE') || !observations.includes('clearData(context)')) {
   throw new Error('Observation controller must clear stale analyzed fields when product/view keys change.');
+}
+
+const tropicalLines = tropical.split(/\r?\n/).length;
+if (tropicalLines > 240) {
+  throw new Error(`TropicalController.ts is ${tropicalLines} lines; split renderer/provider responsibilities before acceptance.`);
+}
+for (const token of [
+  'cleanProviderError',
+  'reportProviderStatus',
+  "'degraded'",
+  "'offline'",
+  'publishTropicalRuntime',
+  'fetchTropicalCatalog',
+  'setRenderPending',
+  'requestEpoch',
+  'styleGeneration',
+  'isRequestCurrent',
+]) {
+  if (!tropical.includes(token)) {
+    throw new Error(`Tropical controller lacks its isolated provider/render contract: ${token}`);
+  }
+}
+for (const forbidden of ['RadarController', 'SatelliteController', '../radar/', '../satellite/']) {
+  if (tropical.includes(forbidden)) {
+    throw new Error(`Tropical controller crosses an accepted module boundary: ${forbidden}`);
+  }
 }
 
 const alerts = await read('src/map/controllers/AlertsController.ts');

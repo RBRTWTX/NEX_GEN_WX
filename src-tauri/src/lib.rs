@@ -128,6 +128,13 @@ async fn fetch_satellite_catalog(
     weather_engine::providers::satellite_catalog(force).await
 }
 
+#[tauri::command]
+async fn fetch_tropical_catalog(
+    force: bool,
+) -> Result<Value, error::StudioError> {
+    weather_engine::providers::tropical_catalog(force).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -159,7 +166,8 @@ pub fn run() {
             fetch_radar_mrms_catalog,
             fetch_radar_sites,
             fetch_radar_site_catalog,
-            fetch_satellite_catalog
+            fetch_satellite_catalog,
+            fetch_tropical_catalog
         ])
         .run(tauri::generate_context!())
         .expect("error while running NEX GEN WX");

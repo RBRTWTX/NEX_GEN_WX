@@ -1,0 +1,57 @@
+.tropical-controls {
+  display: grid;
+  gap: 12px;
+  min-width: 440px;
+}
+.tropical-controls__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tropical-controls__header > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  align-items: center;
+}
+.tropical-controls__header small {
+  grid-column: 2;
+  opacity: .7;
+}
+.tropical-health-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #55d98b;
+  box-shadow: 0 0 0 3px rgb(85 217 139 / 12%);
+}
+.tropical-health-dot.loading { background: #e7bc54; }
+.tropical-health-dot.degraded { background: #f07c62; }
+.tropical-storm-select {
+  display: grid;
+  gap: 5px;
+}
+.tropical-control-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 12px;
+}
+.tropical-action-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tropical-action-row span {
+  opacity: .72;
+}
+.tropical-status {
+  display: grid;
+  gap: 3px;
+  padding: 9px 10px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 5px;
+  background: rgb(255 255 255 / 3%);
+}
+.tropical-status small { opacity: .72; }
+.tropical-status--warning { border-color: rgb(240 124 98 / 45%); }

@@ -4,6 +4,7 @@ mod observations;
 mod radar;
 mod roads;
 mod satellite;
+mod tropical;
 mod types;
 
 pub use alerts::active_alerts;
@@ -12,4 +13,5 @@ pub use observations::surface_observations;
 pub use radar::{mrms_catalog, radar_site_catalog, radar_sites};
 pub use roads::roads;
 pub use satellite::satellite_catalog;
+pub use tropical::tropical_catalog;
 pub use types::BBox;

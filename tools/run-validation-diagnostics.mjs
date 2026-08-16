@@ -25,6 +25,10 @@ const checks = [
   'test:satellite-provider',
   'validate:satellite-renderer',
   'test:satellite-runtime',
+  'validate:tropical-provider',
+  'test:tropical-provider',
+  'validate:tropical-renderer',
+  'test:tropical-runtime',
   'check',
 ];
 

@@ -99,13 +99,13 @@ for (const id of [
 assert.equal(new Set(ids).size, ids.length, 'built-in module IDs must be unique');
 assert.deepEqual(
   moduleRegistry.createMapControllers().map((controller) => controller.id),
-  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
+  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'tropical', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
   'built-in map controllers should be registry-ordered and complete',
 );
 const providers = moduleRegistry.getProviders();
 assert.deepEqual(
   providers.map((provider) => provider.id),
-  ['basemap', 'states', 'counties', 'cities', 'roads', 'alerts', 'observations', 'radar-mrms', 'radar-sites', 'satellite-goes'],
+  ['basemap', 'states', 'counties', 'cities', 'roads', 'alerts', 'observations', 'radar-mrms', 'radar-sites', 'satellite-goes', 'tropical-nhc'],
   'provider health definitions should be registry-owned',
 );
 const mapScene = {
@@ -148,4 +148,24 @@ assert.equal(normalizedSatellite.moduleState.satellite.autoRefreshEnabled, true)
 assert.ok(moduleRegistry.getDialog('module:satellite', normalizedSatellite));
 assert.ok(moduleRegistry.getTools(normalizedSatellite, 'quick').some((tool) => tool.id === 'satellite-quick'));
 
-console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 13 map controllers verified.`);
+
+const tropicalScene = {
+  ...mapScene,
+  id: 'tropical-scene',
+  name: 'NHC Forecast Track and Cone',
+  category: 'Tropical',
+  activeModuleIds: ['tropical'],
+  moduleState: {},
+  product: { category: 'tropical', id: 'nhc-track-cone', opacity: 1, smoothing: 'balanced' },
+};
+const normalizedTropical = moduleRegistry.normalizeSceneModuleState(tropicalScene);
+assert.equal(normalizedTropical.moduleState.tropical.selectedStormId, null);
+assert.equal(normalizedTropical.moduleState.tropical.showTrack, true);
+assert.equal(normalizedTropical.moduleState.tropical.showCone, true);
+assert.equal(normalizedTropical.moduleState.tropical.showPoints, true);
+assert.equal(normalizedTropical.moduleState.tropical.showWarnings, true);
+assert.equal(normalizedTropical.moduleState.tropical.autoRefreshEnabled, true);
+assert.ok(moduleRegistry.getDialog('module:tropical', normalizedTropical));
+assert.ok(moduleRegistry.getTools(normalizedTropical, 'quick').some((tool) => tool.id === 'tropical-quick'));
+
+console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 14 map controllers verified.`);

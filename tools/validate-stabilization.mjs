@@ -97,6 +97,7 @@ const weatherPosition = layerOrder.indexOf('LAYER_IDS.observationField');
 const satellitePosition = layerOrder.indexOf('...SATELLITE_LAYER_IDS');
 const radarPosition = layerOrder.indexOf('...RADAR_LAYER_IDS');
 const contextPosition = layerOrder.indexOf('...contextLayers');
+const tropicalPosition = layerOrder.indexOf('...TROPICAL_LAYER_IDS');
 const countyPosition = layerOrder.indexOf('LAYER_IDS.countyLines');
 const statePosition = layerOrder.indexOf('LAYER_IDS.stateLines');
 const alertPosition = layerOrder.indexOf('LAYER_IDS.alertFill');
@@ -108,13 +109,14 @@ if (!(
   && satellitePosition > weatherPosition
   && radarPosition > satellitePosition
   && contextPosition > radarPosition
-  && countyPosition > contextPosition
+  && tropicalPosition > contextPosition
+  && countyPosition > tropicalPosition
   && statePosition > countyPosition
   && alertPosition > statePosition
   && cityPosition > alertPosition
 )) {
   throw new Error(
-    'Runtime layer order must keep base roads below weather, satellite/radar in the weather stack, broadcast context/boundaries above weather, alerts above context, and cities above alerts.',
+    'Runtime layer order must keep base roads below weather, Satellite/Radar stable, broadcast roads below Tropical graphics, boundaries above Tropical, alerts above boundaries, and cities above alerts.',
   );
 }
 

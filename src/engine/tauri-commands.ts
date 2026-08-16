@@ -198,3 +198,9 @@ export async function fetchSatelliteCatalog(
 ): Promise<unknown> {
   return invoke<unknown>('fetch_satellite_catalog', { force });
 }
+
+export async function fetchTropicalCatalog(
+  force = false,
+): Promise<unknown> {
+  return invoke<unknown>('fetch_tropical_catalog', { force });
+}

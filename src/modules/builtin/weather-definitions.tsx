@@ -2,10 +2,13 @@ import type { StudioModuleDefinition } from '../../types/module';
 import { RadarController } from '../../radar/RadarController';
 import { DEFAULT_RADAR_SCENE_STATE, normalizeRadarSceneState } from '../../radar/radar-types';
 import { SatelliteController } from '../../satellite/SatelliteController';
+import { TropicalController } from '../../tropical/TropicalController';
 import { DEFAULT_SATELLITE_SCENE_STATE, normalizeSatelliteSceneState } from '../../satellite/satellite-types';
+import { DEFAULT_TROPICAL_SCENE_STATE, normalizeTropicalSceneState } from '../../tropical/tropical-types';
 import { ModelLabDialogPanel } from './panels/ModelLabDialogPanel';
 import { RadarDialogPanel } from './panels/RadarDialogPanel';
 import { SatelliteDialogPanel } from './panels/SatelliteDialogPanel';
+import { TropicalDialogPanel } from './panels/TropicalDialogPanel';
 
 export const weatherModuleDefinitions: StudioModuleDefinition[] = [
   {
@@ -61,12 +64,25 @@ export const weatherModuleDefinitions: StudioModuleDefinition[] = [
   {
     manifest: {
       id: 'tropical', name: 'Tropical Weather', domain: 'weather', maturity: 'migration-next',
-      description: 'NHC outlooks, current storms, track, cone, points, watches, wind radii and impact products.',
-      sceneKinds: ['map'], tools: ['Storm', 'Track', 'Cone', 'Points', 'Watches', 'Wind radii', 'Impacts'],
+      description: 'Official NOAA/NWS/NHC forecast track, cone, forecast points and coastal watches/warnings with scene-owned controls and output-safe rendering.',
+      sceneKinds: ['map'], tools: ['Storm', 'Track', 'Cone', 'Points', 'Watches'],
       legacyFiles: ['lib/tropical.js', 'public/broadcast-data-layers.js'], dependencies: ['map', 'data-engine'],
     },
     isActiveForScene: (scene) => scene.kind === 'map' && scene.category === 'Tropical',
-    defaultSceneState: { selectedStormId: null, showTrack: true, showCone: true, showPoints: true },
+    providers: [
+      { id: 'tropical-nhc', label: 'NOAA / NHC Tropical Weather Summary' },
+    ],
+    mapControllers: [{ id: 'tropical', phase: 'data', order: 26, create: () => new TropicalController() }],
+    dialogs: [{ id: 'module:tropical', title: 'Tropical Controls', className: 'tool-window--tropical', order: 30, sceneKinds: ['map'], requiresActiveModule: true, component: TropicalDialogPanel }],
+    tools: [
+      { id: 'tropical-dock', label: 'Tropical', placement: 'dock-tool', order: 40, sceneKinds: ['map'], requiresActiveModule: true, command: { kind: 'open-dialog', dialog: 'module:tropical' } },
+      { id: 'tropical-quick', label: 'Tropical', placement: 'quick', order: 30, sceneKinds: ['map'], requiresActiveModule: true, command: { kind: 'open-dialog', dialog: 'module:tropical' } },
+      { id: 'tropical-context', label: 'Tropical', placement: 'context', order: 105, sceneKinds: ['map'], requiresActiveModule: true, command: { kind: 'open-dialog', dialog: 'module:tropical' } },
+    ],
+    defaultSceneState: { ...DEFAULT_TROPICAL_SCENE_STATE },
+    migrateSceneState: (value, scene) => scene.kind === 'map'
+      ? { ...normalizeTropicalSceneState(value) }
+      : { ...value },
   },
   {
     manifest: {

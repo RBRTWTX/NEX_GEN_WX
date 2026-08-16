@@ -1,0 +1,204 @@
+use crate::{error::StudioError, weather_engine::provider_client};
+use reqwest::Url;
+use serde_json::{json, Value};
+
+const NHC_SUMMARY_SERVICE: &str =
+    "https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather_summary/MapServer";
+const TROPICAL_TTL_SECONDS: u64 = 180;
+const FORECAST_POINTS_LAYER: u8 = 5;
+const FORECAST_TRACK_LAYER: u8 = 6;
+const FORECAST_CONE_LAYER: u8 = 7;
+const WATCH_WARNING_LAYER: u8 = 8;
+
+fn layer_query_url(layer: u8) -> Result<Url, StudioError> {
+    let mut url = Url::parse(&format!("{NHC_SUMMARY_SERVICE}/{layer}/query"))
+        .map_err(|error| StudioError::Url(error.to_string()))?;
+    url.query_pairs_mut()
+        .append_pair("where", "1=1")
+        .append_pair("outFields", "*")
+        .append_pair("returnGeometry", "true")
+        .append_pair("outSR", "4326")
+        .append_pair("f", "geojson");
+    Ok(url)
+}
+
+fn empty_collection() -> Value {
+    json!({ "type": "FeatureCollection", "features": [] })
+}
+
+fn cache_status(value: &Value) -> &str {
+    value.get("cacheStatus").and_then(Value::as_str).unwrap_or("live")
+}
+
+fn cache_warning(value: &Value) -> Option<&str> {
+    value.get("cacheWarning").and_then(Value::as_str)
+}
+
+fn collection_or_failure(
+    label: &str,
+    result: Result<Value, StudioError>,
+    failures: &mut Vec<String>,
+) -> Value {
+    match result {
+        Ok(value) if is_feature_collection(&value) => value,
+        Ok(_) => {
+            failures.push(format!("{label} did not return a GeoJSON FeatureCollection"));
+            empty_collection()
+        }
+        Err(error) => {
+            failures.push(format!("{label} unavailable: {error}"));
+            empty_collection()
+        }
+    }
+}
+
+fn is_feature_collection(value: &Value) -> bool {
+    value.get("type").and_then(Value::as_str) == Some("FeatureCollection")
+        && value.get("features").and_then(Value::as_array).is_some()
+}
+
+fn combine_catalog(
+    points_result: Result<Value, StudioError>,
+    track_result: Result<Value, StudioError>,
+    cone_result: Result<Value, StudioError>,
+    warnings_result: Result<Value, StudioError>,
+) -> Result<Value, StudioError> {
+    let results = [&points_result, &track_result, &cone_result, &warnings_result];
+    let valid_count = results
+        .iter()
+        .filter_map(|result| result.as_ref().ok())
+        .filter(|value| is_feature_collection(value))
+        .count();
+    if valid_count == 0 {
+        let errors = results
+            .iter()
+            .filter_map(|result| result.as_ref().err())
+            .map(ToString::to_string)
+            .collect::<Vec<_>>();
+        let detail = if errors.is_empty() {
+            "all four NHC layers returned invalid GeoJSON".to_string()
+        } else {
+            errors.join("; ")
+        };
+        return Err(StudioError::Provider(format!(
+            "NHC Tropical Weather Summary failed: {detail}"
+        )));
+    }
+
+    let (status, mut failures) = {
+        let successful = [&points_result, &track_result, &cone_result, &warnings_result]
+            .into_iter()
+            .filter_map(|result| result.as_ref().ok())
+            .collect::<Vec<_>>();
+        let status = if successful.iter().any(|value| cache_status(value) == "stale") {
+            "stale"
+        } else if !successful.is_empty()
+            && successful.iter().all(|value| cache_status(value) == "fresh-cache")
+        {
+            "fresh-cache"
+        } else {
+            "live"
+        };
+        let warnings = successful
+            .iter()
+            .filter_map(|value| cache_warning(value))
+            .map(str::to_string)
+            .collect::<Vec<_>>();
+        (status.to_string(), warnings)
+    };
+
+    let points = collection_or_failure("NHC forecast points", points_result, &mut failures);
+    let track = collection_or_failure("NHC forecast track", track_result, &mut failures);
+    let cone = collection_or_failure("NHC forecast cone", cone_result, &mut failures);
+    let warnings = collection_or_failure("NHC watches/warnings", warnings_result, &mut failures);
+
+    let mut output = json!({
+        "provider": "NOAA/NWS/NHC Tropical Weather Summary",
+        "points": points,
+        "track": track,
+        "cone": cone,
+        "warnings": warnings,
+        "cacheStatus": status,
+    });
+    if !failures.is_empty() {
+        if let Some(object) = output.as_object_mut() {
+            object.insert("cacheWarning".to_string(), Value::String(failures.join("; ")));
+        }
+    }
+    Ok(output)
+}
+
+pub async fn tropical_catalog(force: bool) -> Result<Value, StudioError> {
+    let points = provider_client::fetch_json_cached(
+        layer_query_url(FORECAST_POINTS_LAYER)?, TROPICAL_TTL_SECONDS, force,
+        "application/geo+json,application/json",
+    )
+    .await;
+    let track = provider_client::fetch_json_cached(
+        layer_query_url(FORECAST_TRACK_LAYER)?, TROPICAL_TTL_SECONDS, force,
+        "application/geo+json,application/json",
+    )
+    .await;
+    let cone = provider_client::fetch_json_cached(
+        layer_query_url(FORECAST_CONE_LAYER)?, TROPICAL_TTL_SECONDS, force,
+        "application/geo+json,application/json",
+    )
+    .await;
+    let warnings = provider_client::fetch_json_cached(
+        layer_query_url(WATCH_WARNING_LAYER)?, TROPICAL_TTL_SECONDS, force,
+        "application/geo+json,application/json",
+    )
+    .await;
+    combine_catalog(points, track, cone, warnings)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn collection(status: &str) -> Value {
+        json!({ "type": "FeatureCollection", "features": [], "cacheStatus": status })
+    }
+
+    #[test]
+    fn official_tropical_layers_are_geojson_queries() {
+        for layer in [FORECAST_POINTS_LAYER, FORECAST_TRACK_LAYER, FORECAST_CONE_LAYER, WATCH_WARNING_LAYER] {
+            let url = layer_query_url(layer).unwrap();
+            assert_eq!(url.host_str(), Some("mapservices.weather.noaa.gov"));
+            assert!(url.as_str().contains("NHC_tropical_weather_summary"));
+            assert!(url.as_str().contains("f=geojson"));
+            assert!(url.as_str().contains("outSR=4326"));
+        }
+    }
+
+    #[test]
+    fn partial_tropical_layer_failure_is_degraded_not_fatal() {
+        let result = combine_catalog(
+            Ok(collection("live")),
+            Ok(collection("live")),
+            Ok(collection("live")),
+            Err(StudioError::Provider("warning layer down".to_string())),
+        )
+        .unwrap();
+        assert_eq!(result.get("cacheStatus").and_then(Value::as_str), Some("live"));
+        assert!(result.get("cacheWarning").and_then(Value::as_str).is_some());
+        assert_eq!(
+            result.get("warnings")
+                .and_then(|value| value.get("features"))
+                .and_then(Value::as_array)
+                .map(Vec::len),
+            Some(0)
+        );
+    }
+    #[test]
+    fn all_structurally_invalid_tropical_layers_are_fatal() {
+        let result = combine_catalog(
+            Ok(json!({"error": "invalid"})),
+            Ok(json!({"type": "FeatureCollection"})),
+            Ok(json!({"features": []})),
+            Ok(json!({})),
+        );
+        assert!(result.is_err());
+    }
+
+}
