@@ -32,6 +32,11 @@ const checks = [
   'validate:tropical-outlook',
   'test:tropical-outlook-provider',
   'test:tropical-outlook-runtime',
+  'validate:tropical-wind-probability',
+  'test:tropical-wind-probability-provider',
+  'test:tropical-wind-probability-runtime',
+  'validate:product-legends',
+  'test:product-legends',
   'check',
 ];
 

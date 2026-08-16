@@ -4,6 +4,7 @@ import { DEFAULT_RADAR_SCENE_STATE, normalizeRadarSceneState } from '../../radar
 import { SatelliteController } from '../../satellite/SatelliteController';
 import { TropicalController } from '../../tropical/TropicalController';
 import { TropicalOutlookController } from '../../tropical/TropicalOutlookController';
+import { TropicalWindProbabilityController } from '../../tropical/TropicalWindProbabilityController';
 import { DEFAULT_SATELLITE_SCENE_STATE, normalizeSatelliteSceneState } from '../../satellite/satellite-types';
 import { DEFAULT_TROPICAL_SCENE_STATE, normalizeTropicalSceneState } from '../../tropical/tropical-types';
 import { ModelLabDialogPanel } from './panels/ModelLabDialogPanel';
@@ -65,8 +66,8 @@ export const weatherModuleDefinitions: StudioModuleDefinition[] = [
   {
     manifest: {
       id: 'tropical', name: 'Tropical Weather', domain: 'weather', maturity: 'migration-next',
-      description: 'Official NOAA/NWS/NHC tropical outlooks plus forecast track, cone, forecast points and coastal watches/warnings with scene-owned controls and output-safe rendering.',
-      sceneKinds: ['map'], tools: ['Outlook', 'Storm', 'Track', 'Cone', 'Points', 'Watches'],
+      description: 'Official NOAA/NWS/NHC tropical outlooks, forecast track/cone, coastal watches/warnings, and 34/50/64-knot wind probabilities with scene-owned controls and output-safe rendering.',
+      sceneKinds: ['map'], tools: ['Outlook', 'Storm', 'Track', 'Cone', 'Points', 'Watches', 'Wind Probability'],
       legacyFiles: ['lib/tropical.js', 'public/broadcast-data-layers.js'], dependencies: ['map', 'data-engine'],
     },
     isActiveForScene: (scene) => scene.kind === 'map' && scene.category === 'Tropical',
@@ -76,6 +77,7 @@ export const weatherModuleDefinitions: StudioModuleDefinition[] = [
     mapControllers: [
       { id: 'tropical', phase: 'data', order: 26, create: () => new TropicalController() },
       { id: 'tropical-outlook', phase: 'data', order: 27, create: () => new TropicalOutlookController() },
+      { id: 'tropical-wind-probability', phase: 'data', order: 28, create: () => new TropicalWindProbabilityController() },
     ],
     dialogs: [{ id: 'module:tropical', title: 'Tropical Controls', className: 'tool-window--tropical', order: 30, sceneKinds: ['map'], requiresActiveModule: true, component: TropicalDialogPanel }],
     tools: [

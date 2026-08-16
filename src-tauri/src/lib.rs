@@ -143,6 +143,14 @@ async fn fetch_tropical_outlook_catalog(
     weather_engine::providers::tropical_outlook_catalog(&period, force).await
 }
 
+#[tauri::command]
+async fn fetch_tropical_wind_probability_catalog(
+    threshold_knots: u16,
+    force: bool,
+) -> Result<Value, error::StudioError> {
+    weather_engine::providers::tropical_wind_probability_catalog(threshold_knots, force).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -176,7 +184,8 @@ pub fn run() {
             fetch_radar_site_catalog,
             fetch_satellite_catalog,
             fetch_tropical_catalog,
-            fetch_tropical_outlook_catalog
+            fetch_tropical_outlook_catalog,
+            fetch_tropical_wind_probability_catalog
         ])
         .run(tauri::generate_context!())
         .expect("error while running NEX GEN WX");

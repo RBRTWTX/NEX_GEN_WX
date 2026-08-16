@@ -1,0 +1,74 @@
+.tropical-wind-probability-controls {
+  display: grid;
+  gap: 12px;
+}
+
+.tropical-wind-probability-controls__header > div,
+.tropical-wind-probability-summary,
+.tropical-wind-probability-status {
+  display: grid;
+  gap: 3px;
+}
+
+.tropical-wind-probability-controls__header strong,
+.tropical-wind-probability-summary strong,
+.tropical-wind-probability-status strong {
+  color: #f1f5f9;
+}
+
+.tropical-wind-probability-controls__header small,
+.tropical-wind-probability-summary small,
+.tropical-wind-probability-status small {
+  color: #aeb9c6;
+  line-height: 1.35;
+}
+
+.tropical-wind-probability-health-dot {
+  width: 9px;
+  height: 9px;
+  margin-right: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.45);
+}
+
+.tropical-wind-probability-health-dot.loading {
+  background: #fbbf24;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.45);
+}
+
+.tropical-wind-probability-health-dot.degraded {
+  background: #fb7185;
+  box-shadow: 0 0 8px rgba(251, 113, 133, 0.45);
+}
+
+.tropical-wind-probability-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+}
+
+.tropical-wind-probability-action-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tropical-wind-probability-action-row span {
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+.tropical-wind-probability-summary,
+.tropical-wind-probability-status {
+  padding: 9px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 7px;
+  background: rgba(12, 18, 25, 0.45);
+}
+
+.tropical-wind-probability-status--warning {
+  border-color: rgba(251, 113, 133, 0.55);
+}

@@ -15,6 +15,7 @@ import {
 import { RADAR_LAYER_IDS } from '../radar/radar-layer-ids';
 import { SATELLITE_LAYER_IDS } from '../satellite/satellite-layer-ids';
 import { TROPICAL_LAYER_IDS, TROPICAL_OUTLOOK_LAYER_IDS } from '../tropical/tropical-layer-ids';
+import { TROPICAL_WIND_PROBABILITY_LAYER_IDS } from '../tropical/tropical-wind-probability-layer-ids';
 
 export interface MutableImageSource {
   updateImage(options: {
@@ -182,6 +183,7 @@ export function enforceStudioLayerOrder(map: MapLibreMap): void {
     ...contextLayers,
     ...TROPICAL_LAYER_IDS,
     ...TROPICAL_OUTLOOK_LAYER_IDS,
+    ...TROPICAL_WIND_PROBABILITY_LAYER_IDS,
     LAYER_IDS.countyCasing,
     LAYER_IDS.countyLines,
     LAYER_IDS.stateLines,

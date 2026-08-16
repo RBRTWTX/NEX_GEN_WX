@@ -813,3 +813,33 @@ body.thumbnail-capture-mode .scene-transition-viewport { transition: none !impor
 .broadcast-header.is-interactive .scene-editable-text {
   cursor: text;
 }
+/* NEX GEN WX 0.8.0 Checkpoint 3.1 — data-driven product legends */
+.header-product-legend {
+  width: min(470px, 34vw);
+  height: 18px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.6);
+  box-shadow: 0 1px 3px #000;
+}
+.header-product-legend__segment {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid rgba(0,0,0,.28);
+}
+.header-product-legend__segment:last-child { border-right: 0; }
+.header-product-legend__segment small {
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0 2px;
+  color: #fff;
+  font-size: 7px;
+  font-weight: 950;
+  line-height: 16px;
+  white-space: nowrap;
+  text-overflow: clip;
+  text-shadow: -1px -1px 1px #000, 1px 1px 1px #000;
+}

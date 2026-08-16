@@ -211,3 +211,13 @@ export async function fetchTropicalOutlookCatalog(
 ): Promise<unknown> {
   return invoke<unknown>('fetch_tropical_outlook_catalog', { period, force });
 }
+
+export async function fetchTropicalWindProbabilityCatalog(
+  thresholdKnots: 34 | 50 | 64,
+  force = false,
+): Promise<unknown> {
+  if (![34, 50, 64].includes(thresholdKnots)) {
+    throw new Error('NHC wind-probability threshold must be 34, 50, or 64 knots.');
+  }
+  return invoke<unknown>('fetch_tropical_wind_probability_catalog', { thresholdKnots, force });
+}

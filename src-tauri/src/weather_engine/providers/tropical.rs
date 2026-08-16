@@ -12,6 +12,9 @@ const FORECAST_POINTS_LAYER: u8 = 5;
 const FORECAST_TRACK_LAYER: u8 = 6;
 const FORECAST_CONE_LAYER: u8 = 7;
 const WATCH_WARNING_LAYER: u8 = 8;
+const WIND_PROBABILITY_34_LAYER: u8 = 30;
+const WIND_PROBABILITY_50_LAYER: u8 = 31;
+const WIND_PROBABILITY_64_LAYER: u8 = 32;
 const OUTLOOK_SEVEN_DAY_MOTION_LAYER: u8 = 33;
 
 fn layer_query_url(layer: u8) -> Result<Url, StudioError> {
@@ -294,6 +297,66 @@ pub async fn tropical_outlook_catalog(
     }
 }
 
+
+fn wind_probability_layer(threshold_knots: u16) -> Result<u8, StudioError> {
+    match threshold_knots {
+        34 => Ok(WIND_PROBABILITY_34_LAYER),
+        50 => Ok(WIND_PROBABILITY_50_LAYER),
+        64 => Ok(WIND_PROBABILITY_64_LAYER),
+        _ => Err(StudioError::Provider(
+            "NHC wind-probability threshold must be 34, 50, or 64 knots".to_string(),
+        )),
+    }
+}
+
+fn combine_wind_probability_catalog(
+    threshold_knots: u16,
+    result: Result<Value, StudioError>,
+) -> Result<Value, StudioError> {
+    let probabilities = match result {
+        Ok(value) if is_feature_collection(&value) => value,
+        Ok(_) => {
+            return Err(StudioError::Provider(format!(
+                "NHC {threshold_knots}-kt wind probabilities did not return GeoJSON"
+            )))
+        }
+        Err(error) => {
+            return Err(StudioError::Provider(format!(
+                "NHC {threshold_knots}-kt wind probabilities unavailable: {error}"
+            )))
+        }
+    };
+    let status = cache_status(&probabilities).to_string();
+    let warning = cache_warning(&probabilities).map(str::to_string);
+    let mut output = json!({
+        "provider": "NOAA/NWS/NHC Tropical Weather Summary",
+        "thresholdKnots": threshold_knots,
+        "probabilities": probabilities,
+        "cacheStatus": status,
+    });
+    if let Some(warning) = warning {
+        if let Some(object) = output.as_object_mut() {
+            object.insert("cacheWarning".to_string(), Value::String(warning));
+        }
+    }
+    Ok(output)
+}
+
+pub async fn tropical_wind_probability_catalog(
+    threshold_knots: u16,
+    force: bool,
+) -> Result<Value, StudioError> {
+    let layer = wind_probability_layer(threshold_knots)?;
+    let probabilities = provider_client::fetch_json_cached(
+        layer_query_url(layer)?,
+        TROPICAL_TTL_SECONDS,
+        force,
+        "application/geo+json,application/json",
+    )
+    .await;
+    combine_wind_probability_catalog(threshold_knots, probabilities)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -393,5 +456,37 @@ mod tests {
             Ok(json!({})),
         );
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn official_wind_probability_layers_are_geojson_queries() {
+        for (threshold, layer) in [
+            (34, WIND_PROBABILITY_34_LAYER),
+            (50, WIND_PROBABILITY_50_LAYER),
+            (64, WIND_PROBABILITY_64_LAYER),
+        ] {
+            assert_eq!(wind_probability_layer(threshold).unwrap(), layer);
+            let url = layer_query_url(layer).unwrap();
+            assert_eq!(url.host_str(), Some("mapservices.weather.noaa.gov"));
+            assert!(url.as_str().contains("NHC_tropical_weather_summary"));
+            assert!(url.as_str().contains("f=geojson"));
+            assert!(url.as_str().contains("outSR=4326"));
+        }
+    }
+
+    #[test]
+    fn invalid_wind_probability_threshold_is_rejected() {
+        assert!(wind_probability_layer(35).is_err());
+        assert!(wind_probability_layer(0).is_err());
+    }
+
+    #[test]
+    fn wind_probability_catalog_requires_geojson() {
+        let invalid = combine_wind_probability_catalog(34, Ok(json!({"error": "invalid"})));
+        assert!(invalid.is_err());
+
+        let valid = combine_wind_probability_catalog(64, Ok(collection("fresh-cache"))).unwrap();
+        assert_eq!(valid.get("thresholdKnots").and_then(Value::as_u64), Some(64));
+        assert_eq!(valid.get("cacheStatus").and_then(Value::as_str), Some("fresh-cache"));
     }
 }

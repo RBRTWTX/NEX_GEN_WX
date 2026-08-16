@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import type { HeaderState, MapScene } from '../types/domain';
 import { EditableSceneText } from '../scene-editing/EditableSceneText';
 import { SceneObject } from '../scene-editing/SceneObject';
+import { productLegendForScene } from '../legends/product-legend';
 
 interface BroadcastHeaderProps {
   scene: MapScene;
@@ -44,6 +45,8 @@ export function BroadcastHeader({
   const firstLine = words.slice(0, Math.max(1, words.length - 1)).join(' ');
   const finalWord = words.at(-1) ?? 'WX';
   const legend = scene.header.legend;
+  const productLegend = productLegendForScene(scene);
+  const showLegend = legend.visible && legend.kind !== 'none' && productLegend?.mode !== 'none';
 
   return (
     <SceneObject
@@ -117,23 +120,45 @@ export function BroadcastHeader({
             value={scene.header.subtitle}
             onChange={(value) => onHeaderChange?.('subtitle', value || scene.header.subtitle)}
           />
-          {legend.visible && legend.kind !== 'none' && (
-            <SceneObject elementId="map.header.legend" label="Header color legend" kind="legend" className="header-legend" aria-label="Product color key">
-              <EditableSceneText
-                as="span"
-                elementId="map.legend.low"
-                label="Legend low label"
-                value={legend.lowLabel}
-                onChange={(value) => onHeaderChange?.('legend', { ...legend, lowLabel: value || legend.lowLabel })}
-              />
-              <SceneObject as="i" elementId="map.legend.ramp" label="Legend color ramp" kind="legend" className={legendClass(legend.kind)} />
-              <EditableSceneText
-                as="span"
-                elementId="map.legend.high"
-                label="Legend high label"
-                value={legend.highLabel}
-                onChange={(value) => onHeaderChange?.('legend', { ...legend, highLabel: value || legend.highLabel })}
-              />
+          {showLegend && (
+            <SceneObject
+              elementId="map.header.legend"
+              label="Header color legend"
+              kind="legend"
+              className="header-legend"
+              aria-label={productLegend?.mode === 'discrete' ? productLegend.title : 'Product color key'}
+            >
+              {productLegend?.mode === 'discrete' ? (
+                <span className="header-product-legend" title={productLegend.title}>
+                  {productLegend.segments.map((segment) => (
+                    <span
+                      key={productLegend.id + ':' + segment.label}
+                      className="header-product-legend__segment"
+                      style={{ backgroundColor: segment.color }}
+                    >
+                      <small>{segment.label}</small>
+                    </span>
+                  ))}
+                </span>
+              ) : (
+                <>
+                  <EditableSceneText
+                    as="span"
+                    elementId="map.legend.low"
+                    label="Legend low label"
+                    value={legend.lowLabel}
+                    onChange={(value) => onHeaderChange?.('legend', { ...legend, lowLabel: value || legend.lowLabel })}
+                  />
+                  <SceneObject as="i" elementId="map.legend.ramp" label="Legend color ramp" kind="legend" className={legendClass(legend.kind)} />
+                  <EditableSceneText
+                    as="span"
+                    elementId="map.legend.high"
+                    label="Legend high label"
+                    value={legend.highLabel}
+                    onChange={(value) => onHeaderChange?.('legend', { ...legend, highLabel: value || legend.highLabel })}
+                  />
+                </>
+              )}
             </SceneObject>
           )}
         </div>
