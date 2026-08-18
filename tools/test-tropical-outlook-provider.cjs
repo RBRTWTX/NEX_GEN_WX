@@ -79,7 +79,10 @@ Module._load = function patchedLoad(request, parent, isMain) {
   return originalLoad.call(this, request, parent, isMain);
 };
 
-const { fetchTropicalOutlookCatalog } = require('../src/tropical/tropical-outlook-provider.ts');
+const {
+  annotateTropicalOutlookRegionLabels,
+  fetchTropicalOutlookCatalog,
+} = require('../src/tropical/tropical-outlook-provider.ts');
 
 (async () => {
   const twoDay = await fetchTropicalOutlookCatalog('2day', false);
@@ -102,7 +105,43 @@ const { fetchTropicalOutlookCatalog } = require('../src/tropical/tropical-outloo
   assert.equal(sevenDay.regions.features[0].properties.ngwxProbability, 50);
   assert.equal(sevenDay.motion.features[0].properties.ngwxProbability, 70);
 
-  console.log('Tropical outlook provider regression passed: typed Tauri period selection and 2-day/7-day NHC probability normalization verified.');
+  const fallbackRegions = annotateTropicalOutlookRegionLabels(
+    {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          properties: { ngwxProbability: 60 },
+          geometry: { type: 'Polygon', coordinates: [[[-60, 10], [-50, 10], [-50, 20], [-60, 10]]] },
+        },
+        {
+          type: 'Feature',
+          properties: { ngwxProbability: 80 },
+          geometry: { type: 'Polygon', coordinates: [[[-120, 10], [-110, 10], [-110, 20], [-120, 10]]] },
+        },
+      ],
+    },
+    {
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        properties: { ngwxProbability: 60 },
+        geometry: { type: 'Point', coordinates: [-55, 15] },
+      }],
+    },
+  );
+  assert.equal(
+    fallbackRegions.features[0].properties.ngwxRegionProbabilityLabel,
+    '',
+    'a region containing an NHC current-location point must not duplicate the point percentage',
+  );
+  assert.equal(
+    fallbackRegions.features[1].properties.ngwxRegionProbabilityLabel,
+    '80%',
+    'a forecast-development region without an NHC current-location point must retain its own probability label',
+  );
+
+  console.log('Tropical outlook provider regression passed: typed Tauri period selection, NHC probability normalization, and no-location region percentage fallback verified.');
 })().catch((error) => {
   console.error(error);
   process.exitCode = 1;

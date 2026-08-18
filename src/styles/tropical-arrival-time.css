@@ -1,0 +1,57 @@
+.tropical-arrival-controls {
+  display: grid;
+  gap: 10px;
+}
+
+.tropical-arrival-controls__header > div,
+.tropical-arrival-summary,
+.tropical-arrival-status {
+  display: grid;
+  gap: 3px;
+}
+
+.tropical-arrival-controls small,
+.tropical-arrival-summary small,
+.tropical-arrival-status small {
+  color: var(--text-muted, #9eabb9);
+  line-height: 1.35;
+}
+
+.tropical-arrival-health-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #3bd174;
+}
+
+.tropical-arrival-health-dot.loading {
+  background: #e9c34a;
+}
+
+.tropical-arrival-health-dot.degraded {
+  background: #ee6c67;
+}
+
+.tropical-arrival-checks {
+  display: grid;
+  gap: 6px;
+}
+
+.tropical-arrival-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tropical-arrival-action-row span {
+  color: var(--text-muted, #9eabb9);
+  font-size: 12px;
+}
+
+.tropical-arrival-status--warning {
+  border-left: 3px solid #ee6c67;
+  padding-left: 8px;
+}

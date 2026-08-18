@@ -14,6 +14,7 @@ pub use radar::{mrms_catalog, radar_site_catalog, radar_sites};
 pub use roads::roads;
 pub use satellite::satellite_catalog;
 pub use tropical::{
-    tropical_catalog, tropical_outlook_catalog, tropical_wind_probability_catalog,
+    tropical_arrival_time_catalog, tropical_catalog, tropical_outlook_catalog,
+    tropical_storm_surge_catalog, tropical_wind_probability_catalog,
 };
 pub use types::BBox;

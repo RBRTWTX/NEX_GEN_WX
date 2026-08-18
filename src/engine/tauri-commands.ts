@@ -221,3 +221,23 @@ export async function fetchTropicalWindProbabilityCatalog(
   }
   return invoke<unknown>('fetch_tropical_wind_probability_catalog', { thresholdKnots, force });
 }
+
+export async function fetchTropicalArrivalTimeCatalog(
+  mode: 'earliest' | 'most-likely',
+  force = false,
+): Promise<unknown> {
+  if (!['earliest', 'most-likely'].includes(mode)) {
+    throw new Error('NHC arrival-time mode must be earliest or most-likely.');
+  }
+  return invoke<unknown>('fetch_tropical_arrival_time_catalog', { mode, force });
+}
+
+export async function fetchTropicalStormSurgeCatalog(
+  product: 'potential' | 'peak',
+  force = false,
+): Promise<unknown> {
+  if (!['potential', 'peak'].includes(product)) {
+    throw new Error('NHC storm-surge product must be potential or peak.');
+  }
+  return invoke<unknown>('fetch_tropical_storm_surge_catalog', { product, force });
+}

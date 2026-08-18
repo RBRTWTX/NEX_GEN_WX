@@ -39,6 +39,22 @@ const NHC_OUTLOOK_SEGMENTS = [
   { label: 'HIGH ≥70%', color: '#e60000' },
 ] as const;
 
+
+const NHC_POTENTIAL_SURGE_SEGMENTS = [
+  { label: '>1 FT', color: '#005ce6' },
+  { label: '>3 FT', color: '#ffff00' },
+  { label: '>6 FT', color: '#ffaa00' },
+  { label: '>9 FT', color: '#ff0000' },
+] as const;
+
+const NHC_PEAK_SURGE_SEGMENTS = [
+  { label: 'UP TO 3 FT', color: '#005ce6' },
+  { label: 'UP TO 6 FT', color: '#ffff00' },
+  { label: 'UP TO 9 FT', color: '#ffaa00' },
+  { label: 'UP TO 12 FT', color: '#ff0000' },
+  { label: 'ABOVE 12 FT', color: '#c500ff' },
+] as const;
+
 const PRODUCT_LEGENDS: Record<string, ProductLegendSpec> = {
   'nhc-wind-prob-34kt': {
     mode: 'discrete',
@@ -69,6 +85,18 @@ const PRODUCT_LEGENDS: Record<string, ProductLegendSpec> = {
     id: 'nhc-tropical-outlook',
     title: 'FORMATION CHANCE',
     segments: NHC_OUTLOOK_SEGMENTS,
+  },
+  'nhc-surge-inundation': {
+    mode: 'discrete',
+    id: 'nhc-potential-storm-surge',
+    title: 'POTENTIAL INUNDATION ABOVE GROUND',
+    segments: NHC_POTENTIAL_SURGE_SEGMENTS,
+  },
+  'nhc-peak-storm-surge': {
+    mode: 'discrete',
+    id: 'nhc-peak-storm-surge',
+    title: 'PEAK SURGE ABOVE GROUND',
+    segments: NHC_PEAK_SURGE_SEGMENTS,
   },
 };
 
@@ -118,6 +146,23 @@ const SCENE_LEGEND_OVERRIDES: Record<string, HiddenProductLegend> = {
 export function productLegendForScene(scene: MapScene): ProductLegendSpec | null {
   const sceneOverride = SCENE_LEGEND_OVERRIDES[scene.id];
   if (sceneOverride) return sceneOverride;
+
+  if (scene.product.id === 'nhc-arrival-earliest' || scene.product.id === 'nhc-arrival-most-likely') {
+    const arrivalState = scene.moduleState?.['tropical-arrival-time'] as Record<string, unknown> | undefined;
+    if (arrivalState?.showWindProbability === false) {
+      return {
+        mode: 'none',
+        id: 'nhc-arrival-time-direct-labels',
+        reason: 'NHC arrival times are labeled directly on the contour lines when the probability background is hidden.',
+      };
+    }
+    return {
+      mode: 'discrete',
+      id: 'nhc-arrival-34kt-probability',
+      title: '34-KT WIND PROBABILITY (%)',
+      segments: NHC_WIND_PROBABILITY_SEGMENTS,
+    };
+  }
 
   const productLegend = PRODUCT_LEGENDS[scene.product.id];
   if (productLegend) return productLegend;

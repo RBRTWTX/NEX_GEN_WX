@@ -99,7 +99,7 @@ for (const id of [
 assert.equal(new Set(ids).size, ids.length, 'built-in module IDs must be unique');
 assert.deepEqual(
   moduleRegistry.createMapControllers().map((controller) => controller.id),
-  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'tropical', 'tropical-outlook', 'tropical-wind-probability', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
+  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'tropical', 'tropical-outlook', 'tropical-wind-probability', 'tropical-storm-surge', 'tropical-arrival-time', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
   'built-in map controllers should be registry-ordered and complete',
 );
 const providers = moduleRegistry.getProviders();
@@ -168,4 +168,4 @@ assert.equal(normalizedTropical.moduleState.tropical.autoRefreshEnabled, true);
 assert.ok(moduleRegistry.getDialog('module:tropical', normalizedTropical));
 assert.ok(moduleRegistry.getTools(normalizedTropical, 'quick').some((tool) => tool.id === 'tropical-quick'));
 
-console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 16 map controllers verified.`);
+console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 18 map controllers verified.`);

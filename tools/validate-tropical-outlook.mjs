@@ -40,7 +40,16 @@ for (const token of ["'nhc-outlook-2day'", "'nhc-outlook-7day'", "scene.moduleSt
 }
 
 const provider = await read('src/tropical/tropical-outlook-provider.ts');
-for (const token of ['ngwxProbability', 'prob2day', 'prob7day', 'risk2day', 'risk7day']) {
+for (const token of [
+  'ngwxProbability',
+  'ngwxRegionProbabilityLabel',
+  'annotateTropicalOutlookRegionLabels',
+  'geometryContainsPoint',
+  'prob2day',
+  'prob7day',
+  'risk2day',
+  'risk7day',
+]) {
   if (!provider.includes(token)) throw new Error(`Tropical outlook normalization missing: ${token}`);
 }
 
@@ -70,6 +79,8 @@ for (const token of [
   'TROPICAL_OUTLOOK_LAYERS.regionFill',
   'TROPICAL_OUTLOOK_LAYERS.motionLine',
   'TROPICAL_OUTLOOK_LAYERS.locationProbability',
+  'TROPICAL_OUTLOOK_LAYERS.regionProbability',
+  'ngwxRegionProbabilityLabel',
 ]) {
   if (!renderer.includes(token)) throw new Error(`Tropical outlook renderer missing: ${token}`);
 }
@@ -86,4 +97,4 @@ if (!definitions.includes("id: 'tropical-outlook'")) throw new Error('Tropical O
 const dialog = await read('src/modules/builtin/panels/TropicalDialogPanel.tsx');
 if (!dialog.includes('TropicalOutlookControls')) throw new Error('Tropical dialog does not expose Outlook controls.');
 
-console.log('Tropical outlook validation passed: official NHC layers 1/2/3/33, isolated controller/provider/runtime, NHC risk styling, registry controls, and centralized layer order verified.');
+console.log('Tropical outlook validation passed: official NHC layers 1/2/3/33, isolated controller/provider/runtime, NHC risk styling, fallback region probabilities for no-location development areas, registry controls, and centralized layer order verified.');

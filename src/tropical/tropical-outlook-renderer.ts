@@ -87,6 +87,25 @@ export function ensureTropicalOutlookLayers(map: MapLibreMap): void {
       },
     });
   }
+  if (!map.getLayer(TROPICAL_OUTLOOK_LAYERS.regionProbability)) {
+    map.addLayer({
+      id: TROPICAL_OUTLOOK_LAYERS.regionProbability,
+      type: 'symbol',
+      source: TROPICAL_OUTLOOK_SOURCE_IDS.regions,
+      layout: {
+        'text-field': ['get', 'ngwxRegionProbabilityLabel'],
+        'text-font': ['Noto Sans Bold'],
+        'text-size': 13,
+        'text-allow-overlap': true,
+        'text-ignore-placement': true,
+      },
+      paint: {
+        'text-color': '#ffffff',
+        'text-halo-color': '#11151b',
+        'text-halo-width': 1.8,
+      },
+    });
+  }
   if (!map.getLayer(TROPICAL_OUTLOOK_LAYERS.locationCircle)) {
     map.addLayer({
       id: TROPICAL_OUTLOOK_LAYERS.locationCircle,
@@ -160,6 +179,11 @@ export function applyTropicalOutlookVisibility(
   state: TropicalOutlookSceneState,
   sevenDay: boolean,
 ): void {
+  setVisibility(
+    map,
+    TROPICAL_OUTLOOK_LAYERS.regionProbability,
+    sevenDay && state.showRegions,
+  );
   setVisibility(map, TROPICAL_OUTLOOK_LAYERS.locationCircle, state.showLocations);
   setVisibility(map, TROPICAL_OUTLOOK_LAYERS.locationX, state.showLocations);
   setVisibility(map, TROPICAL_OUTLOOK_LAYERS.locationProbability, state.showLocations);

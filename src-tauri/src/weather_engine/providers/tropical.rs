@@ -4,6 +4,8 @@ use serde_json::{json, Value};
 
 const NHC_SUMMARY_SERVICE: &str =
     "https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_tropical_weather_summary/MapServer";
+const NHC_PEAK_STORM_SURGE_SERVICE: &str =
+    "https://mapservices.weather.noaa.gov/tropical/rest/services/tropical/NHC_PeakStormSurge/MapServer";
 const TROPICAL_TTL_SECONDS: u64 = 180;
 const OUTLOOK_TWO_DAY_LOCATION_LAYER: u8 = 1;
 const OUTLOOK_SEVEN_DAY_LOCATION_LAYER: u8 = 2;
@@ -16,9 +18,28 @@ const WIND_PROBABILITY_34_LAYER: u8 = 30;
 const WIND_PROBABILITY_50_LAYER: u8 = 31;
 const WIND_PROBABILITY_64_LAYER: u8 = 32;
 const OUTLOOK_SEVEN_DAY_MOTION_LAYER: u8 = 33;
+const ARRIVAL_EARLIEST_LAYER: u8 = 18;
+const ARRIVAL_MOST_LIKELY_LAYER: u8 = 19;
+const INUNDATION_FOOTPRINT_LAYER: u8 = 23;
+const INUNDATION_IMAGE_LAYER: u8 = 24;
+const PEAK_SURGE_POINTS_LAYER: u8 = 0;
+const PEAK_SURGE_LINES_LAYER: u8 = 1;
+const PEAK_SURGE_POLYGONS_LAYER: u8 = 2;
 
 fn layer_query_url(layer: u8) -> Result<Url, StudioError> {
     let mut url = Url::parse(&format!("{NHC_SUMMARY_SERVICE}/{layer}/query"))
+        .map_err(|error| StudioError::Url(error.to_string()))?;
+    url.query_pairs_mut()
+        .append_pair("where", "1=1")
+        .append_pair("outFields", "*")
+        .append_pair("returnGeometry", "true")
+        .append_pair("outSR", "4326")
+        .append_pair("f", "geojson");
+    Ok(url)
+}
+
+fn peak_layer_query_url(layer: u8) -> Result<Url, StudioError> {
+    let mut url = Url::parse(&format!("{NHC_PEAK_STORM_SURGE_SERVICE}/{layer}/query"))
         .map_err(|error| StudioError::Url(error.to_string()))?;
     url.query_pairs_mut()
         .append_pair("where", "1=1")
@@ -357,6 +378,195 @@ pub async fn tropical_wind_probability_catalog(
     combine_wind_probability_catalog(threshold_knots, probabilities)
 }
 
+
+fn arrival_time_layer(mode: &str) -> Result<(u8, &'static str), StudioError> {
+    match mode.trim().to_ascii_lowercase().as_str() {
+        "earliest" => Ok((ARRIVAL_EARLIEST_LAYER, "earliest")),
+        "most-likely" => Ok((ARRIVAL_MOST_LIKELY_LAYER, "most-likely")),
+        _ => Err(StudioError::Provider(
+            "NHC arrival-time mode must be earliest or most-likely".to_string(),
+        )),
+    }
+}
+
+fn combine_arrival_time_catalog(
+    mode: &str,
+    result: Result<Value, StudioError>,
+) -> Result<Value, StudioError> {
+    let contours = match result {
+        Ok(value) if is_feature_collection(&value) => value,
+        Ok(_) => {
+            return Err(StudioError::Provider(format!(
+                "NHC {mode} arrival-time contours did not return GeoJSON"
+            )))
+        }
+        Err(error) => {
+            return Err(StudioError::Provider(format!(
+                "NHC {mode} arrival-time contours unavailable: {error}"
+            )))
+        }
+    };
+    let status = cache_status(&contours).to_string();
+    let warning = cache_warning(&contours).map(str::to_string);
+    let mut output = json!({
+        "provider": "NOAA/NWS/NHC Tropical Weather Summary",
+        "mode": mode,
+        "contours": contours,
+        "cacheStatus": status,
+    });
+    if let Some(warning) = warning {
+        if let Some(object) = output.as_object_mut() {
+            object.insert("cacheWarning".to_string(), Value::String(warning));
+        }
+    }
+    Ok(output)
+}
+
+pub async fn tropical_arrival_time_catalog(
+    mode: &str,
+    force: bool,
+) -> Result<Value, StudioError> {
+    let (layer, normalized_mode) = arrival_time_layer(mode)?;
+    let contours = provider_client::fetch_json_cached(
+        layer_query_url(layer)?,
+        TROPICAL_TTL_SECONDS,
+        force,
+        "application/geo+json,application/json",
+    )
+    .await;
+    combine_arrival_time_catalog(normalized_mode, contours)
+}
+
+fn combine_potential_storm_surge_catalog(
+    result: Result<Value, StudioError>,
+) -> Result<Value, StudioError> {
+    let footprint = match result {
+        Ok(value) if is_feature_collection(&value) => value,
+        Ok(_) => {
+            return Err(StudioError::Provider(
+                "NHC potential storm-surge footprint did not return GeoJSON".to_string(),
+            ))
+        }
+        Err(error) => {
+            return Err(StudioError::Provider(format!(
+                "NHC potential storm-surge footprint unavailable: {error}"
+            )))
+        }
+    };
+    let status = cache_status(&footprint).to_string();
+    let warning = cache_warning(&footprint).map(str::to_string);
+    let mut output = json!({
+        "provider": "NOAA/NWS/NHC Tropical Weather Summary",
+        "product": "potential",
+        "footprint": footprint,
+        "rasterLayer": INUNDATION_IMAGE_LAYER,
+        "cacheStatus": status,
+    });
+    if let Some(warning) = warning {
+        if let Some(object) = output.as_object_mut() {
+            object.insert("cacheWarning".to_string(), Value::String(warning));
+        }
+    }
+    Ok(output)
+}
+
+fn combine_peak_storm_surge_catalog(
+    points_result: Result<Value, StudioError>,
+    lines_result: Result<Value, StudioError>,
+    polygons_result: Result<Value, StudioError>,
+) -> Result<Value, StudioError> {
+    let results = [&points_result, &lines_result, &polygons_result];
+    let valid_count = results
+        .iter()
+        .filter_map(|result| result.as_ref().ok())
+        .filter(|value| is_feature_collection(value))
+        .count();
+    if valid_count == 0 {
+        let errors = results
+            .iter()
+            .filter_map(|result| result.as_ref().err())
+            .map(ToString::to_string)
+            .collect::<Vec<_>>();
+        let detail = if errors.is_empty() {
+            "all Peak Storm Surge layers returned invalid GeoJSON".to_string()
+        } else {
+            errors.join("; ")
+        };
+        return Err(StudioError::Provider(format!(
+            "NHC Peak Storm Surge failed: {detail}"
+        )));
+    }
+
+    let (status, mut failures) = combined_status(&results);
+    let points = collection_or_failure("NHC Peak Storm Surge points", points_result, &mut failures);
+    let lines = collection_or_failure("NHC Peak Storm Surge lines", lines_result, &mut failures);
+    let polygons = collection_or_failure(
+        "NHC Peak Storm Surge polygons",
+        polygons_result,
+        &mut failures,
+    );
+
+    let mut output = json!({
+        "provider": "NOAA/NWS/NHC Peak Storm Surge",
+        "product": "peak",
+        "points": points,
+        "lines": lines,
+        "polygons": polygons,
+        "cacheStatus": status,
+    });
+    if !failures.is_empty() {
+        if let Some(object) = output.as_object_mut() {
+            object.insert("cacheWarning".to_string(), Value::String(failures.join("; ")));
+        }
+    }
+    Ok(output)
+}
+
+pub async fn tropical_storm_surge_catalog(
+    product: &str,
+    force: bool,
+) -> Result<Value, StudioError> {
+    match product.trim().to_ascii_lowercase().as_str() {
+        "potential" => {
+            let footprint = provider_client::fetch_json_cached(
+                layer_query_url(INUNDATION_FOOTPRINT_LAYER)?,
+                TROPICAL_TTL_SECONDS,
+                force,
+                "application/geo+json,application/json",
+            )
+            .await;
+            combine_potential_storm_surge_catalog(footprint)
+        }
+        "peak" => {
+            let points = provider_client::fetch_json_cached(
+                peak_layer_query_url(PEAK_SURGE_POINTS_LAYER)?,
+                TROPICAL_TTL_SECONDS,
+                force,
+                "application/geo+json,application/json",
+            )
+            .await;
+            let lines = provider_client::fetch_json_cached(
+                peak_layer_query_url(PEAK_SURGE_LINES_LAYER)?,
+                TROPICAL_TTL_SECONDS,
+                force,
+                "application/geo+json,application/json",
+            )
+            .await;
+            let polygons = provider_client::fetch_json_cached(
+                peak_layer_query_url(PEAK_SURGE_POLYGONS_LAYER)?,
+                TROPICAL_TTL_SECONDS,
+                force,
+                "application/geo+json,application/json",
+            )
+            .await;
+            combine_peak_storm_surge_catalog(points, lines, polygons)
+        }
+        _ => Err(StudioError::Provider(
+            "NHC storm-surge product must be potential or peak".to_string(),
+        )),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -456,6 +666,82 @@ mod tests {
             Ok(json!({})),
         );
         assert!(result.is_err());
+    }
+
+
+    #[test]
+    fn official_arrival_time_layers_are_geojson_queries() {
+        for (mode, layer) in [
+            ("earliest", ARRIVAL_EARLIEST_LAYER),
+            ("most-likely", ARRIVAL_MOST_LIKELY_LAYER),
+        ] {
+            assert_eq!(arrival_time_layer(mode).unwrap().0, layer);
+            let url = layer_query_url(layer).unwrap();
+            assert_eq!(url.host_str(), Some("mapservices.weather.noaa.gov"));
+            assert!(url.as_str().contains("NHC_tropical_weather_summary"));
+            assert!(url.as_str().contains("f=geojson"));
+        }
+        assert!(arrival_time_layer("unknown").is_err());
+    }
+
+    #[test]
+    fn arrival_time_catalog_requires_geojson() {
+        let invalid = combine_arrival_time_catalog(
+            "earliest",
+            Ok(json!({"error": "invalid"})),
+        );
+        assert!(invalid.is_err());
+        let valid = combine_arrival_time_catalog(
+            "most-likely",
+            Ok(collection("fresh-cache")),
+        )
+        .unwrap();
+        assert_eq!(valid.get("mode").and_then(Value::as_str), Some("most-likely"));
+    }
+
+    #[test]
+    fn official_storm_surge_services_are_pinned() {
+        let footprint = layer_query_url(INUNDATION_FOOTPRINT_LAYER).unwrap();
+        assert!(footprint.as_str().contains("NHC_tropical_weather_summary"));
+        assert!(footprint.as_str().contains("/23/query"));
+        assert_eq!(INUNDATION_IMAGE_LAYER, 24);
+
+        for layer in [
+            PEAK_SURGE_POINTS_LAYER,
+            PEAK_SURGE_LINES_LAYER,
+            PEAK_SURGE_POLYGONS_LAYER,
+        ] {
+            let url = peak_layer_query_url(layer).unwrap();
+            assert_eq!(url.host_str(), Some("mapservices.weather.noaa.gov"));
+            assert!(url.as_str().contains("NHC_PeakStormSurge"));
+            assert!(url.as_str().contains("f=geojson"));
+        }
+    }
+
+    #[test]
+    fn potential_storm_surge_requires_geojson() {
+        assert!(combine_potential_storm_surge_catalog(
+            Ok(json!({"error": "invalid"}))
+        )
+        .is_err());
+        let valid = combine_potential_storm_surge_catalog(
+            Ok(collection("fresh-cache"))
+        )
+        .unwrap();
+        assert_eq!(valid.get("product").and_then(Value::as_str), Some("potential"));
+        assert_eq!(valid.get("rasterLayer").and_then(Value::as_u64), Some(24));
+    }
+
+    #[test]
+    fn peak_storm_surge_partial_failure_is_degraded_not_fatal() {
+        let result = combine_peak_storm_surge_catalog(
+            Ok(collection("live")),
+            Ok(collection("live")),
+            Err(StudioError::Provider("polygon layer down".to_string())),
+        )
+        .unwrap();
+        assert_eq!(result.get("product").and_then(Value::as_str), Some("peak"));
+        assert!(result.get("cacheWarning").and_then(Value::as_str).is_some());
     }
 
     #[test]

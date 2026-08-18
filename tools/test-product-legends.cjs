@@ -58,6 +58,37 @@ for (const productId of ['nhc-outlook-2day', 'nhc-outlook-7day']) {
   assert.equal(spec.segments.length, 3);
 }
 
+
+for (const productId of ['nhc-arrival-earliest', 'nhc-arrival-most-likely']) {
+  const spec = productLegendForScene(scene({
+    product: { category: 'tropical', id: productId, opacity: 1, smoothing: 'smooth' },
+    moduleState: {},
+  }));
+  assert.equal(spec.mode, 'discrete');
+  assert.equal(spec.id, 'nhc-arrival-34kt-probability');
+  assert.equal(spec.segments.length, 10);
+
+  const contoursOnly = productLegendForScene(scene({
+    product: { category: 'tropical', id: productId, opacity: 1, smoothing: 'smooth' },
+    moduleState: { 'tropical-arrival-time': { showWindProbability: false } },
+  }));
+  assert.equal(contoursOnly.mode, 'none');
+}
+
+const potentialSurge = productLegendForScene(scene({
+  product: { category: 'tropical', id: 'nhc-surge-inundation', opacity: 1, smoothing: 'smooth' },
+}));
+assert.equal(potentialSurge.mode, 'discrete');
+assert.equal(potentialSurge.segments.length, 4);
+assert.equal(potentialSurge.segments[0].color, '#005ce6');
+
+const peakSurge = productLegendForScene(scene({
+  product: { category: 'tropical', id: 'nhc-peak-storm-surge', opacity: 1, smoothing: 'smooth' },
+}));
+assert.equal(peakSurge.mode, 'discrete');
+assert.equal(peakSurge.segments.length, 5);
+assert.equal(peakSurge.segments.at(-1).color, '#c500ff');
+
 assert.equal(productLegendForScene(scene({ id: 'nhc-track-cone' })).mode, 'none');
 assert.equal(productLegendForScene(scene({ id: 'active-alerts-ewx' })).mode, 'none');
 assert.equal(productLegendForScene(scene({ id: 'national-air-quality-ozone' })).mode, 'none');
@@ -83,4 +114,4 @@ assert.equal(
   'true Custom scenes should retain the editable custom key',
 );
 
-console.log('Product legend regression passed: wind/outlook product keys, no-key categorical scenes, operational placeholder suppression, and verified/custom fallbacks behave correctly.');
+console.log('Product legend regression passed: wind/outlook/arrival/surge product keys, arrival background toggling, no-key categorical scenes, operational placeholder suppression, and verified/custom fallbacks behave correctly.');

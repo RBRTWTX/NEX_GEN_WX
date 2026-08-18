@@ -1,0 +1,57 @@
+.tropical-surge-controls {
+  display: grid;
+  gap: 10px;
+}
+
+.tropical-surge-controls__header > div,
+.tropical-surge-summary,
+.tropical-surge-status {
+  display: grid;
+  gap: 3px;
+}
+
+.tropical-surge-controls small,
+.tropical-surge-summary small,
+.tropical-surge-status small {
+  color: var(--text-muted, #9eabb9);
+  line-height: 1.35;
+}
+
+.tropical-surge-health-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #3bd174;
+}
+
+.tropical-surge-health-dot.loading {
+  background: #e9c34a;
+}
+
+.tropical-surge-health-dot.degraded {
+  background: #ee6c67;
+}
+
+.tropical-surge-checks {
+  display: grid;
+  gap: 6px;
+}
+
+.tropical-surge-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tropical-surge-action-row span {
+  color: var(--text-muted, #9eabb9);
+  font-size: 12px;
+}
+
+.tropical-surge-status--warning {
+  border-left: 3px solid #ee6c67;
+  padding-left: 8px;
+}

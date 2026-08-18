@@ -5,6 +5,8 @@ import { SatelliteController } from '../../satellite/SatelliteController';
 import { TropicalController } from '../../tropical/TropicalController';
 import { TropicalOutlookController } from '../../tropical/TropicalOutlookController';
 import { TropicalWindProbabilityController } from '../../tropical/TropicalWindProbabilityController';
+import { TropicalStormSurgeController } from '../../tropical/TropicalStormSurgeController';
+import { TropicalArrivalTimeController } from '../../tropical/TropicalArrivalTimeController';
 import { DEFAULT_SATELLITE_SCENE_STATE, normalizeSatelliteSceneState } from '../../satellite/satellite-types';
 import { DEFAULT_TROPICAL_SCENE_STATE, normalizeTropicalSceneState } from '../../tropical/tropical-types';
 import { ModelLabDialogPanel } from './panels/ModelLabDialogPanel';
@@ -66,8 +68,8 @@ export const weatherModuleDefinitions: StudioModuleDefinition[] = [
   {
     manifest: {
       id: 'tropical', name: 'Tropical Weather', domain: 'weather', maturity: 'migration-next',
-      description: 'Official NOAA/NWS/NHC tropical outlooks, forecast track/cone, coastal watches/warnings, and 34/50/64-knot wind probabilities with scene-owned controls and output-safe rendering.',
-      sceneKinds: ['map'], tools: ['Outlook', 'Storm', 'Track', 'Cone', 'Points', 'Watches', 'Wind Probability'],
+      description: 'Official NOAA/NWS/NHC tropical outlooks, forecast track/cone, coastal watches/warnings, wind probabilities, arrival-time contours, and storm-surge products with scene-owned controls and output-safe rendering.',
+      sceneKinds: ['map'], tools: ['Outlook', 'Storm', 'Track', 'Cone', 'Points', 'Watches', 'Wind Probability', 'Arrival Time', 'Storm Surge'],
       legacyFiles: ['lib/tropical.js', 'public/broadcast-data-layers.js'], dependencies: ['map', 'data-engine'],
     },
     isActiveForScene: (scene) => scene.kind === 'map' && scene.category === 'Tropical',
@@ -78,6 +80,8 @@ export const weatherModuleDefinitions: StudioModuleDefinition[] = [
       { id: 'tropical', phase: 'data', order: 26, create: () => new TropicalController() },
       { id: 'tropical-outlook', phase: 'data', order: 27, create: () => new TropicalOutlookController() },
       { id: 'tropical-wind-probability', phase: 'data', order: 28, create: () => new TropicalWindProbabilityController() },
+      { id: 'tropical-storm-surge', phase: 'data', order: 29, create: () => new TropicalStormSurgeController() },
+      { id: 'tropical-arrival-time', phase: 'data', order: 29.5, create: () => new TropicalArrivalTimeController() },
     ],
     dialogs: [{ id: 'module:tropical', title: 'Tropical Controls', className: 'tool-window--tropical', order: 30, sceneKinds: ['map'], requiresActiveModule: true, component: TropicalDialogPanel }],
     tools: [
