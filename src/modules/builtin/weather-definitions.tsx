@@ -9,6 +9,8 @@ import { TropicalStormSurgeController } from '../../tropical/TropicalStormSurgeC
 import { TropicalArrivalTimeController } from '../../tropical/TropicalArrivalTimeController';
 import { DEFAULT_SATELLITE_SCENE_STATE, normalizeSatelliteSceneState } from '../../satellite/satellite-types';
 import { DEFAULT_TROPICAL_SCENE_STATE, normalizeTropicalSceneState } from '../../tropical/tropical-types';
+import { ModelController } from '../../models/ModelController';
+import { DEFAULT_MODEL_SCENE_STATE, normalizeModelSceneState } from '../../models/model-types';
 import { ModelLabDialogPanel } from './panels/ModelLabDialogPanel';
 import { RadarDialogPanel } from './panels/RadarDialogPanel';
 import { SatelliteDialogPanel } from './panels/SatelliteDialogPanel';
@@ -136,16 +138,24 @@ export const weatherModuleDefinitions: StudioModuleDefinition[] = [
   },
   {
     manifest: {
-      id: 'models', name: 'Forecast Models', domain: 'weather', maturity: 'planned',
-      description: 'GRIB acquisition, numerical grids, model fields, timelines, loops and sampling.',
+      id: 'models', name: 'Forecast Models', domain: 'weather', maturity: 'migration-next',
+      description: 'Provider-independent numerical-model runtime with direct NOAA NODD HRRR discovery, byte-range GRIB2 decoding, MapLibre field rendering, scene persistence and top-touch playback.',
       sceneKinds: ['map'], tools: ['Model', 'Run', 'Field', 'Forecast hour', 'Loop', 'Sampling'],
       legacyFiles: ['workers/model_worker.py', 'public/data/model-registry.json'], dependencies: ['map', 'data-engine'],
     },
     isActiveForScene: (scene) => scene.kind === 'map' && scene.category === 'Models',
+    providers: [
+      { id: 'model-hrrr-nodd', label: 'NOAA NODD HRRR' },
+    ],
+    mapControllers: [{ id: 'models', phase: 'data', order: 23, create: () => new ModelController() }],
     dialogs: [{ id: 'module:model-lab', title: 'Model Lab', className: 'tool-window--model-lab', order: 50, sceneKinds: ['map'], component: ModelLabDialogPanel }],
     tools: [
       { id: 'models-dock', label: 'Model Lab', placement: 'dock-tool', order: 70, sceneKinds: ['map'], command: { kind: 'open-dialog', dialog: 'module:model-lab' } },
-      { id: 'models-timeline', label: 'Timeline', placement: 'dock-tool', order: 60, sceneKinds: ['map'], command: { kind: 'status', message: 'Timeline module will open in the R3 bottom workspace' } },
+      { id: 'models-timeline', label: 'Timeline', placement: 'dock-tool', order: 60, sceneKinds: ['map'], requiresActiveModule: true, command: { kind: 'status', message: 'Model playback is live in the hidden map-control menu; use Model Lab for field, run, speed and rendering configuration.' } },
     ],
+    defaultSceneState: { ...DEFAULT_MODEL_SCENE_STATE },
+    migrateSceneState: (value, scene) => scene.kind === 'map'
+      ? { ...normalizeModelSceneState(value) }
+      : { ...value },
   },
 ];

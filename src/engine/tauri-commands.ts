@@ -241,3 +241,56 @@ export async function fetchTropicalStormSurgeCatalog(
   }
   return invoke<unknown>('fetch_tropical_storm_surge_catalog', { product, force });
 }
+
+export async function fetchModelHrrrCycleCatalog(
+  date: string,
+  cycle: number,
+  force = false,
+): Promise<unknown> {
+  const normalizedDate = date.trim();
+  if (!/^\d{8}$/.test(normalizedDate)) {
+    throw new Error('HRRR date must use YYYYMMDD.');
+  }
+  if (!Number.isInteger(cycle) || cycle < 0 || cycle > 23) {
+    throw new Error('HRRR cycle must be between 00 and 23 UTC.');
+  }
+  return invoke<unknown>('fetch_model_hrrr_cycle_catalog', {
+    date: normalizedDate,
+    cycle,
+    force,
+  });
+}
+
+export async function fetchModelHrrrField(
+  date: string,
+  cycle: number,
+  forecastHour: number,
+  field: string,
+  smoothing: string,
+  force = false,
+): Promise<unknown> {
+  const normalizedDate = date.trim();
+  if (!/^\d{8}$/.test(normalizedDate)) {
+    throw new Error('HRRR date must use YYYYMMDD.');
+  }
+  if (!Number.isInteger(cycle) || cycle < 0 || cycle > 23) {
+    throw new Error('HRRR cycle must be between 00 and 23 UTC.');
+  }
+  if (!Number.isInteger(forecastHour) || forecastHour < 0 || forecastHour > 48) {
+    throw new Error('HRRR forecast hour must be between F00 and F48.');
+  }
+  if (!['composite-reflectivity', 'temperature-2m'].includes(field)) {
+    throw new Error('Unsupported HRRR field.');
+  }
+  if (!['sharp', 'balanced', 'smooth'].includes(smoothing)) {
+    throw new Error('Unsupported model smoothing mode.');
+  }
+  return invoke<unknown>('fetch_model_hrrr_field', {
+    date: normalizedDate,
+    cycle,
+    forecastHour,
+    field,
+    smoothing,
+    force,
+  });
+}

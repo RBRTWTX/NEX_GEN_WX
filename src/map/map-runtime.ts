@@ -14,6 +14,7 @@ import {
 } from './broadcast-context';
 import { RADAR_LAYER_IDS } from '../radar/radar-layer-ids';
 import { SATELLITE_LAYER_IDS } from '../satellite/satellite-layer-ids';
+import { MODEL_FIELD_LAYER_IDS } from '../models/model-layer-ids';
 import { TROPICAL_LAYER_IDS, TROPICAL_OUTLOOK_LAYER_IDS } from '../tropical/tropical-layer-ids';
 import { TROPICAL_WIND_PROBABILITY_LAYER_IDS } from '../tropical/tropical-wind-probability-layer-ids';
 import { TROPICAL_STORM_SURGE_LAYER_IDS } from '../tropical/tropical-storm-surge-layer-ids';
@@ -182,6 +183,7 @@ export function enforceStudioLayerOrder(map: MapLibreMap): void {
     LAYER_IDS.observationField,
     ...SATELLITE_LAYER_IDS,
     ...RADAR_LAYER_IDS,
+    ...MODEL_FIELD_LAYER_IDS,
     ...contextLayers,
     ...TROPICAL_LAYER_IDS,
     ...TROPICAL_OUTLOOK_LAYER_IDS,

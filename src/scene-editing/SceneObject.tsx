@@ -9,12 +9,15 @@ import type { SceneObjectKind } from '../types/domain';
 import { useSceneEditing, sceneObjectSelection } from './SceneEditingContext';
 import { sceneObjectCss } from './scene-object-style';
 
+export type SceneObjectEditTrigger = 'left' | 'contextmenu' | 'none';
+
 interface SceneObjectProps {
   elementId: string;
   label: string;
   kind?: SceneObjectKind;
   source?: 'built-in' | 'custom';
   customObjectId?: string;
+  editTrigger?: SceneObjectEditTrigger;
   as?: ElementType;
   className?: string;
   style?: CSSProperties;
@@ -28,22 +31,20 @@ export function SceneObject({
   kind = 'container',
   source = 'built-in',
   customObjectId,
+  editTrigger = 'left',
   as = 'div',
   className = '',
   style,
   children,
   onClick,
+  onContextMenu,
   ...rest
 }: SceneObjectProps) {
   const editing = useSceneEditing();
   const selected = editing.selectedElementId === elementId;
   const override = editing.elementOverrides[elementId];
 
-  function select(event: MouseEvent<HTMLElement>): void {
-    if (typeof onClick === 'function') {
-      (onClick as (event: MouseEvent<HTMLElement>) => void)(event);
-    }
-    if (!editing.interactive || event.defaultPrevented) return;
+  function selectForEditing(event: MouseEvent<HTMLElement>): void {
     event.stopPropagation();
     editing.selectElement(sceneObjectSelection(
       editing.sceneId,
@@ -55,6 +56,23 @@ export function SceneObject({
     ));
   }
 
+  function click(event: MouseEvent<HTMLElement>): void {
+    if (typeof onClick === 'function') {
+      (onClick as (event: MouseEvent<HTMLElement>) => void)(event);
+    }
+    if (!editing.interactive || event.defaultPrevented || editTrigger !== 'left') return;
+    selectForEditing(event);
+  }
+
+  function contextMenu(event: MouseEvent<HTMLElement>): void {
+    if (typeof onContextMenu === 'function') {
+      (onContextMenu as (event: MouseEvent<HTMLElement>) => void)(event);
+    }
+    if (!editing.interactive || event.defaultPrevented || editTrigger !== 'contextmenu') return;
+    event.preventDefault();
+    selectForEditing(event);
+  }
+
   return createElement(
     as,
     {
@@ -64,8 +82,10 @@ export function SceneObject({
       'data-scene-object-id': elementId,
       'data-scene-object-kind': kind,
       'data-scene-object-source': source,
+      'data-scene-object-edit-trigger': editTrigger,
       'data-operator-editable': editing.interactive ? 'true' : undefined,
-      onClick: select,
+      onClick: click,
+      onContextMenu: contextMenu,
     },
     children,
   );

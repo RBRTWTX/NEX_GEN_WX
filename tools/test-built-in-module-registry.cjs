@@ -99,13 +99,13 @@ for (const id of [
 assert.equal(new Set(ids).size, ids.length, 'built-in module IDs must be unique');
 assert.deepEqual(
   moduleRegistry.createMapControllers().map((controller) => controller.id),
-  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'tropical', 'tropical-outlook', 'tropical-wind-probability', 'tropical-storm-surge', 'tropical-arrival-time', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
+  ['basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'models', 'satellite', 'radar', 'tropical', 'tropical-outlook', 'tropical-wind-probability', 'tropical-storm-surge', 'tropical-arrival-time', 'alerts', 'observations', 'camera', 'interaction', 'layer-order', 'resize'],
   'built-in map controllers should be registry-ordered and complete',
 );
 const providers = moduleRegistry.getProviders();
 assert.deepEqual(
   providers.map((provider) => provider.id),
-  ['basemap', 'states', 'counties', 'cities', 'roads', 'alerts', 'observations', 'radar-mrms', 'radar-sites', 'satellite-goes', 'tropical-nhc'],
+  ['basemap', 'states', 'counties', 'cities', 'roads', 'alerts', 'observations', 'radar-mrms', 'radar-sites', 'satellite-goes', 'tropical-nhc', 'model-hrrr-nodd'],
   'provider health definitions should be registry-owned',
 );
 const mapScene = {
@@ -168,4 +168,22 @@ assert.equal(normalizedTropical.moduleState.tropical.autoRefreshEnabled, true);
 assert.ok(moduleRegistry.getDialog('module:tropical', normalizedTropical));
 assert.ok(moduleRegistry.getTools(normalizedTropical, 'quick').some((tool) => tool.id === 'tropical-quick'));
 
-console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 18 map controllers verified.`);
+
+const modelScene = {
+  ...mapScene,
+  id: 'model-scene',
+  name: 'HRRR 2m Temperature',
+  category: 'Models',
+  activeModuleIds: ['models'],
+  moduleState: {},
+  product: { category: 'models', id: 'temperature-2m', opacity: 0.86, smoothing: 'balanced' },
+};
+const normalizedModel = moduleRegistry.normalizeSceneModuleState(modelScene);
+assert.equal(normalizedModel.moduleState.models.model, 'hrrr');
+assert.equal(normalizedModel.moduleState.models.field, 'temperature-2m');
+assert.equal(normalizedModel.moduleState.models.runMode, 'latest');
+assert.equal(normalizedModel.moduleState.models.forecastHour, 0);
+assert.equal(normalizedModel.moduleState.models.opacity, 0.86);
+assert.ok(moduleRegistry.getDialog('module:model-lab', normalizedModel));
+
+console.log(`Built-in registry regression passed: ${ids.length} modules, ${providers.length} providers, and 19 map controllers verified.`);

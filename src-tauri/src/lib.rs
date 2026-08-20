@@ -167,6 +167,35 @@ async fn fetch_tropical_storm_surge_catalog(
     weather_engine::providers::tropical_storm_surge_catalog(&product, force).await
 }
 
+#[tauri::command]
+async fn fetch_model_hrrr_cycle_catalog(
+    date: String,
+    cycle: u8,
+    force: bool,
+) -> Result<Value, error::StudioError> {
+    weather_engine::providers::hrrr_cycle_catalog(&date, cycle, force).await
+}
+
+#[tauri::command]
+async fn fetch_model_hrrr_field(
+    date: String,
+    cycle: u8,
+    forecast_hour: u16,
+    field: String,
+    smoothing: String,
+    force: bool,
+) -> Result<Value, error::StudioError> {
+    weather_engine::providers::hrrr_field(
+        &date,
+        cycle,
+        forecast_hour,
+        &field,
+        &smoothing,
+        force,
+    )
+    .await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -203,7 +232,9 @@ pub fn run() {
             fetch_tropical_outlook_catalog,
             fetch_tropical_wind_probability_catalog,
             fetch_tropical_arrival_time_catalog,
-            fetch_tropical_storm_surge_catalog
+            fetch_tropical_storm_surge_catalog,
+            fetch_model_hrrr_cycle_catalog,
+            fetch_model_hrrr_field
         ])
         .run(tauri::generate_context!())
         .expect("error while running NEX GEN WX");

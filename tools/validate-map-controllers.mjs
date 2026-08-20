@@ -17,6 +17,7 @@ const controllerFiles = [
   'src/map/controllers/RoadsController.ts',
   'src/radar/RadarController.ts',
   'src/satellite/SatelliteController.ts',
+  'src/models/ModelController.ts',
   'src/tropical/TropicalController.ts',
   'src/map/controllers/AlertsController.ts',
   'src/map/controllers/ObservationsController.ts',
@@ -96,7 +97,7 @@ const registryDefinitions = [
   await read('src/modules/builtin/weather-definitions.tsx'),
 ].join('\n');
 for (const controller of [
-  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'satellite', 'radar', 'tropical', 'alerts', 'observations',
+  'basemap', 'layer-style', 'roads', 'boundaries', 'cities', 'models', 'satellite', 'radar', 'tropical', 'alerts', 'observations',
   'camera', 'interaction', 'layer-order', 'resize',
 ]) {
   if (!registryDefinitions.includes(`id: '${controller}'`)) {

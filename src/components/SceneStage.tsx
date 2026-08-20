@@ -21,6 +21,7 @@ import { GraphicStage } from './GraphicStage';
 import { ObservationCallout } from './ObservationCallout';
 import { ObservationLegend } from './ObservationLegend';
 import { RadarQuickToolbar } from '../radar/RadarQuickToolbar';
+import { ModelPlaybackDriver } from '../models/ModelPlaybackTouchControls';
 
 export interface SceneStageProps {
   scene: StudioScene;
@@ -163,6 +164,12 @@ export const SceneStage = forwardRef<HTMLDivElement, SceneStageProps>(function S
               onRemoveSample={onRemoveSample}
               onRenderReady={markRenderReady}
             />
+            {interactive && scene.category === 'Models' && onModuleStateChange && (
+              <ModelPlaybackDriver
+                scene={scene}
+                onModuleStateChange={onModuleStateChange}
+              />
+            )}
             {interactive && scene.product.category === 'radar' && onModuleStateChange && onProductChange && (
               <RadarQuickToolbar
                 scene={scene}
@@ -176,6 +183,7 @@ export const SceneStage = forwardRef<HTMLDivElement, SceneStageProps>(function S
               studioName={branding?.shortName ?? 'NEX GEN WX'}
               logoDataUrl={branding?.logoDataUrl}
               interactive={interactive}
+              renderPurpose={renderPurpose}
               menuOpen={contextMenuOpen}
               onToggleMenu={onToggleContextMenu}
               onHeaderChange={onHeaderChange}

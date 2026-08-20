@@ -1,5 +1,5 @@
 use crate::{error::StudioError, storage};
-use reqwest::{header::RETRY_AFTER, Client, StatusCode, Url};
+use reqwest::{header::{RANGE, RETRY_AFTER}, Client, StatusCode, Url};
 use serde_json::Value;
 use std::{sync::OnceLock, time::Duration};
 use tokio::time::sleep;
@@ -16,7 +16,7 @@ fn client() -> Result<&'static Client, StudioError> {
         .connect_timeout(Duration::from_secs(12))
         .timeout(Duration::from_secs(35))
         .pool_idle_timeout(Duration::from_secs(90))
-        .user_agent("NEX-GEN-WX/0.8.0 (+https://github.com/RBRTWTX/NEX_GEN_WX)")
+        .user_agent("NEX-GEN-WX/0.8.5 (+https://github.com/RBRTWTX/NEX_GEN_WX)")
         .build()?;
     let _ = HTTP_CLIENT.set(value);
     HTTP_CLIENT
@@ -95,6 +95,58 @@ pub async fn fetch_bytes(url: Url, accept: &str) -> Result<Vec<u8>, StudioError>
         }
     }
     Err(last_error.unwrap_or_else(|| StudioError::Provider("provider request failed".to_string())))
+}
+
+pub async fn fetch_bytes_range(
+    url: Url,
+    start: u64,
+    end: u64,
+    accept: &str,
+) -> Result<Vec<u8>, StudioError> {
+    if end < start {
+        return Err(StudioError::Provider("invalid provider byte range".to_string()));
+    }
+    let range = format!("bytes={start}-{end}");
+    let mut last_error: Option<StudioError> = None;
+    for attempt in 1..=MAX_ATTEMPTS {
+        match client()?
+            .get(url.clone())
+            .header("Accept", accept)
+            .header(RANGE, range.clone())
+            .send()
+            .await
+        {
+            Ok(response) => {
+                let status = response.status();
+                let headers = response.headers().clone();
+                if status == StatusCode::PARTIAL_CONTENT {
+                    return Ok(response.bytes().await?.to_vec());
+                }
+                if status.is_success() {
+                    return Err(StudioError::Provider(
+                        "provider ignored the requested byte range; refusing full-object model download".to_string(),
+                    ));
+                }
+                let body = response.text().await.unwrap_or_default();
+                let error = clean_status_error(status, &body);
+                let retryable = status == StatusCode::TOO_MANY_REQUESTS || status.is_server_error();
+                last_error = Some(error);
+                if !retryable || attempt == MAX_ATTEMPTS {
+                    break;
+                }
+                sleep(retry_delay(&headers, attempt)).await;
+            }
+            Err(error) => {
+                let retryable = error.is_timeout() || error.is_connect() || error.is_request();
+                last_error = Some(StudioError::Request(error));
+                if !retryable || attempt == MAX_ATTEMPTS {
+                    break;
+                }
+                sleep(DEFAULT_RETRY_DELAY * attempt as u32).await;
+            }
+        }
+    }
+    Err(last_error.unwrap_or_else(|| StudioError::Provider("provider byte-range request failed".to_string())))
 }
 
 pub async fn fetch_json_cached(

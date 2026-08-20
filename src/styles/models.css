@@ -1,0 +1,200 @@
+.model-lab {
+  display: grid;
+  gap: 12px;
+  min-width: 310px;
+}
+
+.model-lab__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.model-lab__header h3 {
+  margin: 0;
+}
+
+.model-lab__header small,
+.model-lab__status small {
+  display: block;
+  opacity: 0.72;
+  margin-top: 3px;
+}
+
+.model-lab__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.model-lab__grid label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.model-lab__grid label.wide {
+  grid-column: 1 / -1;
+}
+
+.model-lab__grid select,
+.model-lab__grid input,
+.model-lab button {
+  min-height: 30px;
+}
+
+.model-lab__loop-check {
+  align-content: end;
+  grid-template-columns: 1fr auto !important;
+  align-items: center;
+  min-height: 52px;
+}
+
+.model-lab__loop-check input {
+  width: 18px;
+  height: 18px;
+}
+
+.model-lab__status {
+  padding: 9px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.model-lab__status.error {
+  border-color: rgba(255, 92, 92, 0.55);
+}
+
+.model-lab__foundation-note {
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.74;
+}
+
+.model-touch-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 31px;
+  margin: 0 8px;
+  padding: 3px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 5px;
+  background: rgba(7, 13, 22, 0.78);
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.38);
+  pointer-events: auto;
+  user-select: none;
+}
+
+.model-touch-button {
+  min-width: 30px;
+  height: 26px;
+  padding: 0 7px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 4px;
+  background: linear-gradient(#26364a, #142133);
+  color: #f2f7fc;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.model-touch-button:hover:not(:disabled) {
+  border-color: #67adff;
+  background: linear-gradient(#31547d, #1d3858);
+}
+
+.model-touch-button:disabled {
+  cursor: default;
+  opacity: 0.38;
+}
+
+.model-touch-button.is-active {
+  border-color: #74b7ff;
+  background: linear-gradient(#2584ef, #155ab5);
+}
+
+.model-touch-button--loop {
+  min-width: 45px;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+}
+
+.model-touch-status {
+  display: grid;
+  min-width: 47px;
+  line-height: 1;
+  text-align: center;
+}
+
+.model-touch-status b {
+  color: #fff;
+  font-size: 12px;
+}
+
+.model-touch-status small {
+  margin-top: 3px;
+  color: #8eb9e8;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+}
+
+.output-shell .model-touch-controls {
+  display: none !important;
+}
+
+
+/* CP2.2: model playback lives in the hidden map-control menu. */
+.hidden-map-menu.has-model-playback .quick-menu-row {
+  align-items: center;
+  max-width: 920px;
+}
+
+.hidden-map-menu.has-model-playback .model-touch-controls {
+  min-height: 34px;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.hidden-map-menu.has-model-playback .model-touch-button {
+  min-width: 38px;
+  height: 34px;
+  padding: 0 9px;
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 0;
+  background: transparent;
+  color: #f2f7fc;
+}
+
+.hidden-map-menu.has-model-playback .model-touch-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, .13);
+}
+
+.hidden-map-menu.has-model-playback .model-touch-button.is-active {
+  background: #176a42;
+  color: #eafff2;
+}
+
+.hidden-map-menu.has-model-playback .model-touch-status {
+  min-width: 58px;
+  padding: 0 7px;
+}
+
+.hidden-map-menu.has-model-playback .model-touch-status b {
+  font-size: 11px;
+}
+
+.hidden-map-menu.has-model-playback .model-touch-status small {
+  font-size: 7px;
+}

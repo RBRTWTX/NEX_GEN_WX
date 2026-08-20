@@ -401,6 +401,9 @@ export function StudioApp() {
               open={state.ui.contextMenuOpen}
               tools={contextTools}
               onInvoke={invokeModuleCommand}
+              onModuleStateChange={(moduleId, patch) => dispatch({
+                type: 'scene/merge-module-state', sceneId: selectedScene.id, moduleId, patch,
+              })}
               onClose={() => dispatch({ type: 'ui/set-context-menu', value: false })}
             />
             <StageQuickTools tools={quickTools} onInvoke={invokeModuleCommand} />

@@ -1,6 +1,6 @@
 [package]
 name = "nex-gen-wx"
-version = "0.8.0"
+version = "0.8.5"
 description = "Local weather presentation authoring and rendering workstation"
 authors = ["NEX GEN WX"]
 edition = "2021"
@@ -22,6 +22,7 @@ thiserror = "2"
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 csv = "1.3"
 flate2 = "1.1"
+grib = { version = "=0.16.0", default-features = false, features = ["jpeg2000-unpack-with-hayro", "png-unpack-with-png-crate", "ccsds-unpack-with-rust-aec"] }
 tokio = { version = "1", features = ["time"] }
 
 [profile.release]

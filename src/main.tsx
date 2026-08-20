@@ -7,6 +7,7 @@ import { ModuleRegistryProvider } from './modules/module-context';
 import { StudioErrorBoundary } from './components/StudioErrorBoundary';
 import './styles/r3-base.css';
 import './styles/nex-gen-wx.css';
+import './styles/broadcast-header.css';
 
 const params = new URLSearchParams(window.location.search);
 const isOutput = params.get('window') === 'output';

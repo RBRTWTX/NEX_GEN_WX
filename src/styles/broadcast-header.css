@@ -1,0 +1,112 @@
+/*
+ * NEX GEN WX shared broadcast-header geometry.
+ *
+ * FINAL cascade layer. Every map scene, including Models/HRRR, uses the same
+ * canonical R3 bar geometry. Models may change metadata/content, but not bar
+ * width, position, menu-column width, or title-block height.
+ */
+.broadcast-header {
+  width: min(1460px, calc(100% - 24px));
+  max-width: none;
+  height: 108px;
+  grid-template-columns: 54px minmax(0, 1fr);
+}
+
+.broadcast-header.has-custom-logo {
+  grid-template-columns: 285px minmax(0, 1fr);
+}
+
+.broadcast-header .header-logo.header-menu-trigger,
+.broadcast-header .header-copy {
+  box-sizing: border-box;
+  align-self: center;
+  height: 90px;
+  min-height: 90px;
+  max-height: 90px;
+}
+
+/* No uploaded logo = structural operator menu cap, not a branding panel. */
+.broadcast-header:not(.has-custom-logo) .header-logo.header-menu-trigger {
+  min-width: 0;
+  width: auto;
+  padding: 0;
+  clip-path: none;
+  overflow: hidden;
+  background: rgba(15, 20, 27, .97);
+  border-top: 4px solid #174b79;
+  border-bottom: 4px solid var(--gold);
+}
+
+.broadcast-header:not(.has-custom-logo) .header-logo-fallback {
+  display: none !important;
+}
+
+.broadcast-header:not(.has-custom-logo) .header-copy {
+  margin-left: -2px;
+  padding-left: 22px;
+}
+
+.broadcast-header.has-custom-logo .header-copy {
+  margin-left: -18px;
+  padding-left: 34px;
+}
+
+.broadcast-header:not(.has-custom-logo) .header-menu-glyph {
+  position: absolute;
+  inset: 0;
+  display: grid !important;
+  place-items: center;
+  color: #d5dde8 !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  letter-spacing: 2px !important;
+  font-weight: 900;
+}
+
+.broadcast-header.has-custom-logo .header-menu-glyph {
+  display: none !important;
+}
+
+/*
+ * HRRR uses the same bar geometry as Tropical. Its discrete model key can have
+ * many more segments, so constrain only the legend CONTENT to its shared grid
+ * track. This does not resize or reposition the bar itself.
+ */
+.broadcast-header.is-model-header .header-legend {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.broadcast-header.is-model-header .header-product-legend {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: flex;
+}
+
+.broadcast-header.is-model-header .header-product-legend__segment {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Preserve the established compact breakpoint without changing composition. */
+@media (max-width: 1050px) {
+  .broadcast-header {
+    width: min(1460px, calc(100% - 24px));
+    height: 90px;
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .broadcast-header.has-custom-logo {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .broadcast-header .header-logo.header-menu-trigger,
+  .broadcast-header .header-copy {
+    height: 78px;
+    min-height: 78px;
+    max-height: 78px;
+  }
+}

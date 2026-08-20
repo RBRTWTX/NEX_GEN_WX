@@ -55,6 +55,30 @@ const NHC_PEAK_SURGE_SEGMENTS = [
   { label: 'ABOVE 12 FT', color: '#c500ff' },
 ] as const;
 
+
+const MODEL_REFLECTIVITY_SEGMENTS = [
+  { label: '5', color: '#2ea838' },
+  { label: '20', color: '#33ed57' },
+  { label: '30', color: '#fae80d' },
+  { label: '40', color: '#ff8005' },
+  { label: '50', color: '#f0170f' },
+  { label: '60', color: '#940061' },
+  { label: '70', color: '#ff33db' },
+  { label: '80 dBZ', color: '#ffffff' },
+] as const;
+
+const MODEL_TEMPERATURE_SEGMENTS = [
+  { label: '-40', color: '#e066db' },
+  { label: '-10', color: '#6e2ed1' },
+  { label: '10', color: '#1a63db' },
+  { label: '32', color: '#00b8e3' },
+  { label: '50', color: '#21ab61' },
+  { label: '70', color: '#cceb29' },
+  { label: '85', color: '#ffa30f' },
+  { label: '100', color: '#f2291f' },
+  { label: '115°F', color: '#e80094' },
+] as const;
+
 const PRODUCT_LEGENDS: Record<string, ProductLegendSpec> = {
   'nhc-wind-prob-34kt': {
     mode: 'discrete',
@@ -144,6 +168,24 @@ const SCENE_LEGEND_OVERRIDES: Record<string, HiddenProductLegend> = {
 };
 
 export function productLegendForScene(scene: MapScene): ProductLegendSpec | null {
+  if (scene.category === 'Models') {
+    const modelState = scene.moduleState?.models as Record<string, unknown> | undefined;
+    if (modelState?.field === 'composite-reflectivity') {
+      return {
+        mode: 'discrete',
+        id: 'hrrr-composite-reflectivity',
+        title: 'COMPOSITE REFLECTIVITY (dBZ)',
+        segments: MODEL_REFLECTIVITY_SEGMENTS,
+      };
+    }
+    return {
+      mode: 'discrete',
+      id: 'hrrr-temperature-2m',
+      title: '2 M TEMPERATURE (°F)',
+      segments: MODEL_TEMPERATURE_SEGMENTS,
+    };
+  }
+
   const sceneOverride = SCENE_LEGEND_OVERRIDES[scene.id];
   if (sceneOverride) return sceneOverride;
 

@@ -1,4 +1,5 @@
 import type { LayerVisibility, StudioScene } from '../types/domain';
+import { modelLayerStackLabel } from '../models/model-display-metadata';
 
 interface LayerStackProps {
   scene: StudioScene;
@@ -35,10 +36,14 @@ export function LayerStack({ scene, onOverlayChange, onClearProduct }: LayerStac
     );
   }
 
+  const productLabel = scene.category === 'Models'
+    ? modelLayerStackLabel(scene)
+    : scene.product.id.replace(/-/g, ' ');
+
   const rows: Array<{ id: string; label: string; overlay?: keyof LayerVisibility; removable?: boolean }> = [
     { id: 'states', label: 'States', overlay: 'states' },
     { id: 'counties', label: 'Counties', overlay: 'counties' },
-    { id: 'product', label: scene.product.id.replace(/-/g, ' '), removable: true },
+    { id: 'product', label: productLabel, removable: true },
     ...scene.activeModuleIds
       .filter((id) => !['map', 'cities', 'roads', 'boundaries', 'alerts', 'observations'].includes(id))
       .map((id) => ({ id: `module-${id}`, label: id.replace(/-/g, ' ') })),
