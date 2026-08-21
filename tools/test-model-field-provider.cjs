@@ -52,7 +52,13 @@ Module._load = function patchedLoad(request, parent, isMain) {
           iIndices: [0, 1798],
           jIndices: [0, 1058],
           values: [10, 20, 30, 40],
-          unit: field === 'temperature-2m' ? '°F' : 'dBZ',
+          unit: ({
+            'temperature-2m': '°F',
+            'dewpoint-2m': '°F',
+            'relative-humidity-2m': '%',
+            'wind-gust-surface': 'mph',
+            'composite-reflectivity': 'dBZ',
+          })[field] ?? '',
         };
       },
     };
@@ -85,6 +91,21 @@ Module._load = function patchedLoad(request, parent, isMain) {
   });
   assert.equal(grid.values.length, 4);
   assert.equal(grid.unit, 'dBZ');
+
+  for (const [field, unit] of [
+    ['temperature-2m', '°F'],
+    ['dewpoint-2m', '°F'],
+    ['relative-humidity-2m', '%'],
+    ['wind-gust-surface', 'mph'],
+  ]) {
+    const scalarGrid = await provider.fetchModelFieldGrid(
+      { model: 'hrrr', field, smoothing: 'balanced' },
+      catalog.run,
+      2,
+    );
+    assert.equal(fieldCall.field, field);
+    assert.equal(scalarGrid.unit, unit);
+  }
 
   const southwest = projection.hrrrGridLonLat(0, 0);
   const northeast = projection.hrrrGridLonLat(1798, 1058);

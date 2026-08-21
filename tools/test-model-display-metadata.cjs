@@ -43,6 +43,21 @@ assert.equal(metadata.isGeneratedModelSubtitle('MY CUSTOM FORECAST'), false);
 assert.equal(metadata.isGeneratedModelValidLabel('CURRENT'), true);
 assert.equal(metadata.isGeneratedModelValidLabel('TONIGHT'), false);
 
+for (const [field, broadcast, stack] of [
+  ['dewpoint-2m', '2 M DEW POINT', 'HRRR · 2 m Dew Point'],
+  ['relative-humidity-2m', '2 M RELATIVE HUMIDITY', 'HRRR · 2 m Relative Humidity'],
+  ['wind-gust-surface', 'SURFACE WIND GUST', 'HRRR · Surface Wind Gust'],
+]) {
+  const fieldScene = {
+    category: 'Models',
+    moduleState: { models: { field } },
+    product: { id: 'hrrr-reflectivity' },
+    header: { subtitle: 'COMPOSITE REFLECTIVITY', validLabel: 'CURRENT' },
+  };
+  assert.equal(metadata.modelFieldBroadcastLabel(fieldScene), broadcast);
+  assert.equal(metadata.modelLayerStackLabel(fieldScene), stack);
+}
+
 const run = {
   id: '20260818T17Z',
   date: '20260818',

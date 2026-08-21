@@ -89,6 +89,30 @@ assert.equal(peakSurge.mode, 'discrete');
 assert.equal(peakSurge.segments.length, 5);
 assert.equal(peakSurge.segments.at(-1).color, '#c500ff');
 
+for (const [field, expectedId, expectedTitle] of [
+  ['dewpoint-2m', 'hrrr-dewpoint-2m', '2 M DEW POINT (°F)'],
+  ['relative-humidity-2m', 'hrrr-relative-humidity-2m', '2 M RELATIVE HUMIDITY (%)'],
+  ['wind-gust-surface', 'hrrr-wind-gust-surface', 'SURFACE WIND GUST (mph)'],
+]) {
+  const spec = productLegendForScene(scene({
+    category: 'Models',
+    product: { category: 'models', id: 'hrrr-reflectivity', opacity: 1, smoothing: 'balanced' },
+    moduleState: { models: { field } },
+    header: {
+      title: 'HRRR MODEL FORECAST',
+      subtitle: '',
+      validLabel: 'CURRENT',
+      visible: true,
+      opacity: 1,
+      scale: 1,
+      legend: { kind: 'temperature', visible: true, lowLabel: '', highLabel: '', customLabel: '' },
+    },
+  }));
+  assert.equal(spec.mode, 'discrete');
+  assert.equal(spec.id, expectedId);
+  assert.equal(spec.title, expectedTitle);
+}
+
 assert.equal(productLegendForScene(scene({ id: 'nhc-track-cone' })).mode, 'none');
 assert.equal(productLegendForScene(scene({ id: 'active-alerts-ewx' })).mode, 'none');
 assert.equal(productLegendForScene(scene({ id: 'national-air-quality-ozone' })).mode, 'none');

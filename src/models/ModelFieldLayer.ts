@@ -42,6 +42,36 @@ const temperatureStops: Array<[number, Rgba]> = [
   [115, { r: 0.91, g: 0.00, b: 0.58, a: 1 }],
 ];
 
+const dewpointStops: Array<[number, Rgba]> = [
+  [-10, { r: 0.48, g: 0.29, b: 0.13, a: 1 }],
+  [20, { r: 0.72, g: 0.55, b: 0.31, a: 1 }],
+  [40, { r: 0.91, g: 0.87, b: 0.39, a: 1 }],
+  [55, { r: 0.35, g: 0.78, b: 0.36, a: 1 }],
+  [65, { r: 0.00, g: 0.71, b: 0.62, a: 1 }],
+  [75, { r: 0.15, g: 0.51, b: 0.78, a: 1 }],
+  [80, { r: 0.48, g: 0.29, b: 0.77, a: 1 }],
+];
+
+const relativeHumidityStops: Array<[number, Rgba]> = [
+  [10, { r: 0.65, g: 0.29, b: 0.16, a: 1 }],
+  [20, { r: 0.86, g: 0.55, b: 0.25, a: 1 }],
+  [30, { r: 0.93, g: 0.83, b: 0.36, a: 1 }],
+  [50, { r: 0.47, g: 0.78, b: 0.36, a: 1 }],
+  [70, { r: 0.20, g: 0.72, b: 0.65, a: 1 }],
+  [85, { r: 0.24, g: 0.56, b: 0.82, a: 1 }],
+  [100, { r: 0.44, g: 0.30, b: 0.78, a: 1 }],
+];
+
+const windGustStops: Array<[number, Rgba]> = [
+  [0, { r: 0.29, g: 0.42, b: 0.54, a: 0.72 }],
+  [15, { r: 0.24, g: 0.69, b: 0.41, a: 0.84 }],
+  [25, { r: 0.84, g: 0.86, b: 0.26, a: 0.90 }],
+  [35, { r: 0.95, g: 0.64, b: 0.23, a: 0.94 }],
+  [50, { r: 0.91, g: 0.29, b: 0.25, a: 0.97 }],
+  [65, { r: 0.76, g: 0.24, b: 0.60, a: 0.99 }],
+  [80, { r: 0.48, g: 0.31, b: 0.71, a: 1 }],
+];
+
 function interpolateColor(value: number, stops: Array<[number, Rgba]>): Rgba {
   if (value <= stops[0][0]) return stops[0][1];
   if (value >= stops[stops.length - 1][0]) return stops[stops.length - 1][1];
@@ -62,12 +92,28 @@ function interpolateColor(value: number, stops: Array<[number, Rgba]>): Rgba {
 
 function fieldColor(field: ModelFieldId, value: number | null, opacity: number): Rgba {
   if (value == null || !Number.isFinite(value)) return TRANSPARENT;
-  if (field === 'composite-reflectivity') {
-    if (value < 5) return TRANSPARENT;
-    const color = interpolateColor(value, reflectivityStops);
-    return { ...color, a: color.a * opacity };
+
+  let color: Rgba;
+  switch (field) {
+    case 'composite-reflectivity':
+      if (value < 5) return TRANSPARENT;
+      color = interpolateColor(value, reflectivityStops);
+      break;
+    case 'temperature-2m':
+      color = interpolateColor(value, temperatureStops);
+      break;
+    case 'dewpoint-2m':
+      color = interpolateColor(value, dewpointStops);
+      break;
+    case 'relative-humidity-2m':
+      color = interpolateColor(value, relativeHumidityStops);
+      break;
+    case 'wind-gust-surface':
+      color = interpolateColor(value, windGustStops);
+      break;
+    default:
+      color = TRANSPARENT;
   }
-  const color = interpolateColor(value, temperatureStops);
   return { ...color, a: color.a * opacity };
 }
 

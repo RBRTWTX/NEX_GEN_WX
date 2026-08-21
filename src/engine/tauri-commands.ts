@@ -279,7 +279,7 @@ export async function fetchModelHrrrField(
   if (!Number.isInteger(forecastHour) || forecastHour < 0 || forecastHour > 48) {
     throw new Error('HRRR forecast hour must be between F00 and F48.');
   }
-  if (!['composite-reflectivity', 'temperature-2m'].includes(field)) {
+  if (!['composite-reflectivity', 'temperature-2m', 'dewpoint-2m', 'relative-humidity-2m', 'wind-gust-surface'].includes(field)) {
     throw new Error('Unsupported HRRR field.');
   }
   if (!['sharp', 'balanced', 'smooth'].includes(smoothing)) {

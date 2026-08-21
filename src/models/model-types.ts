@@ -1,7 +1,7 @@
 import type { MapScene } from '../types/domain';
 
 export type ModelId = 'hrrr';
-export type ModelFieldId = 'composite-reflectivity' | 'temperature-2m';
+export type ModelFieldId = 'composite-reflectivity' | 'temperature-2m' | 'dewpoint-2m' | 'relative-humidity-2m' | 'wind-gust-surface';
 export type ModelRunMode = 'latest' | 'pinned';
 export type ModelProviderId = 'noaa-nodd-hrrr';
 export type ModelSmoothing = 'sharp' | 'balanced' | 'smooth';
@@ -75,6 +75,30 @@ export const MODEL_FIELDS: readonly ModelFieldDefinition[] = [
     displayUnit: '°F',
   },
   {
+    id: 'dewpoint-2m',
+    label: '2 m Dew Point',
+    parameter: 'DPT',
+    level: '2 m above ground',
+    sourceUnit: 'K',
+    displayUnit: '°F',
+  },
+  {
+    id: 'relative-humidity-2m',
+    label: '2 m Relative Humidity',
+    parameter: 'RH',
+    level: '2 m above ground',
+    sourceUnit: '%',
+    displayUnit: '%',
+  },
+  {
+    id: 'wind-gust-surface',
+    label: 'Surface Wind Gust',
+    parameter: 'GUST',
+    level: 'surface',
+    sourceUnit: 'm/s',
+    displayUnit: 'mph',
+  },
+  {
     id: 'composite-reflectivity',
     label: 'Composite Reflectivity',
     parameter: 'REFC',
@@ -106,7 +130,11 @@ function boundedNumber(value: unknown, fallback: number, minimum: number, maximu
 }
 
 export function isModelField(value: unknown): value is ModelFieldId {
-  return value === 'composite-reflectivity' || value === 'temperature-2m';
+  return value === 'composite-reflectivity'
+    || value === 'temperature-2m'
+    || value === 'dewpoint-2m'
+    || value === 'relative-humidity-2m'
+    || value === 'wind-gust-surface';
 }
 
 export function normalizeModelSceneState(

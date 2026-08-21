@@ -92,15 +92,25 @@ for (const marker of [
   'HRRR_NY: usize = 1059',
   '":REFC:entire atmosphere:"',
   '":TMP:2 m above ground:"',
+  '":DPT:2 m above ground:"',
+  '":RH:2 m above ground:"',
+  '":GUST:surface:"',
+  '2.236_936_3',
   'provider_client::fetch_bytes_range',
 ]) {
   if (!nativeModels.includes(marker)) throw new Error(`Native HRRR field decoder marker missing: ${marker}`);
 }
 if (!nativeLib.includes('fetch_model_hrrr_field')) throw new Error('Native HRRR field command is not registered.');
 if (!tauriCommands.includes('fetchModelHrrrField')) throw new Error('Frontend HRRR field command is missing.');
+for (const marker of ["'dewpoint-2m'", "'relative-humidity-2m'", "'wind-gust-surface'"]) {
+  if (!tauriCommands.includes(marker)) throw new Error(`Frontend HRRR command allowlist is missing: ${marker}`);
+}
 if (
   !modelTypes.includes("'composite-reflectivity'")
   || !modelTypes.includes("'temperature-2m'")
+  || !modelTypes.includes("'dewpoint-2m'")
+  || !modelTypes.includes("'relative-humidity-2m'")
+  || !modelTypes.includes("'wind-gust-surface'")
   || !modelTypes.includes("field: 'temperature-2m'")
   || !modelTypes.includes('loopEnabled')
   || modelTypes.includes('defaultModelFieldForScene')
@@ -225,6 +235,9 @@ if (
   !productLegend.includes("scene.category === 'Models'")
   || !productLegend.includes('MODEL_REFLECTIVITY_SEGMENTS')
   || !productLegend.includes('MODEL_TEMPERATURE_SEGMENTS')
+  || !productLegend.includes('MODEL_DEWPOINT_SEGMENTS')
+  || !productLegend.includes('MODEL_RELATIVE_HUMIDITY_SEGMENTS')
+  || !productLegend.includes('MODEL_WIND_GUST_SEGMENTS')
 ) {
   throw new Error('Model field-specific broadcast legends are not wired to the active Model Lab field.');
 }
@@ -246,4 +259,8 @@ const activeFiles = [
 ].join('\n');
 if (/aguacero/i.test(activeFiles)) throw new Error('Aguacero reference found in active Checkpoint 2 code.');
 
-console.log('Model renderer validation passed: NOAA HRRR byte-range GRIB decoding, Lambert mesh rendering, hidden-menu playback, right-click-only box editing, field/header/valid-time metadata sync, exact Tropical/HRRR shared bar geometry, contained multi-segment model key, Layer Stack naming, cache/readiness, and layer order verified.');
+for (const marker of ['dewpointStops', 'relativeHumidityStops', 'windGustStops']) {
+  if (!layer.includes(marker)) throw new Error(`Checkpoint 3 V2 scalar renderer mapping missing: ${marker}`);
+}
+
+console.log('Model renderer validation passed: NOAA HRRR bounded byte-range GRIB decoding, five selectable scalar fields, dew point Fahrenheit conversion, relative humidity percent preservation, wind-gust mph conversion, existing shared header/key layout, Layer Stack naming, playback/cache/readiness, and layer order verified.');

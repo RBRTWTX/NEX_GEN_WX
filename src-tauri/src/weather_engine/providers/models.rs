@@ -49,6 +49,9 @@ fn field_contract(field: &str) -> Result<(&'static str, &'static str), StudioErr
     match field {
         "composite-reflectivity" => Ok((":REFC:entire atmosphere:", "dBZ")),
         "temperature-2m" => Ok((":TMP:2 m above ground:", "°F")),
+        "dewpoint-2m" => Ok((":DPT:2 m above ground:", "°F")),
+        "relative-humidity-2m" => Ok((":RH:2 m above ground:", "%")),
+        "wind-gust-surface" => Ok((":GUST:surface:", "mph")),
         _ => Err(StudioError::Provider(format!(
             "Unsupported HRRR field: {field}"
         ))),
@@ -115,8 +118,9 @@ fn convert_value(field: &str, value: f32) -> Option<f32> {
         return None;
     }
     match field {
-        "temperature-2m" => Some(value * 9.0 / 5.0 - 459.67),
-        "composite-reflectivity" => Some(value),
+        "temperature-2m" | "dewpoint-2m" => Some(value * 9.0 / 5.0 - 459.67),
+        "relative-humidity-2m" | "composite-reflectivity" => Some(value),
+        "wind-gust-surface" => Some(value * 2.236_936_3),
         _ => None,
     }
 }
@@ -313,6 +317,26 @@ mod tests {
             record_range_from_index(index, ":TMP:2 m above ground:").unwrap(),
             (564153, 700999)
         );
+    }
+
+    #[test]
+    fn hrrr_surface_broadcast_field_contracts_are_exact() {
+        assert_eq!(field_contract("temperature-2m").unwrap(), (":TMP:2 m above ground:", "°F"));
+        assert_eq!(field_contract("dewpoint-2m").unwrap(), (":DPT:2 m above ground:", "°F"));
+        assert_eq!(field_contract("relative-humidity-2m").unwrap(), (":RH:2 m above ground:", "%"));
+        assert_eq!(field_contract("wind-gust-surface").unwrap(), (":GUST:surface:", "mph"));
+        assert!(field_contract("not-a-field").is_err());
+    }
+
+    #[test]
+    fn hrrr_surface_broadcast_unit_conversions_are_stable() {
+        let freezing = convert_value("temperature-2m", 273.15).unwrap();
+        assert!((freezing - 32.0).abs() < 0.01);
+        let dewpoint = convert_value("dewpoint-2m", 283.15).unwrap();
+        assert!((dewpoint - 50.0).abs() < 0.02);
+        assert_eq!(convert_value("relative-humidity-2m", 67.0).unwrap(), 67.0);
+        let gust = convert_value("wind-gust-surface", 10.0).unwrap();
+        assert!((gust - 22.369_363).abs() < 0.01);
     }
 
     #[test]
